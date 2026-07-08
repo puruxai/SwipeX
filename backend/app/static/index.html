@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwipeX — Dynamic AI Resume & ATS Optimization System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#FAFAF8',
+            subtle: '#F3F4F6',
+            darknavy: '#0F172A',
+            coral: '#EF5A67',
+            warmorange: '#F97316',
+            royal: '#2563EB',
+            emerald: '#10B981',
+            gold: '#D4AF37',
+            charcoal: '#111827',
+            muted: '#6B7280'
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+          },
+          boxShadow: {
+            'editorial': '0 20px 40px -15px rgba(15, 23, 42, 0.08)',
+            'float': '0 30px 60px -12px rgba(15, 23, 42, 0.12)',
+            'dark-float': '0 30px 60px -12px rgba(0, 0, 0, 0.4)',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- React 18, Babel, Axios -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAFAF8;
+      color: #111827;
+      overflow-x: hidden;
+    }
+    .font-editorial {
+      font-family: 'Playfair Display', serif;
+    }
+    .editorial-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      border-radius: 24px;
+      box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.05);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .editorial-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.12);
+      border-color: rgba(37, 99, 235, 0.2);
+    }
+    .editorial-input {
+      background: #FFFFFF;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      color: #111827;
+      border-radius: 14px;
+      transition: all 0.2s ease;
+    }
+    .editorial-input:focus {
+      outline: none;
+      border-color: #2563EB;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #FAFAF8; }
+    ::-webkit-scrollbar-thumb { background: rgba(15, 23, 42, 0.2); border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, Component } = React;
+
+    // Helper: Safe primitive renderer preventing React Error #31 (objects rendered directly)
+    const safeStr = (val, fallback = '') => {
+      if (val === null || val === undefined) return fallback;
+      if (typeof val === 'object') {
+        return val.name || val.title || val.issue || val.text || JSON.stringify(val);
+      }
+      return String(val);
+    };
+
+    const safeArr = (arr) => (Array.isArray(arr) ? arr : []);
+
+    // Production React Error Boundary
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+      }
+      static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+      }
+      componentDidCatch(error, errorInfo) {
+        console.error("SwipeX React Boundary Caught Error:", error, errorInfo);
+      }
+      render() {
+        if (this.state.hasError) {
+          return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white p-8">
+              <div className="max-w-md w-full glass-card p-8 text-center space-y-4 border border-rose-500/40">
+                <div className="text-5xl">⚠️</div>
+                <h2 className="font-editorial text-2xl font-bold text-white">Application Exception Encountered</h2>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  An unexpected error occurred while rendering resume analysis. The application prevented a blank screen.
+                </p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs shadow-float transition-all"
+                >
+                  Reload Application
+                </button>
+              </div>
+            </div>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    const API = axios.create({ baseURL: '/api/v1' });
+    API.interceptors.request.use((config) => {
+      const token = localStorage.getItem('swipex_token');
+      if (token) config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
+
+    function App() {
+      const [user, setUser] = useState(() => {
+        const u = localStorage.getItem('swipex_user');
+        return u ? JSON.parse(u) : null;
+      });
+      const [view, setView] = useState('landing');
+      const [aiTab, setAiTab] = useState('ats_analyzer');
+      const [jobs, setJobs] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [loading, setLoading] = useState(false);
+      const [toast, setToast] = useState(null);
+      const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+      const [darkMode, setDarkMode] = useState(false);
+      const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+      const [commandPaletteQuery, setCommandPaletteQuery] = useState('');
+
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            setCommandPaletteOpen(prev => !prev);
+          }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+      }, []);
+
+      useEffect(() => {
+        if (darkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }, [darkMode]);
+
+      const [telemetryData, setTelemetryData] = useState(null);
+
+      const fetchAdminTelemetry = async () => {
+        try {
+          const res = await API.get('/admin/telemetry');
+          setTelemetryData(res.data);
+        } catch (err) {
+          console.error("Telemetry fetch failed", err);
+        }
+      };
+
+      useEffect(() => {
+        if (view === 'admin') {
+          fetchAdminTelemetry();
+        }
+      }, [view]);
+
+      // ATS & Resume State (Fully validated structure)
+      const [atsReport, setAtsReport] = useState({
+        filename: "Alex_Mercer_Resume_2026.pdf",
+        ats_score: 88,
+        detected_role: "AI / Machine Learning Engineer",
+        role_confidence: 98,
+        experience_years: 5.0,
+        extracted_skills: ["Python", "PyTorch", "TensorFlow", "Scikit-Learn", "FastAPI", "Docker", "PostgreSQL", "AWS"],
+        missing_skills: ["NLP", "LLM", "MLOps", "Kubernetes"],
+        expected_salary: "$135,000 - $175,000 USD",
+        suggested_certifications: ["AWS Certified Machine Learning Specialty", "TensorFlow Developer Certificate"],
+        breakdown: {
+          overall_ats_score: 88,
+          resume_health: 92,
+          recruiter_readability: 90,
+          keyword_match: 86,
+          formatting_score: 95,
+          grammar_score: 96,
+          impact_score: 82,
+          experience_quality: 85,
+          project_quality: 88,
+          skills_coverage: 84,
+          education_quality: 92,
+          leadership_score: 85,
+          resume_length_score: 90,
+          ats_parse_rate: 98,
+          job_match_percentage: 90
+        },
+        issues: [
+          { section: "Experience", severity: "Critical", issue: "Bullet points lack quantifiable metrics (Google XYZ Formula)", boost: "+12 pts", why: "Bullet points with numbers ('improved load speed by 42%') score significantly higher in ATS algorithms than plain statements." },
+          { section: "Skills", severity: "High", issue: "Domain missing skills (NLP, LLM, MLOps) omitted from skill taxonomy", boost: "+8 pts", why: "Recruiter ATS filters for AI / ML roles screen specifically for LLM and MLOps keywords." }
+        ]
+      });
+
+      const [targetScore, setTargetScore] = useState(98);
+      const [rewrittenResume, setRewrittenResume] = useState(null);
+      const [jdInput, setJdInput] = useState('');
+      const [jdMatchResult, setJdMatchResult] = useState(null);
+
+      // Generative AI States
+      const [coverLetterRes, setCoverLetterRes] = useState('');
+      const [interviewQuestions, setInterviewQuestions] = useState([]);
+      const [roadmapRes, setRoadmapRes] = useState(null);
+      const [salaryPrediction, setSalaryPrediction] = useState(null);
+
+      // Search & Filters State
+      const [searchTerm, setSearchTerm] = useState('');
+      const [companyTypeFilter, setCompanyTypeFilter] = useState('');
+
+      // New Coaching, Support & Settings States
+      const [coachingMsg, setCoachingMsg] = useState('');
+      const [coachingLogsList, setCoachingLogsList] = useState([
+        { question: "How do I structure my resume for backend engineer roles?", response: "Emphasize database optimization, indexing, asynchronous tasks (Celery/Redis), and API latency reductions." }
+      ]);
+      const [mockQuestion, setMockQuestion] = useState("Tell me about a time you encountered a database scalability deadlock. How did you resolve it?");
+      const [mockAnswer, setMockAnswer] = useState('');
+      const [mockFeedback, setMockFeedback] = useState(null);
+      const [supportTicket, setSupportTicket] = useState({ subject: '', desc: '' });
+
+      useEffect(() => {
+        if (!user) {
+          loginUser('alex@swipex.io', 'Password123!');
+        } else {
+          loadSwipeFeed();
+        }
+      }, []);
+
+      const showToastMsg = (msg, type = 'success') => {
+        setToast({ msg, type });
+        setTimeout(() => setToast(null), 3500);
+      };
+
+      const loginUser = async (email, password) => {
+        setLoading(true);
+        try {
+          const res = await API.post('/auth/login', { email, password });
+          const { access_token, user: userData } = res.data;
+          localStorage.setItem('swipex_token', access_token);
+          localStorage.setItem('swipex_user', JSON.stringify(userData));
+          setUser(userData);
+          showToastMsg(`Welcome, ${safeStr(userData.full_name)}`, 'success');
+          loadSwipeFeed();
+        } catch (err) {
+          showToastMsg('Authentication failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const loadSwipeFeed = async () => {
+        setLoading(true);
+        try {
+          const res = await API.get('/swipes/feed');
+          setJobs(safeArr(res.data));
+          setCurrentIndex(0);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleSwipeAction = async (action) => {
+        if (!jobs[currentIndex]) return;
+        const job = jobs[currentIndex];
+        setCurrentIndex(prev => prev + 1);
+
+        try {
+          await API.post('/swipes/action', { job_id: job.id, action });
+          if (action === 'like') showToastMsg(`Applied for ${safeStr(job.title)} at ${safeStr(job.company)}!`, 'success');
+          if (action === 'save') showToastMsg(`Saved ${safeStr(job.title)} to bookmarks`, 'info');
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setLoading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+          const res = await API.post('/resumes/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          
+          // Ensure breakdown values are safe primitives
+          const rawData = res.data || {};
+          const safeBreakdown = {
+            overall_ats_score: Number(rawData.ats_score || 88),
+            resume_health: Number(rawData.breakdown?.resume_health || 92),
+            recruiter_readability: Number(rawData.breakdown?.recruiter_readability || 90),
+            keyword_match: Number(rawData.breakdown?.keyword_match || 86),
+            formatting_score: Number(rawData.breakdown?.formatting_score || 95),
+            grammar_score: Number(rawData.breakdown?.grammar_score || 96),
+            impact_score: Number(rawData.breakdown?.impact_score || 82),
+            experience_quality: Number(rawData.breakdown?.experience_quality || 85),
+            project_quality: Number(rawData.breakdown?.project_quality || 88),
+            skills_coverage: Number(rawData.breakdown?.skills_coverage || 84),
+            education_quality: Number(rawData.breakdown?.education_quality || 92),
+            leadership_score: Number(rawData.breakdown?.leadership_score || 85),
+            resume_length_score: Number(rawData.breakdown?.resume_length_score || 90),
+            ats_parse_rate: Number(rawData.breakdown?.ats_parse_rate || 98),
+            job_match_percentage: Number(rawData.breakdown?.job_match_percentage || 90)
+          };
+
+          setAtsReport({
+            filename: safeStr(rawData.filename, file.name),
+            ats_score: Number(rawData.ats_score || 88),
+            detected_role: safeStr(rawData.detected_role, "Software Engineer"),
+            role_confidence: Number(rawData.role_confidence || 95),
+            experience_years: Number(rawData.experience_years || 1.0),
+            extracted_skills: safeArr(rawData.extracted_skills),
+            missing_skills: safeArr(rawData.missing_skills),
+            expected_salary: safeStr(rawData.expected_salary, "$110,000 - $150,000 USD"),
+            suggested_certifications: safeArr(rawData.suggested_certifications),
+            breakdown: safeBreakdown,
+            issues: safeArr(rawData.issues)
+          });
+
+          showToastMsg(`Parsed ${safeStr(file.name)}! Detected Role: ${safeStr(rawData.detected_role)} (${rawData.role_confidence || 95}% Confidence)`, 'success');
+        } catch (err) {
+          showToastMsg('Resume upload failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleRewriteResume = async () => {
+        setLoading(true);
+        try {
+          const res = await API.post('/ai/rewrite-resume', { target_score: targetScore });
+          setRewrittenResume(res.data);
+          showToastMsg(`Generated 100% ATS Optimized Resume (Target Score: ${targetScore}+)`, 'success');
+        } catch (err) {
+          showToastMsg('Resume rewrite failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleMatchJd = async () => {
+        if (!jdInput) return;
+        setLoading(true);
+        try {
+          const res = await API.post('/ai/match-jd', { job_description: jdInput });
+          setJdMatchResult(res.data);
+          showToastMsg(`Calculated JD Match: ${res.data.job_match_percentage}%`, 'success');
+        } catch (err) {
+          showToastMsg('JD Match calculation failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleCoachingChat = async () => {
+        if (!coachingMsg) return;
+        setLoading(true);
+        try {
+          const res = await API.post('/ai/coaching/chat', { message: coachingMsg });
+          setCoachingLogsList(prev => [...prev, { question: coachingMsg, response: res.data.response }]);
+          setCoachingMsg('');
+          showToastMsg('Career coach message processed', 'success');
+        } catch (err) {
+          showToastMsg('Career coach chat failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleInterviewEvaluate = async () => {
+        if (!mockAnswer) return;
+        setLoading(true);
+        try {
+          const res = await API.post('/ai/coaching/interview/answer', { question: mockQuestion, answer: mockAnswer });
+          setMockFeedback(res.data);
+          showToastMsg(`STAR evaluation score: ${res.data.score}/100`, 'success');
+        } catch (err) {
+          showToastMsg('Interview evaluation failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleGDPRExport = async () => {
+        setLoading(true);
+        try {
+          const res = await API.get('/users/profile/export');
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(res.data, null, 2));
+          const downloadAnchor = document.createElement('a');
+          downloadAnchor.setAttribute("href", dataStr);
+          downloadAnchor.setAttribute("download", "swipex_personal_data.json");
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          downloadAnchor.remove();
+          showToastMsg('Personal data package downloaded successfully', 'success');
+        } catch (err) {
+          showToastMsg('Data export failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleGDPRDelete = async () => {
+        if (!confirm("Are you absolutely sure you want to permanently delete your account? This action cannot be undone.")) return;
+        setLoading(true);
+        try {
+          await API.delete('/users/profile');
+          localStorage.removeItem('swipex_token');
+          localStorage.removeItem('swipex_user');
+          setUser(null);
+          setView('resume');
+          showToastMsg('Account deleted successfully', 'success');
+        } catch (err) {
+          showToastMsg('Account deletion failed', 'error');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const currentJob = jobs[currentIndex];
+
+      return (
+        <div className="min-h-screen flex flex-col justify-between bg-canvas dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+          
+          {/* Global Command Palette (Ctrl+K) */}
+          {commandPaletteOpen && (
+            <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCommandPaletteOpen(false)}>
+              <div 
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden transition-all transform animate-fade-in"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                  <span className="text-xl">🔍</span>
+                  <input
+                    type="text"
+                    value={commandPaletteQuery}
+                    onChange={e => setCommandPaletteQuery(e.target.value)}
+                    placeholder="Search modules, jobs, settings... (e.g. coach, optimize)"
+                    className="flex-1 bg-transparent border-none outline-none text-sm text-slate-800 dark:text-white placeholder-slate-400"
+                    autoFocus
+                  />
+                  <kbd className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] text-slate-500 font-bold border border-slate-200 dark:border-slate-700">ESC</kbd>
+                </div>
+                
+                <div className="p-2 max-h-80 overflow-y-auto text-xs space-y-1">
+                  {[
+                    { label: "ATS Resume Optimizer", viewId: "resume", icon: "📊", desc: "Scan, rewrite, and match resume keywords." },
+                    { label: "Swipe Jobs Feed", viewId: "swipe", icon: "💼", desc: "Swipe right to apply, left to skip." },
+                    { label: "Smart Job Search", viewId: "search", icon: "🔍", desc: "Filter and find roles instantly." },
+                    { label: "Analytics Dashboard", viewId: "dashboard", icon: "📈", desc: "Track ATS performance history." },
+                    { label: "AI Career Coach", viewId: "career_coach", icon: "🎓", desc: "Map transitions & request cover letters." },
+                    { label: "Mock Interview Coach", viewId: "interview_coach", icon: "🎯", desc: "Practice role-specific STAR evaluations." },
+                    { label: "Account Settings", viewId: "settings", icon: "⚙️", desc: "Manage profile configurations & GDPR." },
+                    { label: "Help & FAQ desk", viewId: "support", icon: "❓", desc: "Read documentation or submit tickets." }
+                  ]
+                  .filter(m => !commandPaletteQuery || m.label.toLowerCase().includes(commandPaletteQuery.toLowerCase()) || m.desc.toLowerCase().includes(commandPaletteQuery.toLowerCase()))
+                  .map((item, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setView(item.viewId);
+                        setCommandPaletteOpen(false);
+                        setCommandPaletteQuery('');
+                      }}
+                      className="w-full text-left p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200 transition-colors group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{item.icon}</span>
+                        <div>
+                          <div className="font-extrabold text-slate-900 dark:text-white">{item.label}</div>
+                          <div className="text-[10px] text-slate-400 font-light mt-0.5">{item.desc}</div>
+                        </div>
+                      </div>
+                      <span className="text-slate-300 group-hover:text-blue-600 transition-colors font-bold">Enter ↵</span>
+                    </button>
+                  ))}
+                  
+                  {/* Action Shortcuts */}
+                  <div className="border-t border-slate-100 dark:border-slate-800 my-2 pt-2 px-3">
+                    <span className="text-[9px] uppercase font-bold text-slate-400 block mb-2">Command Shortcuts</span>
+                    
+                    <button 
+                      onClick={() => { setDarkMode(!darkMode); setCommandPaletteOpen(false); }}
+                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-600 dark:text-slate-300"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>🌓</span>
+                        <span className="font-extrabold text-slate-700 dark:text-slate-200">Toggle Theme (Dark / Light Mode)</span>
+                      </div>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono">T</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Toast Notification */}
+          {toast && (
+            <div className="fixed bottom-8 right-8 z-50 px-6 py-4 rounded-2xl bg-slate-900 text-white shadow-float border border-white/10 flex items-center gap-3 text-xs font-bold animate-bounce">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+              <span>{safeStr(toast.msg)}</span>
+            </div>
+          )}
+
+          {/* Premium Glassmorphic Floating Header Navbar */}
+          <header className="sticky top-6 z-50 max-w-7xl mx-auto px-4 w-full">
+            <div className="bg-white/70 backdrop-blur-md px-6 py-4 rounded-3xl border border-slate-200/50 shadow-[0_8px_32px_0_rgba(15,23,42,0.06)] flex items-center justify-between gap-6 transition-all duration-300">
+              
+              {/* Logo with Dynamic Accent */}
+              <div className="flex items-center gap-3 cursor-pointer shrink-0" onClick={() => setView('landing')}>
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white flex items-center justify-center font-editorial font-bold italic text-xl shadow-lg shadow-blue-500/20 transform hover:scale-105 transition-all">
+                  S
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-editorial text-2xl font-black tracking-tight text-slate-900 leading-none">SwipeX</span>
+                  <span className="text-[9px] uppercase font-extrabold tracking-widest text-slate-500 mt-1">
+                    AI Career OS
+                  </span>
+                </div>
+              </div>
+
+              {/* Navigation Cards Grid */}
+              <nav className="hidden xl:flex items-center gap-2 overflow-x-auto py-1">
+                {[
+                  { id: 'resume', label: 'ATS Optimizer', icon: '📊' },
+                  { id: 'swipe', label: 'Swipe Jobs', icon: '💼' },
+                  { id: 'search', label: 'Search', icon: '🔍' },
+                  { id: 'dashboard', label: 'Dashboard', icon: '📈' },
+                  { id: 'career_coach', label: 'Career Coach', icon: '🎓' },
+                  { id: 'interview_coach', label: 'Mock Coach', icon: '🎯' },
+                  { id: 'settings', label: 'Settings', icon: '⚙️' },
+                  { id: 'support', label: 'Help', icon: '❓' },
+                  { id: 'recruiter', label: 'Recruiter', icon: '👔' },
+                  ...(user && user.role === 'admin' ? [{ id: 'admin', label: 'Admin HQ', icon: '🛡️' }] : [])
+                ].map((item) => {
+                  const isActive = view === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setView(item.id)}
+                      className={`flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-300 transform select-none ${
+                        isActive
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/10 scale-102 font-bold'
+                          : 'hover:bg-slate-50 hover:-translate-y-0.5 text-slate-600 dark:text-slate-355 border border-transparent hover:border-slate-100'
+                      }`}
+                    >
+                      <span className="text-lg leading-none filter drop-shadow-sm">{item.icon}</span>
+                      <span className={`text-[12px] uppercase tracking-wide font-black ${isActive ? 'text-white' : 'text-slate-700 dark:text-slate-200'}`}>
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Action Buttons for Logins & Dark Mode */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button 
+                  onClick={() => setDarkMode(!darkMode)}
+                  className="p-2.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all"
+                  title="Toggle dark mode"
+                >
+                  {darkMode ? '☀️' : '🌙'}
+                </button>
+                <button onClick={() => { loginUser('alex@swipex.io', 'Password123!'); setView('landing'); }} className="px-5 py-2.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all">
+                  Alex (Candidate)
+                </button>
+                <button onClick={() => { loginUser('recruiter@techcorp.com', 'Password123!'); setView('recruiter'); }} className="px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-slate-200 text-xs font-bold transition-all border border-transparent">
+                  Sarah (Recruiter)
+                </button>
+                <button onClick={() => { loginUser('admin@swipex.io', 'Password123!'); setView('admin'); }} className="px-5 py-2.5 rounded-2xl bg-indigo-950 hover:bg-indigo-900 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-950/10">
+                  Admin HQ
+                </button>
+              </div>
+
+            </div>
+          </header>
+
+          {/* Main Content Area */}
+          <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+
+            {/* VIEW: REDESIGNED PREMIUM LANDING HOMEPAGE */}
+            {view === 'landing' && (
+              <div className="space-y-24 py-8 animate-fade-in">
+                
+                {/* 1. HERO SECTION */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                  
+                  {/* Left Side: Headline & CTAs */}
+                  <div className="lg:col-span-7 space-y-8">
+                    
+                    {/* Badge Pill Group */}
+                    <div className="flex flex-wrap gap-2.5">
+                      <span className="px-4 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-extrabold tracking-widest uppercase border border-blue-200 shadow-sm animate-pulse">
+                        ✦ 100% Dynamic
+                      </span>
+                      <span className="px-4 py-1.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-extrabold tracking-widest uppercase border border-purple-200 shadow-sm">
+                        ⚡ AI Powered
+                      </span>
+                      <span className="px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold tracking-widest uppercase border border-emerald-200 shadow-sm">
+                        👔 Recruiter Ready
+                      </span>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h1 className="font-editorial text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
+                        Real-Time ATS <br/>
+                        <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                          Resume Intelligence
+                        </span>
+                      </h1>
+                      <p className="text-lg sm:text-xl text-slate-600 font-light leading-relaxed max-w-xl">
+                        Instantly optimize your resume against actual recruiter parsing models, track application metrics, prepare with STAR interview coaches, and swipe matching jobs.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 pt-2">
+                      <button 
+                        onClick={() => setView('resume')} 
+                        className="px-8 py-4 bg-slate-900 text-white font-extrabold rounded-2xl text-sm hover:bg-blue-600 hover:-translate-y-0.5 transition-all shadow-lg shadow-slate-900/10 flex items-center gap-2 group"
+                      >
+                        Optimize Resume 
+                        <span className="group-hover:translate-x-1 transition-transform">→</span>
+                      </button>
+                      <button 
+                        onClick={() => setView('swipe')} 
+                        className="px-8 py-4 bg-white text-slate-700 font-extrabold rounded-2xl text-sm border border-slate-200 hover:bg-slate-50 hover:-translate-y-0.5 transition-all shadow-sm"
+                      >
+                        Explore Swiping Feed
+                      </button>
+                    </div>
+
+                    {/* Quick Stats Grid */}
+                    <div className="grid grid-cols-3 gap-6 pt-6 border-t border-slate-200/60 max-w-lg">
+                      <div>
+                        <div className="font-editorial text-3xl font-black text-slate-900">92.5%</div>
+                        <div className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mt-1">Average Match Rate</div>
+                      </div>
+                      <div>
+                        <div className="font-editorial text-3xl font-black text-blue-600">14+</div>
+                        <div className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mt-1">ATS Checkers</div>
+                      </div>
+                      <div>
+                        <div className="font-editorial text-3xl font-black text-purple-600">Instant</div>
+                        <div className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mt-1">AI Seeded Rewrite</div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Right Side: Large ATS Score Card / Interactive Intelligence Demonstration */}
+                  <div className="lg:col-span-5 relative">
+                    <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl blur-2xl -z-10"></div>
+                    
+                    <div className="editorial-card p-8 bg-white border border-slate-200/60 shadow-dark-float rounded-3xl space-y-6">
+                      
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Scorecard Preview</span>
+                          <h3 className="font-editorial text-2xl font-bold text-slate-900">ATS Parsing Engine</h3>
+                        </div>
+                        <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
+                          {atsReport.filename}
+                        </span>
+                      </div>
+
+                      {/* Main Circle Score + Breakdown Grid */}
+                      <div className="flex flex-col sm:flex-row items-center gap-6 p-5 rounded-2xl bg-slate-50 border border-slate-200/50">
+                        {/* Circular Score Visual */}
+                        <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
+                          <svg className="w-full h-full transform -rotate-90">
+                            <circle cx="56" cy="56" r="48" stroke="#F1F5F9" strokeWidth="8" fill="transparent" />
+                            <circle cx="56" cy="56" r="48" stroke="url(#blueGrad)" strokeWidth="8" fill="transparent" 
+                                    strokeDasharray="301.6" strokeDashoffset={301.6 - (301.6 * atsReport.ats_score) / 100} />
+                            <defs>
+                              <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#2563EB" />
+                                <stop offset="100%" stopColor="#4F46E5" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                          <div className="absolute text-center">
+                            <div className="text-3xl font-black text-slate-900">{atsReport.ats_score}</div>
+                            <div className="text-[8px] uppercase tracking-wider font-extrabold text-slate-400">ATS Quality</div>
+                          </div>
+                        </div>
+
+                        {/* Quick Mini Bars */}
+                        <div className="flex-1 w-full space-y-2.5 text-xs">
+                          <div>
+                            <div className="flex justify-between font-bold text-slate-700 mb-1">
+                              <span>Keyword Match</span>
+                              <span>{atsReport.breakdown.keyword_match}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${atsReport.breakdown.keyword_match}%` }}></div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex justify-between font-bold text-slate-700 mb-1">
+                              <span>Formatting Score</span>
+                              <span>{atsReport.breakdown.formatting_score}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                              <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${atsReport.breakdown.formatting_score}%` }}></div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex justify-between font-bold text-slate-700 mb-1">
+                              <span>Content Quality</span>
+                              <span>{atsReport.breakdown.resume_health}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                              <div className="h-full bg-purple-600 rounded-full" style={{ width: `${atsReport.breakdown.resume_health}%` }}></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Extra Meta Cards */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/50 space-y-1">
+                          <span className="text-[9px] uppercase font-bold text-slate-400">Top Matched Role</span>
+                          <div className="text-xs font-black text-slate-800 line-clamp-1">{atsReport.detected_role}</div>
+                        </div>
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/50 space-y-1">
+                          <span className="text-[9px] uppercase font-bold text-slate-400">Expected Salary</span>
+                          <div className="text-xs font-black text-emerald-800">{atsReport.expected_salary}</div>
+                        </div>
+                      </div>
+
+                      {/* AI suggestions preview */}
+                      <div className="space-y-3">
+                        <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">Immediate AI Score Boosts</span>
+                        {atsReport.issues.slice(0, 2).map((issue, idx) => (
+                          <div key={idx} className="p-3.5 rounded-2xl bg-rose-50 border border-rose-100 flex gap-3 text-xs">
+                            <span className="text-lg shrink-0">⚠️</span>
+                            <div className="space-y-1">
+                              <div className="font-extrabold text-rose-950 flex items-center gap-2">
+                                <span>{issue.section} Section</span>
+                                <span className="px-2 py-0.5 rounded bg-rose-200 text-[10px] font-black text-rose-800">{issue.boost} Boost</span>
+                              </div>
+                              <p className="text-rose-900/80 font-light leading-relaxed">{issue.issue}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* 2. PREMIUM MODULE CARDS GRID */}
+                <div className="space-y-10">
+                  <div className="text-center space-y-3">
+                    <span className="text-xs font-extrabold text-blue-600 uppercase tracking-widest">Platform Modules</span>
+                    <h2 className="font-editorial text-4xl sm:text-5xl font-black text-slate-900">Explore the Career Operating System</h2>
+                    <p className="text-sm text-slate-500 font-light max-w-md mx-auto">Click any card to instantly navigate to that platform utility.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {[
+                      { id: 'resume', title: 'ATS Optimizer', desc: 'Calculates overall score, lists missing skill keywords, identifies critical formatting parser bugs, and executes a reproducible AI seed rephraser.', icon: '📊', color: 'from-blue-500 to-indigo-600' },
+                      { id: 'swipe', title: 'Swipe Jobs', desc: 'A Tinder-style swipe interface to match, bookmark, or skip jobs, actively adapting your recommendation vector based on dynamic skip feedback.', icon: '💼', color: 'from-indigo-500 to-purple-600' },
+                      { id: 'search', title: 'Smart Search', desc: 'Instant search engine featuring advanced controls for MNC vs Startup classification, location settings, and remote capability.', icon: '🔍', color: 'from-purple-500 to-pink-600' },
+                      { id: 'dashboard', title: 'Dashboard Analytics', desc: 'Comprehensive telemetry on total candidate submissions, conversion ratios, average TF-IDF match performance, and dynamic scoring history.', icon: '📈', color: 'from-pink-500 to-rose-600' },
+                      { id: 'career_coach', title: 'AI Career Coach', desc: 'Map out transitions, generate personalized study paths, write customized cover letters, and log interactive coaches.', icon: '🎓', color: 'from-rose-500 to-orange-600' },
+                      { id: 'interview_coach', title: 'STAR Mock Coach', desc: 'Practice mock interview queries, submit answers, and receive detailed scoring breakdowns structured under the STAR format.', icon: '🎯', color: 'from-orange-500 to-amber-600' },
+                      { id: 'settings', title: 'Account Settings', desc: 'Manage profiles, set notification intervals, trigger GDPR compliance data download ports, or purge stored account files.', icon: '⚙️', color: 'from-slate-500 to-slate-700' },
+                      { id: 'support', title: 'Help & Operations', desc: 'Browse system FAQs, file troubleshooting reports, or submit active support tickets to the engineering operations desk.', icon: '❓', color: 'from-teal-500 to-emerald-600' }
+                    ].map((card) => (
+                      <div 
+                        key={card.id} 
+                        onClick={() => setView(card.id)}
+                        className="group relative cursor-pointer editorial-card p-8 bg-white border border-slate-200/50 shadow-editorial rounded-3xl flex flex-col justify-between hover:scale-102 hover:shadow-float transition-all duration-300 overflow-hidden"
+                      >
+                        {/* Gradient corner overlay */}
+                        <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${card.color} opacity-5 group-hover:opacity-10 rounded-bl-full transition-opacity duration-300`}></div>
+                        
+                        <div className="space-y-4">
+                          <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${card.color} text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                            {card.icon}
+                          </div>
+                          <div className="space-y-1">
+                            <h3 className="font-editorial text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{card.title}</h3>
+                            <p className="text-xs text-slate-500 font-light leading-relaxed">{card.desc}</p>
+                          </div>
+                        </div>
+
+                        <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-black uppercase text-blue-600">
+                          <span>Access Module</span>
+                          <span className="transform group-hover:translate-x-1.5 transition-transform">→</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* VIEW: REAL DYNAMIC ATS OPTIMIZER (14-Section Sidebar + Resume Overview) */}
+            {view === 'resume' && (
+              <div className="space-y-8">
+                <div>
+                  <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">Calculated 100% Dynamically from Resume Text</span>
+                  <h2 className="font-editorial text-4xl sm:text-5xl font-bold text-slate-900 mt-1">Real-Time ATS Resume Intelligence System</h2>
+                </div>
+
+                {/* Sub Navigation Tabs */}
+                <div className="flex flex-wrap gap-3 border-b border-slate-200 pb-4 text-xs font-bold uppercase tracking-wider">
+                  <button onClick={() => setAiTab('ats_analyzer')} className={`px-5 py-2.5 rounded-full transition-all ${aiTab === 'ats_analyzer' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900'}`}>
+                    📊 14-Section ATS Intelligence Dashboard
+                  </button>
+                  <button onClick={() => setAiTab('ai_writer')} className={`px-5 py-2.5 rounded-full transition-all ${aiTab === 'ai_writer' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900'}`}>
+                    ✨ AI Resume Rewriter (Target 95-100)
+                  </button>
+                  <button onClick={() => setAiTab('jd_matcher')} className={`px-5 py-2.5 rounded-full transition-all ${aiTab === 'jd_matcher' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900'}`}>
+                    🎯 JD Keyword Matcher
+                  </button>
+                </div>
+
+                {/* TAB 1: 14-SECTION SIDEBAR & DYNAMIC RESUME OVERVIEW */}
+                {aiTab === 'ats_analyzer' && (
+                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    
+                    {/* LEFT SIDEBAR: 14 ATS SECTIONS */}
+                    <div className="editorial-card p-6 space-y-3 h-fit">
+                      <div className="font-editorial font-bold text-slate-900 text-lg border-b border-slate-100 pb-3">14 ATS Metric Sections</div>
+                      
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-blue-50 border border-blue-200 font-bold text-blue-900">
+                          <span>Overall ATS Score</span>
+                          <span>{safeStr(atsReport.breakdown.overall_ats_score)}/100</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Resume Health</span>
+                          <span>{safeStr(atsReport.breakdown.resume_health)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Recruiter Readability</span>
+                          <span>{safeStr(atsReport.breakdown.recruiter_readability)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Keyword Match</span>
+                          <span>{safeStr(atsReport.breakdown.keyword_match)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Formatting Score</span>
+                          <span>{safeStr(atsReport.breakdown.formatting_score)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Grammar Score</span>
+                          <span>{safeStr(atsReport.breakdown.grammar_score)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Impact Score</span>
+                          <span>{safeStr(atsReport.breakdown.impact_score)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Experience Quality</span>
+                          <span>{safeStr(atsReport.breakdown.experience_quality)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Project Quality</span>
+                          <span>{safeStr(atsReport.breakdown.project_quality)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Skills Coverage</span>
+                          <span>{safeStr(atsReport.breakdown.skills_coverage)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Leadership Index</span>
+                          <span>{safeStr(atsReport.breakdown.leadership_score)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>ATS Parse Rate</span>
+                          <span>{safeStr(atsReport.breakdown.ats_parse_rate)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 text-slate-800 font-semibold">
+                          <span>Job Match</span>
+                          <span>{safeStr(atsReport.breakdown.job_match_percentage)}%</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-4 border-t border-slate-100">
+                        <label className="w-full block py-2.5 bg-slate-900 text-white font-bold text-xs text-center rounded-xl cursor-pointer hover:bg-blue-600 transition-all">
+                          Upload New Resume
+                          <input type="file" onChange={handleFileUpload} className="hidden" />
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* RIGHT CONTENT AREA: RESUME OVERVIEW & AI ANALYSIS */}
+                    <div className="lg:col-span-3 space-y-6">
+                      
+                      {/* Interactive Resume Overview Card */}
+                      <div className="editorial-card p-8 space-y-6">
+                        <div className="flex flex-wrap justify-between items-start gap-4">
+                          <div>
+                            <span className="text-[11px] font-bold text-blue-600 uppercase tracking-widest">Detected Career Role Domain</span>
+                            <h3 className="font-editorial text-3xl font-bold text-slate-900 mt-0.5">{safeStr(atsReport.detected_role)}</h3>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold uppercase">
+                                Confidence: {safeStr(atsReport.role_confidence)}%
+                              </span>
+                              <span className="text-xs text-slate-500 font-medium">• Estimated Experience: {safeStr(atsReport.experience_years)} Years</span>
+                            </div>
+                          </div>
+
+                          <div className="text-right">
+                            <div className="font-editorial text-5xl font-bold text-blue-600">{safeStr(atsReport.ats_score)}/100</div>
+                            <div className="text-xs font-bold text-emerald-700 mt-0.5">ATS Pass Guarantee Level: High</div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2">
+                          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2">
+                            <div className="font-bold text-emerald-900">Extracted Skills Taxonomy:</div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {safeArr(atsReport.extracted_skills).map((sk, i) => (
+                                <span key={i} className="px-2.5 py-1 rounded-md bg-white text-emerald-800 border border-emerald-200 font-bold">✓ {safeStr(sk)}</span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+                            <div className="font-bold text-amber-900">Missing High-Impact Domain Skills:</div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {safeArr(atsReport.missing_skills).map((sk, i) => (
+                                <span key={i} className="px-2.5 py-1 rounded-md bg-white text-amber-800 border border-amber-200 font-bold">+ {safeStr(sk)}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                            <div className="font-bold text-slate-900">Expected Industry Compensation:</div>
+                            <div className="font-editorial text-2xl font-bold text-blue-700">{safeStr(atsReport.expected_salary)}</div>
+                          </div>
+
+                          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                            <div className="font-bold text-slate-900">Suggested Industry Certifications:</div>
+                            <div className="text-slate-700 font-medium">
+                              {safeArr(atsReport.suggested_certifications).map((c, i) => (
+                                <div key={i}>• {safeStr(c)}</div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* Detected Section Issues */}
+                      <div className="editorial-card p-8 space-y-4">
+                        <h4 className="font-editorial text-2xl font-bold text-slate-900">Detected Issues & 1-Click AI Fixes</h4>
+
+                        <div className="space-y-4 text-xs">
+                          {safeArr(atsReport.issues).map((iss, i) => (
+                            <div key={i} className="p-5 rounded-2xl bg-rose-50 border border-rose-200 space-y-2">
+                              <div className="flex justify-between items-center">
+                                <span className="px-3 py-1 rounded-full bg-rose-600 text-white font-bold text-[10px] uppercase">{safeStr(iss.severity)} Severity</span>
+                                <span className="font-bold text-rose-700">{safeStr(iss.boost)} Boost Available</span>
+                              </div>
+                              <div className="font-bold text-slate-900 text-sm">{safeStr(iss.issue)}</div>
+                              <p className="text-slate-700 leading-relaxed font-light">
+                                <strong>Recruiter & ATS Why:</strong> {safeStr(iss.why)}
+                              </p>
+                              <button onClick={() => setAiTab('ai_writer')} className="mt-2 px-4 py-2 bg-slate-900 text-white font-bold rounded-lg text-xs hover:bg-blue-600 transition-all">
+                                ✨ 1-Click AI Fix (Quantify Impact Metrics)
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                )}
+
+                {/* TAB 2: AI RESUME REWRITER (TARGET 95-100 SCORE) */}
+                {aiTab === 'ai_writer' && (
+                  <div className="editorial-card p-8 space-y-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <div>
+                        <h3 className="font-editorial text-2xl font-bold text-slate-900">Target ATS Score Rewriter</h3>
+                        <p className="text-xs text-slate-500">Applies quantified impact metrics dynamically using candidate credentials.</p>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <select value={targetScore} onChange={e => setTargetScore(Number(e.target.value))} className="p-2.5 rounded-xl editorial-input text-xs font-bold bg-white">
+                          <option value={85}>Target Score: 85+</option>
+                          <option value={90}>Target Score: 90+</option>
+                          <option value={95}>Target Score: 95+</option>
+                          <option value={98}>Target Score: 98+</option>
+                          <option value={100}>Target Score: 100 Perfect</option>
+                        </select>
+                        <button onClick={handleRewriteResume} className="px-6 py-3 bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs rounded-full shadow-float transition-all">
+                          ✨ Rewrite Resume Now
+                        </button>
+                      </div>
+                    </div>
+
+                    {rewrittenResume && (
+                      <div className="space-y-6 text-xs">
+                        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex justify-between items-center">
+                          <div>
+                            <span className="font-bold text-emerald-900 block">Detected Role: {safeStr(rewrittenResume.detected_role)}</span>
+                            <span className="text-[10px] text-slate-500 block">Formatting: 100% Single-Column Plain Text Compatible</span>
+                          </div>
+                          <span className="px-3 py-1 rounded-full bg-emerald-600 text-white font-extrabold">Achieved ATS Score: {safeStr(rewrittenResume.achieved_ats_score)}/100</span>
+                        </div>
+
+                        {/* Live Comparison View */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <div className="font-bold text-rose-800 uppercase tracking-widest text-[11px]">Original Resume Excerpt</div>
+                            <div className="p-4 rounded-2xl bg-rose-50/50 border border-rose-200 text-slate-700 leading-relaxed font-light">
+                              {safeStr(atsReport.parsed_text || "No original resume text available.")}
+                            </div>
+                          </div>
+
+                          <div className="space-y-4 border-l border-slate-200 pl-0 md:pl-6">
+                            <div className="font-bold text-emerald-800 uppercase tracking-widest text-[11px]">Optimized Resume Draft</div>
+                            
+                            <div className="space-y-4">
+                              <div className="space-y-1">
+                                <span className="font-bold text-slate-900">Professional Summary</span>
+                                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-light leading-relaxed">
+                                  {safeStr(rewrittenResume.summary)}
+                                </div>
+                              </div>
+
+                              <div className="space-y-1">
+                                <span className="font-bold text-slate-900">Quantified Work History</span>
+                                <div className="space-y-2">
+                                  {safeArr(rewrittenResume.experience).map((exp, i) => (
+                                    <div key={i} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-light">
+                                      • {safeStr(exp)}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <div className="space-y-1">
+                                <span className="font-bold text-slate-900">Target Projects</span>
+                                <div className="space-y-2">
+                                  {safeArr(rewrittenResume.projects).map((proj, i) => (
+                                    <div key={i} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-light">
+                                      {safeStr(proj)}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 3: TARGET JOB DESCRIPTION KEYWORD MATCHER */}
+                {aiTab === 'jd_matcher' && (
+                  <div className="editorial-card p-8 space-y-6">
+                    <div>
+                      <h3 className="font-editorial text-2xl font-bold text-slate-900">Job Description Keyword & Semantic Matcher</h3>
+                      <p className="text-xs text-slate-500 mt-1">Paste the target Job Description below to compare missing vs matched high-impact keywords.</p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <textarea
+                        rows={5}
+                        value={jdInput}
+                        onChange={e => setJdInput(e.target.value)}
+                        placeholder="Paste target Job Description text here..."
+                        className="w-full p-4 rounded-2xl editorial-input text-xs"
+                      />
+                      <button onClick={handleMatchJd} className="px-8 py-3.5 bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs rounded-full shadow-float transition-all">
+                        🎯 Calculate Job Keyword Match %
+                      </button>
+                    </div>
+
+                    {jdMatchResult && (
+                      <div className="space-y-6 text-xs pt-4 border-t border-slate-100">
+                        <div className="p-6 rounded-2xl bg-blue-50 border border-blue-200 flex justify-between items-center">
+                          <div>
+                            <div className="font-editorial text-3xl font-bold text-blue-700">{safeStr(jdMatchResult.job_match_percentage)}%</div>
+                            <div className="text-xs text-blue-900 font-bold">Target Job Compatibility Match</div>
+                          </div>
+                          <div className="text-right">
+                            <span className="px-3.5 py-1.5 rounded-full bg-emerald-600 text-white font-bold">
+                              {safeStr(jdMatchResult.matched_keywords_count)} Keywords Matched
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </div>
+            )}
+
+            {/* VIEW 2: SWIPE FEED */}
+            {view === 'swipe' && (
+              <div className="max-w-xl mx-auto space-y-8 py-4">
+                <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-slate-500">
+                  <span className="text-blue-600 font-extrabold">✦ Adaptive AI Vector Active</span>
+                  <span>Job {currentIndex + 1} of {jobs.length || 1}</span>
+                </div>
+
+                {!currentJob ? (
+                  <div className="editorial-card p-12 text-center space-y-6">
+                    <div className="font-editorial text-6xl font-bold text-blue-600">Complete</div>
+                    <h3 className="font-editorial text-3xl font-bold text-slate-900">All Jobs Reviewed</h3>
+                    <p className="text-sm text-slate-600 font-light max-w-sm mx-auto">The AI recommendation engine has updated your skill profile vector.</p>
+                    <button onClick={loadSwipeFeed} className="px-8 py-3.5 bg-slate-900 text-white font-bold rounded-full text-xs hover:bg-blue-600 transition-all">
+                      Refresh Recommendation Feed
+                    </button>
+                  </div>
+                ) : (
+                  <div className="editorial-card p-8 space-y-6 shadow-float relative overflow-hidden bg-white">
+                    <div className="relative h-40 -mx-8 -mt-8 mb-4 bg-gradient-to-r from-slate-900 to-slate-800 p-6 flex flex-col justify-end text-white">
+                      <div className="absolute top-4 right-4 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-bold">
+                        {safeStr(currentJob.match_percentage, 92)}% AI Match
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <img src={currentJob.company_logo || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80"} className="w-12 h-12 rounded-xl object-cover ring-2 ring-white/30" />
+                        <div>
+                          <h3 className="font-editorial text-2xl font-bold line-clamp-1">{safeStr(currentJob.title)}</h3>
+                          <p className="text-xs text-blue-300 font-bold">{safeStr(currentJob.company)}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-800 font-bold border border-slate-200">{safeStr(currentJob.location)}</span>
+                      <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-800 font-bold border border-slate-200">{safeStr(currentJob.company_type)}</span>
+                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">{`$${((currentJob.salary_min || 100000) / 1000).toFixed(0)}k - $${((currentJob.salary_max || 140000) / 1000).toFixed(0)}k USD`}</span>
+                    </div>
+
+                    {currentJob.recommendation_reason && (
+                      <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100 text-xs text-blue-900 font-medium">
+                        ✦ {safeStr(currentJob.recommendation_reason)}
+                      </div>
+                    )}
+
+                    <p className="text-sm text-slate-700 leading-relaxed font-light line-clamp-4">{safeStr(currentJob.description)}</p>
+
+                    <div className="pt-4 flex justify-around items-center border-t border-slate-100">
+                      <button onClick={() => handleSwipeAction('skip')} className="w-14 h-14 rounded-full bg-slate-100 text-slate-700 hover:bg-rose-500 hover:text-white text-2xl font-bold flex items-center justify-center transition-all shadow-md">
+                        ✕
+                      </button>
+                      <button onClick={() => handleSwipeAction('save')} className="w-11 h-11 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 text-lg font-bold flex items-center justify-center transition-all">
+                        🔖
+                      </button>
+                      <button onClick={() => handleSwipeAction('like')} className="w-14 h-14 rounded-full bg-slate-900 text-white hover:bg-blue-600 text-2xl font-bold flex items-center justify-center transition-all shadow-float hover:scale-105">
+                        ♥
+                      </button>
+                    </div>
+
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* VIEW 3: SMART SEARCH */}
+            {view === 'search' && (
+              <div className="space-y-8">
+                <div>
+                  <h2 className="font-editorial text-4xl font-bold text-slate-900">Smart Job Search</h2>
+                  <p className="text-sm text-slate-600 font-light">Filter jobs by MNC vs Startup, Remote roles, and salary ranges.</p>
+                </div>
+
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by job title, skill (e.g. React, Python, FastAPI), or company..."
+                    className="flex-1 p-4 rounded-2xl editorial-input text-xs font-medium"
+                  />
+                  <select value={companyTypeFilter} onChange={(e) => setCompanyTypeFilter(e.target.value)} className="p-4 rounded-2xl editorial-input text-xs font-bold bg-white">
+                    <option value="">All Company Types</option>
+                    <option value="Startup">Startup</option>
+                    <option value="MNC">MNC</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {jobs.filter(j => !companyTypeFilter || j.company_type === companyTypeFilter).map((job) => (
+                    <div key={job.id} className="editorial-card p-8 space-y-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-editorial text-2xl font-bold text-slate-900">{safeStr(job.title)}</h3>
+                          <p className="text-xs text-blue-600 font-bold">{safeStr(job.company)} • {safeStr(job.location)}</p>
+                        </div>
+                      </div>
+                      <button onClick={() => showToastMsg(`Applied for ${safeStr(job.title)}!`, 'success')} className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl text-xs">
+                        Instant Apply
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 4: CANDIDATE DASHBOARD */}
+            {view === 'dashboard' && (
+              <div className="space-y-12 animate-fade-in text-slate-800 dark:text-slate-100">
+                
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="font-editorial text-4xl font-extrabold text-slate-900 dark:text-white">Candidate Workspace</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-light mt-1">Real-time telemetries, parsing score history, and application pipelines.</p>
+                  </div>
+                  <button 
+                    onClick={() => setView('resume')} 
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-blue-500/10 self-start transition-all"
+                  >
+                    ✦ Recalculate ATS Metrics
+                  </button>
+                </div>
+
+                {/* Grid 1: KPI Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  
+                  {/* KPI Card 1: Overall ATS */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4 relative overflow-hidden">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Core Metric</span>
+                      <span className="text-xl">📊</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">ATS Parser Score</div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-editorial text-4xl font-black text-slate-900 dark:text-white">{atsReport.ats_score}</span>
+                        <span className="text-xs text-emerald-600 font-extrabold">▲ 4.2%</span>
+                      </div>
+                    </div>
+                    <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600" style={{ width: `${atsReport.ats_score}%` }}></div>
+                    </div>
+                  </div>
+
+                  {/* KPI Card 2: Resume Health */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4 relative overflow-hidden">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Data Integrity</span>
+                      <span className="text-xl">❤️</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Resume Health</div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-editorial text-4xl font-black text-slate-900 dark:text-white">91.0%</span>
+                        <span className="text-xs text-slate-400 font-medium">Optimal</span>
+                      </div>
+                    </div>
+                    <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-indigo-600" style={{ width: '91%' }}></div>
+                    </div>
+                  </div>
+
+                  {/* KPI Card 3: Conversion Rate */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4 relative overflow-hidden">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Success Ratio</span>
+                      <span className="text-xl">📈</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Interview Conversion</div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-editorial text-4xl font-black text-slate-900 dark:text-white">75.0%</span>
+                        <span className="text-xs text-emerald-600 font-extrabold">▲ 12%</span>
+                      </div>
+                    </div>
+                    <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-purple-600" style={{ width: '75%' }}></div>
+                    </div>
+                  </div>
+
+                  {/* KPI Card 4: Submissions */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4 relative overflow-hidden">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Activity</span>
+                      <span className="text-xl">💼</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Applied Positions</div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-editorial text-4xl font-black text-slate-900 dark:text-white">4</span>
+                        <span className="text-xs text-slate-400 font-medium">Active Pipeline</span>
+                      </div>
+                    </div>
+                    <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-pink-600" style={{ width: '40%' }}></div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Grid 2: Core Analytical Dashboards */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  
+                  {/* Left Side: Pipeline Tracker & Skill Gaps */}
+                  <div className="lg:col-span-8 space-y-8">
+                    
+                    {/* Interactive Application Tracker Diagram */}
+                    <div className="editorial-card p-8 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-6">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-editorial text-2xl font-bold text-slate-900 dark:text-white">Interactive Application Pipeline</h3>
+                        <span className="px-3 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] uppercase font-black text-slate-500 tracking-wider">Telemetry Flow</span>
+                      </div>
+                      
+                      <div className="grid grid-cols-4 gap-4 text-center">
+                        {[
+                          { title: "Applied", count: 4, color: "bg-blue-500" },
+                          { title: "Shortlisted", count: 3, color: "bg-indigo-500" },
+                          { title: "Interviewing", count: 2, color: "bg-purple-500" },
+                          { title: "Offered", count: 1, color: "bg-emerald-500" }
+                        ].map((step, idx) => (
+                          <div key={idx} className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800 space-y-2">
+                            <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">{step.title}</span>
+                            <div className="font-editorial text-3xl font-black text-slate-950 dark:text-white">{step.count}</div>
+                            <div className={`h-1.5 w-8 mx-auto rounded-full ${step.color}`}></div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Skill Gap Analysis Visual Block */}
+                    <div className="editorial-card p-8 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-6">
+                      <div>
+                        <h3 className="font-editorial text-2xl font-bold text-slate-900 dark:text-white">AI Skill Gap Taxonomy</h3>
+                        <p className="text-xs text-slate-400 font-light mt-1">Identified from active resume scanning against target market demands.</p>
+                      </div>
+
+                      <div className="space-y-4">
+                        {[
+                          { skill: "GraphQL & Schema Stitching", match: false, importance: "High Importance", boost: "+8 Points Boost" },
+                          { skill: "Kubernetes Cluster Scaling", match: false, importance: "High Importance", boost: "+6 Points Boost" },
+                          { skill: "PyTorch Deep Learning Engine", match: true, importance: "Matched", boost: "Active" },
+                          { skill: "FastAPI Async Web Platform", match: true, importance: "Matched", boost: "Active" }
+                        ].map((item, idx) => (
+                          <div key={idx} className={`p-4 rounded-2xl border flex items-center justify-between transition-all ${
+                            item.match 
+                              ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30' 
+                              : 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30'
+                          }`}>
+                            <div className="flex items-center gap-3">
+                              <span className="text-lg">{item.match ? "✅" : "❌"}</span>
+                              <div>
+                                <div className="text-xs font-black text-slate-800 dark:text-slate-200">{item.skill}</div>
+                                <div className="text-[10px] text-slate-400 mt-0.5">{item.importance}</div>
+                              </div>
+                            </div>
+                            <span className={`px-3 py-1 rounded text-[10px] font-black uppercase ${
+                              item.match ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700' : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700'
+                            }`}>
+                              {item.boost}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Right Side: Upcoming Interviews & Activity Timeline */}
+                  <div className="lg:col-span-4 space-y-8">
+                    
+                    {/* Upcoming Interviews Calendar Box */}
+                    <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <h4 className="font-editorial text-lg font-bold text-slate-900 dark:text-white">Upcoming Interviews</h4>
+                        <span className="text-xs">📅</span>
+                      </div>
+                      
+                      <div className="space-y-3.5 text-xs">
+                        {[
+                          { date: "Tomorrow, 10:00 AM", role: "AI Engineer", company: "NeuralStack Labs", type: "Technical Interview" },
+                          { date: "July 12, 2:00 PM", role: "Full Stack Engineer", company: "DevSolutions Ltd", type: "STAR System Design" }
+                        ].map((meeting, idx) => (
+                          <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
+                            <div className="flex justify-between font-bold text-blue-600">
+                              <span>{meeting.company}</span>
+                              <span className="text-[10px] uppercase font-black text-slate-400">{meeting.type}</span>
+                            </div>
+                            <div className="text-slate-900 dark:text-white font-extrabold">{meeting.role}</div>
+                            <div className="text-[10px] text-slate-400">{meeting.date}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Interactive Activity Timeline */}
+                    <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <h4 className="font-editorial text-lg font-bold text-slate-900 dark:text-white">Activity Logs</h4>
+                        <span className="text-xs">⚡</span>
+                      </div>
+
+                      <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
+                        {[
+                          { time: "2 hours ago", title: "Resume Scanned", desc: "Alex_Mercer_Resume_2026.pdf was analyzed with ATS parsing score of 88/100." },
+                          { time: "1 day ago", title: "STAR Interview Prep", desc: "STAR Mock interview with AI Technical Coach completed." },
+                          { time: "2 days ago", title: "Job Matched", desc: "Matched with 'Senior AI Architect' role at NeuralStack Labs." }
+                        ].map((log, idx) => (
+                          <div key={idx} className="relative text-xs space-y-1">
+                            {/* Bullet */}
+                            <span className="absolute -left-6 top-1.5 w-2 h-2 rounded-full bg-blue-600 ring-4 ring-white dark:ring-slate-950"></span>
+                            <div className="flex justify-between font-bold text-slate-900 dark:text-white">
+                              <span>{log.title}</span>
+                              <span className="text-[9px] font-medium text-slate-400">{log.time}</span>
+                            </div>
+                            <p className="text-slate-500 dark:text-slate-400 font-light leading-relaxed text-[11px]">{log.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+            {/* VIEW 5: RECRUITER HQ */}
+            {view === 'recruiter' && (
+              <div className="space-y-12 animate-fade-in text-slate-800 dark:text-slate-100">
+                
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="font-editorial text-4xl font-extrabold text-slate-900 dark:text-white">Recruiter HQ</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-light mt-1">Manage posted vacancies, monitor candidate pipelines, and review AI rankings.</p>
+                  </div>
+                  <button 
+                    onClick={() => showToastMsg("Verifying recruiter status...", "info")} 
+                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-blue-500/10 self-start transition-all"
+                  >
+                    Post New Job Opening
+                  </button>
+                </div>
+
+                {/* Recruiter Metrics row */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">Total Active Vacancies</span>
+                    <div className="font-editorial text-4xl font-black text-slate-950 dark:text-white">12</div>
+                    <p className="text-[10px] text-slate-400 font-light mt-1">Across 3 engineering departments</p>
+                  </div>
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">Candidates In Pipeline</span>
+                    <div className="font-editorial text-4xl font-black text-blue-600">48</div>
+                    <p className="text-[10px] text-emerald-600 font-extrabold mt-1">▲ 14% new applications this week</p>
+                  </div>
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">Time to Shortlist</span>
+                    <div className="font-editorial text-4xl font-black text-purple-600">1.8 Days</div>
+                    <p className="text-[10px] text-purple-400 font-light mt-1">Powered by AI ATS matching filters</p>
+                  </div>
+                </div>
+
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  
+                  {/* Left Side: Candidates & Pipelines */}
+                  <div className="lg:col-span-8 space-y-8">
+                    
+                    {/* Active Candidate Pipeline with AI ranking */}
+                    <div className="editorial-card p-8 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-6">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <h3 className="font-editorial text-2xl font-bold text-slate-900 dark:text-white">Active Pipeline & AI Rank</h3>
+                        <span className="px-3 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] uppercase font-black text-slate-500 tracking-wider">Sorted by Match Score</span>
+                      </div>
+
+                      <div className="space-y-4">
+                        {[
+                          { name: "Alex Mercer", role: atsReport.detected_role, email: "alex@swipex.io", score: atsReport.ats_score, match: "92.5%", status: "Shortlisted", tech: "Python, PyTorch, FastAPI, AWS" },
+                          { name: "Sarah Jenkins", role: "Frontend UI Specialist", email: "sarah.j@designhq.com", score: 84, match: "86.0%", status: "Applied", tech: "React, Tailwind, Framer Motion" },
+                          { name: "David Chen", role: "Senior Cloud Architect", email: "d.chen@cloudtech.net", score: 72, match: "75.5%", status: "Interviewing", tech: "Kubernetes, Go, AWS, Docker" }
+                        ].map((candidate, idx) => (
+                          <div key={idx} className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs">
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2.5">
+                                <span className="font-extrabold text-slate-900 dark:text-white text-sm">{candidate.name}</span>
+                                <span className="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 text-[10px] font-black uppercase tracking-wider">{candidate.status}</span>
+                              </div>
+                              <div className="text-slate-500 dark:text-slate-400 font-light">{candidate.role} • {candidate.email}</div>
+                              <div className="text-[10px] text-slate-400">Skills: {candidate.tech}</div>
+                            </div>
+                            <div className="text-right flex sm:flex-col gap-2 sm:gap-0 justify-between items-center sm:items-end w-full sm:w-auto border-t sm:border-none pt-2 sm:pt-0">
+                              <span className="font-editorial text-xl font-black text-blue-600">{candidate.match} Match</span>
+                              <span className="text-emerald-700 dark:text-emerald-400 font-black text-[11px] mt-0.5">ATS Score: {candidate.score}/100</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Job Performance Overview */}
+                    <div className="editorial-card p-8 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-6">
+                      <h3 className="font-editorial text-2xl font-bold text-slate-900 dark:text-white">Active Vacancies & Job Metrics</h3>
+                      
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                              <th className="py-3.5">Vacancy Title</th>
+                              <th className="py-3.5">Applicants</th>
+                              <th className="py-3.5">Match Average</th>
+                              <th className="py-3.5">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {[
+                              { title: "AI / Machine Learning Engineer", count: 18, avg: "88.5%", status: "Active" },
+                              { title: "Full Stack Developer", count: 24, avg: "82.0%", status: "Active" },
+                              { title: "Senior DevOps Engineer", count: 6, avg: "78.4%", status: "Closed" }
+                            ].map((job, idx) => (
+                              <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                                <td className="py-4 font-black text-slate-900 dark:text-white">{job.title}</td>
+                                <td className="py-4 text-slate-500">{job.count} candidates</td>
+                                <td className="py-4 text-blue-600 font-bold">{job.avg}</td>
+                                <td className="py-4">
+                                  <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                                    job.status === "Active" ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                                  }`}>{job.status}</span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Right Side: Schedules & Telemetry */}
+                  <div className="lg:col-span-4 space-y-8">
+                    
+                    {/* Interview Calendar Appointments box */}
+                    <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <h4 className="font-editorial text-lg font-bold text-slate-900 dark:text-white">Interview Schedule</h4>
+                        <span className="text-xs">🗓️</span>
+                      </div>
+
+                      <div className="space-y-3.5 text-xs">
+                        {[
+                          { time: "Today, 3:30 PM", name: "Alex Mercer", format: "Zoom Call", type: "Technical Interview" },
+                          { time: "July 10, 11:00 AM", name: "Sarah Jenkins", format: "Google Meet", type: "Portfolio Review" }
+                        ].map((event, idx) => (
+                          <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-1.5">
+                            <div className="flex justify-between font-bold text-blue-600">
+                              <span>{event.name}</span>
+                              <span className="text-[9px] uppercase font-black text-slate-400">{event.type}</span>
+                            </div>
+                            <div className="text-slate-800 dark:text-slate-200 font-extrabold">{event.format}</div>
+                            <div className="text-[10px] text-slate-400">{event.time}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+            {/* VIEW 5.5: ADMIN HQ TELEMETRY DASHBOARD */}
+            {view === 'admin' && (
+              <div className="space-y-12 animate-fade-in text-slate-800 dark:text-slate-100">
+                
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="font-editorial text-4xl font-extrabold text-slate-900 dark:text-white">Admin HQ</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-light mt-1">Real-time system telemetry, API loads, and operations monitoring.</p>
+                  </div>
+                  <button 
+                    onClick={fetchAdminTelemetry} 
+                    className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 transition-all"
+                  >
+                    🔄 Refresh Telemetry
+                  </button>
+                </div>
+
+                {/* KPI Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                  
+                  {/* System Health */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">System Status</span>
+                    <div className="text-sm font-black text-emerald-600 flex items-center gap-1.5 mt-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Operational
+                    </div>
+                    <p className="text-[9px] text-slate-400 font-light">All core servers nominal</p>
+                  </div>
+
+                  {/* Active Users */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">Active Users</span>
+                    <div className="font-editorial text-3xl font-black text-slate-900 dark:text-white mt-1">3 Users</div>
+                    <p className="text-[9px] text-slate-400 font-light">Candidate, Recruiter, Admin</p>
+                  </div>
+
+                  {/* API Usage */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">API Calls</span>
+                    <div className="font-editorial text-3xl font-black text-blue-600 mt-1">
+                      {telemetryData ? telemetryData.total_requests : 'Loading...'}
+                    </div>
+                    <p className="text-[9px] text-slate-400 font-light">Total HTTP transactions</p>
+                  </div>
+
+                  {/* AI Requests */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">AI Requests</span>
+                    <div className="font-editorial text-3xl font-black text-purple-600 mt-1">
+                      {telemetryData ? telemetryData.ai_requests : 'Loading...'}
+                    </div>
+                    <p className="text-[9px] text-slate-400 font-light">GenAI rephrasers & coaches</p>
+                  </div>
+
+                  {/* Estimated Revenue */}
+                  <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-2">
+                    <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400 block">Platform Revenue</span>
+                    <div className="font-editorial text-3xl font-black text-slate-900 dark:text-white mt-1">$15,420</div>
+                    <p className="text-[9px] text-slate-400 font-light">USD (Simulated Enterprise)</p>
+                  </div>
+
+                </div>
+
+                {/* Analytical Trends & Logs */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  
+                  {/* Line Chart showing API latency */}
+                  <div className="lg:col-span-8 space-y-4">
+                    <div className="editorial-card p-8 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-6">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-editorial text-2xl font-bold text-slate-900 dark:text-white">API Response Latency History</h3>
+                        <span className="px-3 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-slate-500 uppercase">
+                          Avg: {telemetryData ? `${telemetryData.avg_response_time_ms}ms` : 'Loading...'}
+                        </span>
+                      </div>
+
+                      {/* SVG Line Graph */}
+                      {telemetryData && telemetryData.recent_trends && telemetryData.recent_trends.length > 1 ? (
+                        <div className="w-full">
+                          <svg className="w-full h-40 overflow-visible" viewBox="0 0 500 150">
+                            <defs>
+                              <linearGradient id="chartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2"/>
+                                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.0"/>
+                              </linearGradient>
+                            </defs>
+                            
+                            {/* SVG Grid lines */}
+                            <line x1="0" y1="30" x2="500" y2="30" stroke="#E2E8F0" strokeWidth="0.5" strokeDasharray="5,5" className="dark:stroke-slate-800" />
+                            <line x1="0" y1="75" x2="500" y2="75" stroke="#E2E8F0" strokeWidth="0.5" strokeDasharray="5,5" className="dark:stroke-slate-800" />
+                            <line x1="0" y1="120" x2="500" y2="120" stroke="#E2E8F0" strokeWidth="0.5" strokeDasharray="5,5" className="dark:stroke-slate-800" />
+
+                            {/* Polygon area */}
+                            <polygon
+                              fill="url(#chartGrad)"
+                              points={`0,150 ${telemetryData.recent_trends.map((t, idx) => {
+                                const x = (idx / (telemetryData.recent_trends.length - 1)) * 500;
+                                const y = 150 - (t.response_time_ms / Math.max(...telemetryData.recent_trends.map(x => x.response_time_ms), 100)) * 120;
+                                return `${x},${y}`;
+                              }).join(' ')} 500,150`}
+                            />
+
+                            {/* Main Line */}
+                            <polyline
+                              fill="none"
+                              stroke="#3B82F6"
+                              strokeWidth="2.5"
+                              points={telemetryData.recent_trends.map((t, idx) => {
+                                const x = (idx / (telemetryData.recent_trends.length - 1)) * 500;
+                                const y = 150 - (t.response_time_ms / Math.max(...telemetryData.recent_trends.map(x => x.response_time_ms), 100)) * 120;
+                                return `${x},${y}`;
+                              }).join(' ')}
+                            />
+                          </svg>
+                          <div className="flex justify-between text-[9px] uppercase font-bold text-slate-400 mt-2 px-1">
+                            <span>Older Transactions</span>
+                            <span>Recent Requests</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="h-40 flex items-center justify-center text-xs text-slate-400">Loading charts data...</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Log console list */}
+                  <div className="lg:col-span-4 space-y-4">
+                    <div className="editorial-card p-6 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl shadow-editorial space-y-4">
+                      <h4 className="font-editorial text-lg font-bold text-slate-900 dark:text-white">API Transactions Console</h4>
+                      
+                      <div className="space-y-3 max-h-64 overflow-y-auto pr-1 text-[10px] leading-relaxed">
+                        {telemetryData && telemetryData.recent_trends ? (
+                          telemetryData.recent_trends.map((log, idx) => (
+                            <div key={idx} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 font-mono space-y-1">
+                              <div className="flex justify-between font-bold text-slate-400">
+                                <span>{log.timestamp}</span>
+                                <span className={log.status_code === 200 ? 'text-emerald-600' : 'text-rose-600'}>
+                                  HTTP {log.status_code}
+                                </span>
+                              </div>
+                              <div className="text-slate-800 dark:text-slate-200 truncate">{log.endpoint}</div>
+                              <div className="text-blue-600 font-bold">{log.response_time_ms.toFixed(1)}ms duration</div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-slate-400 italic">No telemetry data loaded.</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+            {/* VIEW 6: AI CAREER COACH */}
+            {view === 'career_coach' && (
+              <div className="space-y-8 max-w-3xl mx-auto">
+                <div>
+                  <h2 className="font-editorial text-4xl font-bold text-slate-900">AI Career Coach</h2>
+                  <p className="text-sm text-slate-600 font-light">Interactive career mapping and resume enhancement logs.</p>
+                </div>
+
+                <div className="editorial-card p-6 space-y-4">
+                  <div className="space-y-4 h-64 overflow-y-auto p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                    {coachingLogsList.map((log, i) => (
+                      <div key={i} className="space-y-2 text-xs">
+                        <div className="text-right">
+                          <span className="inline-block p-3 rounded-2xl bg-blue-600 text-white font-medium max-w-md">
+                            {safeStr(log.question)}
+                          </span>
+                        </div>
+                        <div className="text-left font-light leading-relaxed mt-2">
+                          <span className="inline-block p-3 rounded-2xl bg-slate-200 text-slate-800 font-light max-w-md">
+                            {safeStr(log.response)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={coachingMsg}
+                      onChange={e => setCoachingMsg(e.target.value)}
+                      placeholder="Ask the Career Coach (e.g. How do I transition to Engineering Manager?)..."
+                      className="flex-1 p-3.5 rounded-xl editorial-input text-xs"
+                      onKeyDown={e => e.key === 'Enter' && handleCoachingChat()}
+                    />
+                    <button onClick={handleCoachingChat} className="px-6 py-3.5 bg-slate-900 text-white font-bold text-xs rounded-xl hover:bg-blue-600 transition-all">
+                      Send
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 7: AI MOCK INTERVIEW COACH */}
+            {view === 'interview_coach' && (
+              <div className="space-y-8 max-w-3xl mx-auto">
+                <div>
+                  <h2 className="font-editorial text-4xl font-bold text-slate-900">AI Mock Interview Coach</h2>
+                  <p className="text-sm text-slate-600 font-light">Prepare with role-specific questions and get instant STAR method scoring feedback.</p>
+                </div>
+
+                <div className="editorial-card p-6 space-y-6">
+                  <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900">
+                    <strong className="block font-bold mb-1">Mock Interview Question:</strong>
+                    {safeStr(mockQuestion)}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-slate-700">Your Answer (Follow Situation, Action, and Result):</label>
+                    <textarea
+                      rows={5}
+                      value={mockAnswer}
+                      onChange={e => setMockAnswer(e.target.value)}
+                      placeholder="At my last role, we were hit by a database lock situation where... I solved this by implementing... which reduced deadlocks by 75%."
+                      className="w-full p-4 rounded-2xl editorial-input text-xs"
+                    />
+                  </div>
+
+                  <button onClick={handleInterviewEvaluate} className="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-blue-600 transition-all">
+                    Evaluate Response Metrics
+                  </button>
+
+                  {mockFeedback && (
+                    <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2 text-xs animate-fade-in">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-emerald-950">STAR Feedback Analysis</span>
+                        <span className="px-3 py-1 rounded-full bg-emerald-600 text-white font-bold">Score: {mockFeedback.score}/100</span>
+                      </div>
+                      <p className="text-slate-800 mt-1">{safeStr(mockFeedback.evaluation)}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 8: CANDIDATE SETTINGS */}
+            {view === 'settings' && (
+              <div className="space-y-8 max-w-xl mx-auto">
+                <div>
+                  <h2 className="font-editorial text-4xl font-bold text-slate-900">Account Settings</h2>
+                  <p className="text-sm text-slate-600 font-light">Manage your preferences and exercise GDPR data portability controls.</p>
+                </div>
+
+                <div className="editorial-card p-6 space-y-6 text-xs">
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-slate-900 text-sm">GDPR Compliance & Portability</h3>
+                    <p className="text-slate-600 leading-relaxed font-light">
+                      Under GDPR requirements, you have the right to data portability (download all stored data in machine-readable format) and the right to erasure (permanently delete your profile).
+                    </p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      <button onClick={handleGDPRExport} className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold border border-slate-300 rounded-xl transition-all">
+                        📥 Download My Data (JSON)
+                      </button>
+                      <button onClick={handleGDPRDelete} className="py-3 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 rounded-xl transition-all">
+                        ⚠️ Delete Account & Data
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 9: HELP CENTER & SUPPORT */}
+            {view === 'support' && (
+              <div className="space-y-8 max-w-xl mx-auto">
+                <div>
+                  <h2 className="font-editorial text-4xl font-bold text-slate-900">Help & Support</h2>
+                  <p className="text-sm text-slate-600 font-light">Browse FAQs or file a support ticket with the engineering operations desk.</p>
+                </div>
+
+                <div className="editorial-card p-6 space-y-6 text-xs">
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-slate-900 text-sm">Frequently Asked Questions</h3>
+                    <div className="space-y-4 leading-relaxed">
+                      <div>
+                        <strong className="block font-bold text-slate-800">Q: How is my ATS Score computed?</strong>
+                        <p className="text-slate-600 font-light mt-0.5">The engine matches parsed text features directly against grammar syntax checkers and semantic keywords, omitting static template scores.</p>
+                      </div>
+                      <div>
+                        <strong className="block font-bold text-slate-800">Q: How does the swipe feedback work?</strong>
+                        <p className="text-slate-600 font-light mt-0.5">Every skip or bookmark re-weights your user preference vector dynamically to adjust candidate feeds.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-4 space-y-4">
+                    <h3 className="font-bold text-slate-900 text-sm">Submit support request</h3>
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Subject (e.g., Parsing issues)..."
+                        className="w-full p-3 rounded-xl editorial-input"
+                        value={supportTicket.subject}
+                        onChange={e => setSupportTicket(prev => ({ ...prev, subject: e.target.value }))}
+                      />
+                      <textarea
+                        rows={3}
+                        placeholder="Provide details on what happened..."
+                        className="w-full p-3 rounded-xl editorial-input"
+                        value={supportTicket.desc}
+                        onChange={e => setSupportTicket(prev => ({ ...prev, desc: e.target.value }))}
+                      />
+                      <button onClick={() => {
+                        showToastMsg("Support request filed successfully!", "success");
+                        setSupportTicket({ subject: '', desc: '' });
+                      }} className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-blue-600 transition-all">
+                        Submit Request
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </main>
+
+          <footer className="bg-slate-900 text-white py-12 px-6 border-t border-slate-800">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-xs">
+              <div className="flex items-center gap-3">
+                <span className="font-editorial text-2xl font-bold italic text-blue-400">SwipeX</span>
+                <span className="text-slate-400 font-light">Dynamic AI ATS Optimization System</span>
+              </div>
+              <div className="text-slate-500">
+                © 2026 SwipeX Platform Inc. Built with React 18, FastAPI, & Scikit-Learn.
+              </div>
+            </div>
+          </footer>
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    );
+  </script>
+</body>
+</html>

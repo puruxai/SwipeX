@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swipex_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=swipex_super_secret_jwt_key_2026_antigravity_master
+      - DATABASE_URL=sqlite:///./swipex.db
+    volumes:
+      - ./backend/uploads:/app/uploads
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: swipex_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always
+
+networks:
+  default:
+    name: swipex_network

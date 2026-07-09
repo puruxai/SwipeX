@@ -9,6 +9,7 @@ on:
 jobs:
   test-backend:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -18,19 +19,22 @@ jobs:
           python-version: "3.11"
 
       - name: Install Backend Dependencies
+        working-directory: backend
         run: |
-          cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Backend Tests
+        working-directory: backend
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
         run: |
-          cd backend
-          pytest tests/
+          python -m pytest tests/
 
   build-containers:
     needs: test-backend
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 

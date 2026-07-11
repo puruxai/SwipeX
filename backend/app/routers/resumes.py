@@ -93,8 +93,7 @@ async def upload_resume(
             headline=f"{detected_role} ({exp_years} yrs exp)",
             target_role=detected_role,
             skills=extracted_skills,
-            experience_years=exp_years,
-            ats_score=ats_report["ats_score"]
+            experience_years=exp_years
         )
         db.add(profile)
     else:
@@ -102,7 +101,6 @@ async def upload_resume(
         profile.target_role = detected_role
         profile.skills = extracted_skills
         profile.experience_years = exp_years
-        profile.ats_score = ats_report["ats_score"]
 
     db.commit()
     db.refresh(new_resume)

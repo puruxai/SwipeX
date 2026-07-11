@@ -30,8 +30,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await API.post('/auth/login', { email, password });
-    const { access_token, user: userData } = res.data;
+    const { access_token, refresh_token, user: userData } = res.data;
     localStorage.setItem('swipex_token', access_token);
+    localStorage.setItem('swipex_refresh_token', refresh_token);
     localStorage.setItem('swipex_user', JSON.stringify(userData));
     setToken(access_token);
     setUser(userData);
@@ -40,8 +41,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, password, full_name, role = 'user') => {
     const res = await API.post('/auth/register', { email, password, full_name, role });
-    const { access_token, user: userData } = res.data;
+    const { access_token, refresh_token, user: userData } = res.data;
     localStorage.setItem('swipex_token', access_token);
+    localStorage.setItem('swipex_refresh_token', refresh_token);
     localStorage.setItem('swipex_user', JSON.stringify(userData));
     setToken(access_token);
     setUser(userData);
@@ -50,8 +52,9 @@ export const AuthProvider = ({ children }) => {
 
   const googleLogin = async (email, full_name, role = 'user') => {
     const res = await API.post('/auth/google', { email, full_name, role });
-    const { access_token, user: userData } = res.data;
+    const { access_token, refresh_token, user: userData } = res.data;
     localStorage.setItem('swipex_token', access_token);
+    localStorage.setItem('swipex_refresh_token', refresh_token);
     localStorage.setItem('swipex_user', JSON.stringify(userData));
     setToken(access_token);
     setUser(userData);
@@ -60,6 +63,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('swipex_token');
+    localStorage.removeItem('swipex_refresh_token');
     localStorage.removeItem('swipex_user');
     setToken(null);
     setUser(null);

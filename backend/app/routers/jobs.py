@@ -18,8 +18,8 @@ def list_and_search_jobs(
     low_competition: Optional[bool] = None,
     min_salary: Optional[int] = None,
     skills: Optional[str] = None, # Comma separated
-    skip: int = 0,
-    limit: int = 50,
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     query = db.query(models.Job).filter(models.Job.status == "active")
@@ -55,6 +55,14 @@ def list_and_search_jobs(
 
     if min_salary is not None:
         query = query.filter(models.Job.salary_max >= min_salary)
+
+    # JSON skills are filtered in application code to retain SQLite/PostgreSQL
+    # portability. Normalize skills into a relation as the catalogue grows.
+    if skills:
+        requested_skills = {skill.strip().lower() for skill in skills.split(",") if skill.strip()}
+        jobs = [job for job in query.order_by(models.Job.created_at.desc()).all()
+                if requested_skills.issubset({skill.lower() for skill in (job.required_skills or [])})]
+        return jobs[skip:skip + limit]
 
     jobs = query.order_by(models.Job.created_at.desc()).offset(skip).limit(limit).all()
     return jobs

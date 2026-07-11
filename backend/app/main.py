@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -6,9 +6,13 @@ import os
 import time
 
 from app.config import settings
+from app.auth import get_current_admin
 from app.database import engine, Base, SessionLocal
 from app.routers import auth, users, resumes, jobs, swipes, applications, analytics, recruiter, admin, ai_tools
 from app.seed import seed_database
+
+if settings.is_production and settings.SECRET_KEY == "change-me-before-production":
+    raise RuntimeError("SECRET_KEY must be configured in production")
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -78,15 +82,18 @@ async def add_security_and_telemetry_headers(request: Request, call_next):
     # Apply security headers
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
     response.headers["Content-Security-Policy"] = "default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdn.tailwindcss.com; img-src 'self' data: https://fastapi.tiangolo.com https://images.unsplash.com; font-src 'self' https://fonts.gstatic.com;"
+    if settings.is_production:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=settings.cors_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -108,20 +115,23 @@ app.include_router(admin.router, prefix=settings.API_V1_STR)
 app.include_router(ai_tools.router, prefix=settings.API_V1_STR)
 
 @app.post(f"{settings.API_V1_STR}/seed")
-def seed_endpoint():
+def seed_endpoint(current_user = Depends(get_current_admin)):
+    if settings.is_production:
+        raise HTTPException(status_code=404, detail="Not found")
     seed_database()
     return {"message": "Database successfully re-seeded with sample dataset."}
 
-# Mount static directory
+# Legacy static UI is retained for backwards compatibility, but production
+# deployments should serve the built frontend through its dedicated web server.
 static_dir = os.path.join(os.path.dirname(__file__), "static")
-if os.path.exists(static_dir):
+if settings.SERVE_LEGACY_UI and os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Serve main single-page application at root /
 @app.get("/")
 def read_root():
     index_path = os.path.join(os.path.dirname(__file__), "static", "index.html")
-    if os.path.exists(index_path):
+    if settings.SERVE_LEGACY_UI and os.path.exists(index_path):
         return FileResponse(index_path)
     return {
         "message": "Welcome to SwipeX AI Platform API",

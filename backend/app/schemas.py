@@ -1,13 +1,20 @@
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
 from typing import List, Optional, Any, Dict
 from datetime import datetime
 
 # Auth Schemas
 class UserRegister(BaseModel):
     email: EmailStr
-    password: str = Field(..., min_length=6)
-    full_name: str
+    password: str = Field(..., min_length=10, max_length=128)
+    full_name: str = Field(..., min_length=2, max_length=255)
     role: str = "user" # user, recruiter, admin
+
+    @field_validator("role")
+    @classmethod
+    def validate_registration_role(cls, value: str) -> str:
+        if value not in {"user", "recruiter"}:
+            raise ValueError("Only candidate and recruiter registration is allowed")
+        return value
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -22,8 +29,12 @@ class GoogleLoginRequest(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: Optional[str] = None
     token_type: str
     user: Dict[str, Any]
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str = Field(..., min_length=20)
 
 class TokenData(BaseModel):
     user_id: Optional[int] = None
@@ -147,6 +158,13 @@ class JobOut(BaseModel):
 class SwipeCreate(BaseModel):
     job_id: int
     action: str # like, skip, save
+
+    @field_validator("action")
+    @classmethod
+    def validate_action(cls, value: str) -> str:
+        if value not in {"like", "skip", "save"}:
+            raise ValueError("Action must be like, skip, or save")
+        return value
 
 class ApplicationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)

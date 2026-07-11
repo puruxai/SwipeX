@@ -42,6 +42,8 @@ def update_application_status(
     app_obj = db.query(models.Application).filter(models.Application.id == app_id).first()
     if not app_obj:
         raise HTTPException(status_code=404, detail="Application not found")
+    if current_user.role != models.UserRole.ADMIN.value and app_obj.job.recruiter_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only update applications for your own jobs")
 
     app_obj.status = status_update.status
     if status_update.notes:

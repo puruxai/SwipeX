@@ -40,7 +40,9 @@ def delete_user_account(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(get_db)
 ):
-    db.query(models.User).filter(models.User.id == current_user.id).delete()
+    # Delete through the ORM so configured relationship cascades are honored.
+    # A bulk query delete bypasses those cascades and can leave orphaned rows.
+    db.delete(current_user)
     db.commit()
     return {"message": "User account and all associated profile records successfully purged."}
 

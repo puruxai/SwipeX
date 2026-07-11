@@ -9,11 +9,17 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - SECRET_KEY=swipex_super_secret_jwt_key_2026_antigravity_master
-      - DATABASE_URL=sqlite:///./swipex.db
+      - SECRET_KEY=${SECRET_KEY:?Set SECRET_KEY in your environment or .env file}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./swipex.db}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
     volumes:
       - ./backend/uploads:/app/uploads
     restart: always
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   frontend:
     build:
@@ -23,7 +29,8 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: always
 
 networks:

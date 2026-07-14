@@ -1,10 +1,40 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+import base64
+import hashlib
+import hmac
+
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+
+# ---------------------------------------------------------------------------
+# Passlib + bcrypt 4.x compatibility shim
+# ---------------------------------------------------------------------------
+# bcrypt >= 4.1 rejects secrets longer than 72 bytes with a hard ValueError.
+# passlib's internal ``detect_wrap_bug`` routine tests hashing with a 260-byte
+# secret, which triggers this error on first use.  The monkeypatch below wraps
+# ``bcrypt.hashpw`` to silently truncate overlong secrets, restoring the
+# historical bcrypt behaviour that passlib relies on.
+# ---------------------------------------------------------------------------
+import bcrypt as _bcrypt_mod  # noqa: E402
+
+_original_hashpw = _bcrypt_mod.hashpw
+
+def _safe_hashpw(password, salt):
+    if isinstance(password, str):
+        password = password.encode("utf-8")
+    if isinstance(salt, str):
+        salt = salt.encode("utf-8")
+    # bcrypt only examines the first 72 bytes; truncate to avoid ValueError
+    if len(password) > 72:
+        password = password[:72]
+    return _original_hashpw(password, salt)
+
+_bcrypt_mod.hashpw = _safe_hashpw
+
+from passlib.context import CryptContext  # noqa: E402
 
 from app.config import settings
 from app.database import get_db
@@ -113,6 +143,3 @@ def get_current_admin(current_user: models.User = Depends(get_current_user)) -> 
             detail="Admin permission required"
         )
     return current_user
-import base64
-import hashlib
-import hmac

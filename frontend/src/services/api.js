@@ -31,7 +31,15 @@ API.interceptors.response.use(
 
     originalRequest._retry = true;
     const refreshToken = localStorage.getItem('swipex_refresh_token');
-    if (!refreshToken) return Promise.reject(error);
+    if (!refreshToken) {
+      localStorage.removeItem('swipex_token');
+      localStorage.removeItem('swipex_refresh_token');
+      localStorage.removeItem('swipex_user');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('swipex_auth_failure'));
+      }
+      return Promise.reject(error);
+    }
 
     try {
       refreshPromise ??= API.post('/auth/refresh', { refresh_token: refreshToken });
@@ -44,6 +52,9 @@ API.interceptors.response.use(
       localStorage.removeItem('swipex_token');
       localStorage.removeItem('swipex_refresh_token');
       localStorage.removeItem('swipex_user');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('swipex_auth_failure'));
+      }
       return Promise.reject(refreshError);
     } finally {
       refreshPromise = null;

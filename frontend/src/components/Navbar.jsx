@@ -101,7 +101,7 @@ export default function Navbar() {
                 Saved
               </Link>
 
-              {user.role === 'recruiter' && (
+              {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                 <Link
                   to="/recruiter"
                   className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
@@ -167,7 +167,7 @@ export default function Navbar() {
                       My Profile
                     </Link>
 
-                    {user.role === 'recruiter' && (
+                    {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                       <Link
                         to="/recruiter"
                         onClick={() => setDropdownOpen(false)}

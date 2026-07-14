@@ -17,6 +17,7 @@ Reviewed the React/Vite frontend, FastAPI routers and AI modules, SQLAlchemy mod
 | Medium | API served a separate stale static UI in addition to Vite. | Legacy UI is opt-in via `SERVE_LEGACY_UI`; API root returns service metadata by default. |
 | Medium | Search pagination accepted unbounded values and ignored skills. | Added page bounds and skill filtering. |
 | Medium | Account deletion used a bulk operation that skipped ORM cascades. | It now deletes the loaded user entity so configured dependent records cascade. |
+| Critical | Valid production register and login requests returned HTTP 500. | The affected Render image triggers Passlib's bcrypt probe with a 260-byte secret, while bcrypt 4.x rejects values above 72 bytes. The compatibility wrapper safely truncates only this internal probe, preserving bcrypt's defined 72-byte behavior. A hash round-trip regression test now covers this path. |
 
 ## Open findings
 
@@ -45,6 +46,10 @@ Reviewed the React/Vite frontend, FastAPI routers and AI modules, SQLAlchemy mod
 - Several older strings have mojibake characters (for example, copyright and bullet symbols).
 - Docker Compose uses SQLite by default and has no persistent database backup policy.
 - Test coverage is small and lacks isolated database fixtures, browser tests, and CI execution.
+
+## CI delivery
+
+GitHub Actions now installs backend dependencies, runs the Pytest suite against an isolated SQLite database, and builds the React frontend using Node 20 in CI. Local frontend execution is not required for this workflow.
 
 ## Recommended delivery order
 

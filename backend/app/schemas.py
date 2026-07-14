@@ -4,9 +4,11 @@ from datetime import datetime
 
 # Auth Schemas
 class UserRegister(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     email: EmailStr
     password: str = Field(..., min_length=10, max_length=128)
-    full_name: str = Field(..., min_length=2, max_length=255)
+    full_name: str = Field(..., min_length=2, max_length=255, validation_alias="fullName")
     role: str = "user" # user, recruiter, admin
 
     @field_validator("role")
@@ -21,10 +23,12 @@ class UserLogin(BaseModel):
     password: str
 
 class GoogleLoginRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     email: EmailStr
-    full_name: str
-    avatar_url: Optional[str] = None
-    google_token: Optional[str] = None
+    full_name: str = Field(..., validation_alias="fullName")
+    avatar_url: Optional[str] = Field(None, validation_alias="avatarUrl")
+    google_token: Optional[str] = Field(None, validation_alias="googleToken")
     role: str = "user"
 
 class Token(BaseModel):

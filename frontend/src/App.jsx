@@ -18,6 +18,8 @@ import AppliedJobs from './pages/AppliedJobs';
 import RecruiterDashboard from './pages/RecruiterDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
+import { NotFoundPage } from './pages/ErrorPage';
+import AppErrorBoundary from './components/AppErrorBoundary';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, roles }) => {
@@ -33,10 +35,11 @@ export default function App() {
     <AuthProvider>
       <NotificationProvider>
         <Router>
-          <div className="min-h-screen flex flex-col justify-between">
-            <Navbar />
-            <main className="flex-1">
-              <Routes>
+          <AppErrorBoundary>
+            <div className="min-h-screen flex flex-col justify-between">
+              <Navbar />
+              <main className="flex-1">
+                <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
@@ -51,18 +54,19 @@ export default function App() {
 
                 <Route
                   path="/recruiter"
-                  element={<ProtectedRoute roles={['recruiter', 'admin']}><RecruiterDashboard /></ProtectedRoute>}
+                  element={<ProtectedRoute roles={['recruiter', 'recruiter_unverified', 'admin']}><RecruiterDashboard /></ProtectedRoute>}
                 />
                 <Route
                   path="/admin"
                   element={<ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute>}
                 />
 
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </AppErrorBoundary>
         </Router>
       </NotificationProvider>
     </AuthProvider>

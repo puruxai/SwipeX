@@ -74,3 +74,32 @@ def export_user_data(
         "applications": [{"job_id": app.job_id, "status": app.status, "applied_at": app.applied_at} for app in applications],
         "swipes_count": len(swipes)
     }
+
+@router.get("/notifications", response_model=list[schemas.NotificationOut])
+def get_user_notifications(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    return (
+        db.query(models.Notification)
+        .filter(models.Notification.user_id == current_user.id)
+        .order_by(models.Notification.created_at.desc())
+        .limit(50)
+        .all()
+    )
+
+@router.put("/notifications/{notif_id}/read")
+def mark_notification_read(
+    notif_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    notif = db.query(models.Notification).filter(
+        models.Notification.id == notif_id,
+        models.Notification.user_id == current_user.id,
+    ).first()
+    if not notif:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    notif.is_read = True
+    db.commit()
+    return {"message": "Notification marked as read"}

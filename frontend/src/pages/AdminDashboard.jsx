@@ -21,7 +21,7 @@ export default function AdminDashboard() {
       setStats(statsRes.data);
       setUsers(usersRes.data);
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load admin data. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

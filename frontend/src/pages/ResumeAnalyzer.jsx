@@ -36,12 +36,26 @@ export default function ResumeAnalyzer() {
         setActiveResume(primary);
       }
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load your resumes. Please try again.', 'error');
     }
   };
 
   const handleFileUpload = async (file) => {
     if (!file) return;
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain',
+    ];
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    if (!allowedTypes.includes(file.type) && !['pdf', 'docx', 'txt'].includes(extension)) {
+      addToast('Upload a PDF, DOCX, or TXT resume.', 'error');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      addToast('Resume files must be 10 MB or smaller.', 'error');
+      return;
+    }
     setUploading(true);
     const formData = new FormData();
     formData.append('file', file);
@@ -220,7 +234,9 @@ export default function ResumeAnalyzer() {
               </h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {Object.entries(atsBreakdown.breakdown || {}).map(([key, val]) => (
+                {Object.entries(atsBreakdown.breakdown || {})
+                  .filter(([, val]) => val && typeof val === 'object' && 'score' in val && 'max' in val)
+                  .map(([key, val]) => (
                   <div key={key} className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
                     <div className="flex justify-between text-xs font-bold">
                       <span className="capitalize text-slate-300">{key.replace('_', ' ')}</span>

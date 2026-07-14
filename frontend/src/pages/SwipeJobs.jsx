@@ -78,7 +78,7 @@ export default function SwipeJobs() {
         addToast(`Saved ${currentJob.title} to bookmarks`, 'info');
       }
     } catch (err) {
-      console.error("Swipe action failed", err);
+      addToast('Your swipe could not be saved. Please try again.', 'error');
     }
   };
 

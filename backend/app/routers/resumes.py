@@ -82,6 +82,12 @@ async def upload_resume(
         parsed_text=raw_text,
         extracted_skills=extracted_skills,
         ats_score=ats_report["ats_score"],
+        ats_breakdown_json={
+            "ats_score": ats_report["ats_score"],
+            "breakdown": ats_report["breakdown"],
+            "suggestions": ats_report.get("issues", []),
+            "strengths": ats_report.get("ats_improvements", []),
+        },
         is_primary=True
     )
     db.add(new_resume)
@@ -111,7 +117,12 @@ async def upload_resume(
     return {
         "id": new_resume.id,
         "filename": new_resume.filename,
+        "file_path": new_resume.file_path,
+        "file_type": new_resume.file_type,
+        "is_primary": new_resume.is_primary,
+        "created_at": new_resume.created_at,
         "ats_score": ats_report["ats_score"],
+        "ats_breakdown_json": new_resume.ats_breakdown_json,
         "rating_tier": ats_report.get("rating_tier", "Good Resume"),
         "detected_role": detected_role,
         "role_confidence": parsed_data.get("role_confidence", 95),

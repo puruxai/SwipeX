@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
+import { useNotification } from '../context/NotificationContext';
 import { Briefcase, CheckCircle2, Clock, Zap, Building2 } from 'lucide-react';
 
 export default function AppliedJobs() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addToast } = useNotification();
 
   useEffect(() => {
     fetchApplications();
@@ -15,7 +17,7 @@ export default function AppliedJobs() {
       const res = await API.get('/applications/');
       setApplications(res.data);
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load your applications. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

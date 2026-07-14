@@ -37,7 +37,7 @@ export default function Profile() {
         setExperienceYears(p.experience_years || 0);
       }
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load your profile. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

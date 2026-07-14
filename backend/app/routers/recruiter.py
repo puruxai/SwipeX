@@ -9,7 +9,7 @@ router = APIRouter(prefix="/recruiter", tags=["Recruiter Dashboard"])
 
 @router.get("/jobs", response_model=List[schemas.JobOut])
 def get_recruiter_posted_jobs(
-    current_recruiter: models.User = Depends(auth.get_current_active_recruiter),
+    current_recruiter: models.User = Depends(auth.get_current_recruiter_including_unverified),
     db: Session = Depends(get_db)
 ):
     jobs = db.query(models.Job).filter(models.Job.recruiter_id == current_recruiter.id).order_by(models.Job.created_at.desc()).all()
@@ -18,7 +18,7 @@ def get_recruiter_posted_jobs(
 @router.get("/jobs/{job_id}/applicants", response_model=List[schemas.ApplicationOut])
 def get_job_applicants_ranking(
     job_id: int,
-    current_recruiter: models.User = Depends(auth.get_current_active_recruiter),
+    current_recruiter: models.User = Depends(auth.get_current_recruiter_including_unverified),
     db: Session = Depends(get_db)
 ):
     job = db.query(models.Job).filter(models.Job.id == job_id).first()

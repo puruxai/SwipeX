@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
+import { useNotification } from '../context/NotificationContext';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -26,6 +27,7 @@ import {
 export default function Dashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { addToast } = useNotification();
 
   useEffect(() => {
     fetchDashboardData();
@@ -36,7 +38,7 @@ export default function Dashboard() {
       const res = await API.get('/analytics/dashboard');
       setData(res.data);
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load dashboard analytics. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

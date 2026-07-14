@@ -35,4 +35,12 @@ class Settings(BaseSettings):
     def is_production(self) -> bool:
         return self.ENVIRONMENT.lower() == "production"
 
+    @property
+    def get_database_url(self) -> str:
+        """Translate legacy ``postgres://`` to ``postgresql://`` for SQLAlchemy 1.4+."""
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return url
+
 settings = Settings()

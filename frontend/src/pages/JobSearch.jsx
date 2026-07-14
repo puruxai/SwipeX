@@ -48,7 +48,7 @@ export default function JobSearch() {
       const res = await API.get('/jobs/', { params });
       setJobs(res.data);
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load jobs. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

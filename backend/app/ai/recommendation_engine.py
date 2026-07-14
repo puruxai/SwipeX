@@ -17,7 +17,7 @@ def rank_jobs_for_swipe(user_profile: Dict[str, Any], resume_data: Dict[str, Any
         if action == "like":
             if job.get("company_type"):
                 liked_company_types.add(job.get("company_type"))
-            for s in job.get("required_skills", []):
+            for s in (job.get("required_skills") or []):
                 liked_skills.add(s.lower())
         elif action == "skip":
             if job.get("title"):
@@ -33,7 +33,7 @@ def rank_jobs_for_swipe(user_profile: Dict[str, Any], resume_data: Dict[str, Any
             score += 5.0
             
         # Boost if required skills contain liked skills
-        job_skills = [s.lower() for s in job.get("required_skills", [])]
+        job_skills = [s.lower() for s in (job.get("required_skills") or [])]
         overlap_liked = len(set(job_skills).intersection(liked_skills))
         score += min(overlap_liked * 2.5, 8.0)
 

@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
           setUser(res.data);
           localStorage.setItem('swipex_user', JSON.stringify(res.data));
         } catch (err) {
-          console.error("Auth validation failed", err);
           logout();
         }
       }
@@ -27,6 +26,16 @@ export const AuthProvider = ({ children }) => {
     };
     initAuth();
   }, [token]);
+
+  useEffect(() => {
+    const handleAuthFailure = () => {
+      logout();
+    };
+    window.addEventListener('swipex_auth_failure', handleAuthFailure);
+    return () => {
+      window.removeEventListener('swipex_auth_failure', handleAuthFailure);
+    };
+  }, []);
 
   const login = async (email, password) => {
     const res = await API.post('/auth/login', { email, password });

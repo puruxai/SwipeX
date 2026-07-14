@@ -8,6 +8,7 @@ export default function Signup() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [role, setRole] = useState('user');
   const [loading, setLoading] = useState(false);
 
@@ -17,6 +18,11 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password.length < 10) {
+      setPasswordError('Password must be at least 10 characters');
+      return;
+    }
+    setPasswordError('');
     setLoading(true);
     try {
       await register(email, password, fullName, role);
@@ -77,6 +83,8 @@ export default function Signup() {
               <input
                 type="text"
                 required
+                minLength={2}
+                maxLength={255}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm"
@@ -92,6 +100,7 @@ export default function Signup() {
               <input
                 type="email"
                 required
+                maxLength={255}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm"
@@ -107,12 +116,17 @@ export default function Signup() {
               <input
                 type="password"
                 required
+                minLength={10}
+                maxLength={128}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm"
-                placeholder="Minimum 6 characters"
+                onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
+                className={`w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm ${passwordError ? 'border-red-500/60' : ''}`}
+                placeholder="Minimum 10 characters"
               />
             </div>
+            {passwordError && (
+              <p className="text-xs text-red-400 mt-1" role="alert">{passwordError}</p>
+            )}
           </div>
 
           <button

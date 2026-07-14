@@ -49,7 +49,7 @@ export default function RecruiterDashboard() {
         handleSelectJob(res.data[0]);
       }
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load recruiter jobs. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ export default function RecruiterDashboard() {
       const res = await API.get(`/recruiter/jobs/${job.id}/applicants`);
       setApplicants(res.data);
     } catch (err) {
-      console.error(err);
+      addToast('Unable to load applicants for this job. Please try again.', 'error');
     }
   };
 

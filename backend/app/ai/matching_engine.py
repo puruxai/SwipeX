@@ -12,9 +12,9 @@ def compute_job_match(user_profile: Dict[str, Any], resume_data: Dict[str, Any],
     - missing_skills (list of str)
     - recommendation_reason (str)
     """
-    user_skills = set([s.lower() for s in user_profile.get("skills", [])] + [s.lower() for s in resume_data.get("skills", [])])
-    required_skills = [s.lower() for s in job.get("required_skills", [])]
-    nice_to_have_skills = [s.lower() for s in job.get("nice_to_have_skills", [])]
+    user_skills = set([s.lower() for s in (user_profile.get("skills") or [])] + [s.lower() for s in (resume_data.get("skills") or [])])
+    required_skills = [s.lower() for s in (job.get("required_skills") or [])]
+    nice_to_have_skills = [s.lower() for s in (job.get("nice_to_have_skills") or [])]
     
     # 1. Skill Overlap Calculation
     missing_required = []

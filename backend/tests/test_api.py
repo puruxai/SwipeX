@@ -4,6 +4,7 @@ from app.main import app
 from app.ai.resume_parser import parse_resume_text
 from app.ai.ats_engine import calculate_ats_score
 from app.ai.matching_engine import compute_job_match
+from app.auth import get_password_hash, verify_password
 
 client = TestClient(app)
 
@@ -45,3 +46,11 @@ def test_job_match_calculator():
     match_res = compute_job_match(user_profile, resume_data, job)
     assert match_res["match_percentage"] > 70.0
     assert len(match_res["missing_skills"]) == 0
+
+def test_password_hash_round_trip():
+    """Registration must not depend on an incompatible native bcrypt wheel."""
+    password = "Password123!"
+    hashed_password = get_password_hash(password)
+    assert hashed_password != password
+    assert verify_password(password, hashed_password)
+    assert not verify_password("incorrect-password", hashed_password)

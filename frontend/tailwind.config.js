@@ -9,18 +9,54 @@ export default {
     extend: {
       colors: {
         dark: {
-          bg: '#0B0F19',
-          card: 'rgba(17, 24, 39, 0.7)',
-          border: 'rgba(255, 255, 255, 0.1)',
-          hover: 'rgba(255, 255, 255, 0.05)',
+          bg: '#0B0B0B',
+          card: '#181818',
+          border: '#262626',
+          hover: '#262626',
         },
         brand: {
-          primary: '#6366F1',
-          secondary: '#8B5CF6',
-          cyan: '#06B6D4',
-          emerald: '#10B981',
-          pink: '#EC4899',
-        }
+          primary: '#FF6B00',
+          secondary: '#FF8A3D',
+          cyan: '#FF8A3D',
+          emerald: '#22C55E',
+          pink: '#FF6B00',
+        },
+        indigo: {
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          300: '#fdbb74',
+          400: '#FF8A3D',
+          500: '#FF6B00',
+          600: '#e66000',
+          700: '#c24e00',
+          800: '#9a3c00',
+          900: '#7c3200',
+          950: '#431700',
+        },
+        violet: {
+          300: '#fdbb74',
+          400: '#FF8A3D',
+          500: '#FF6B00',
+          600: '#e66000',
+          700: '#c24e00',
+        },
+        cyan: {
+          300: '#fdbb74',
+          400: '#FF8A3D',
+          500: '#FF6B00',
+          600: '#e66000',
+        },
+        pink: {
+          400: '#FF8A3D',
+          500: '#FF6B00',
+          600: '#e66000',
+        },
+        slate: {
+          300: '#D1D5DB',
+          400: '#A8A8A8',
+          500: '#9CA3AF',
+        },
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
@@ -29,9 +65,9 @@ export default {
         xs: '2px',
       },
       boxShadow: {
-        'neon-indigo': '0 0 25px -5px rgba(99, 102, 241, 0.4)',
-        'neon-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.4)',
-        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'neon-indigo': '0 0 25px -5px rgba(255, 107, 0, 0.45)',
+        'neon-cyan': '0 0 25px -5px rgba(255, 138, 61, 0.35)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.5)',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

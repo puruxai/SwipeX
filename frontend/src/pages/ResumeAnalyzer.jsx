@@ -101,24 +101,24 @@ export default function ResumeAnalyzer() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-white flex items-center gap-2">
-            <Sparkles className="w-8 h-8 text-cyan-400" />
+            <Sparkles className="w-8 h-8 text-[#FF6B00]" />
             AI Resume & ATS Analyzer
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[#A8A8A8] mt-1">
             Upload your resume to calculate ATS score, extract skills, and optimize keywords.
           </p>
         </div>
 
         {resumes.length > 0 && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Select Resume:</span>
+            <span className="text-xs text-[#A8A8A8] font-medium">Select Resume:</span>
             <select
               value={activeResume?.id || ''}
               onChange={(e) => setActiveResume(resumes.find(r => r.id === parseInt(e.target.value)))}
               className="px-3 py-1.5 rounded-xl glass-input text-xs font-bold"
             >
               {resumes.map((r) => (
-                <option key={r.id} value={r.id} className="bg-slate-900 text-white">
+                <option key={r.id} value={r.id} className="bg-[#121212] text-white">
                   {r.filename} ({r.ats_score} ATS) {r.is_primary ? '★ Primary' : ''}
                 </option>
               ))}
@@ -134,18 +134,18 @@ export default function ResumeAnalyzer() {
         onDrop={handleDrop}
         className={`glass-panel p-8 rounded-3xl border-2 border-dashed transition-all text-center space-y-4 ${
           dragActive
-            ? 'border-indigo-500 bg-indigo-500/10 scale-[1.01]'
-            : 'border-white/15 hover:border-indigo-500/40'
+            ? 'border-[#FF6B00] bg-[#FF6B00]/10 scale-[1.01]'
+            : 'border-[#262626] hover:border-[#FF6B00]/40'
         }`}
       >
-        <div className="w-16 h-16 mx-auto rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center">
-          <UploadCloud className="w-8 h-8 text-cyan-400" />
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-[#FF6B00]/10 border border-[#FF6B00]/25 flex items-center justify-center">
+          <UploadCloud className="w-8 h-8 text-[#FF8A3D]" />
         </div>
         <div>
           <h3 className="text-lg font-bold text-white">Drag & Drop Resume PDF or DOCX</h3>
-          <p className="text-xs text-slate-400 mt-1">Supports PDF, DOCX, and TXT (Max 10MB)</p>
+          <p className="text-xs text-[#A8A8A8] mt-1">Supports PDF, DOCX, and TXT (Max 10MB)</p>
         </div>
-        <label className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-500 font-bold text-xs text-white shadow-neon-indigo cursor-pointer hover:scale-105 transition-all">
+        <label className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] font-bold text-xs text-white shadow-[0_4px_15px_rgba(255,107,0,0.35)] cursor-pointer hover:scale-105 transition-all">
           {uploading ? 'Analyzing with AI...' : 'Choose Resume File'}
           <input
             type="file"
@@ -162,7 +162,7 @@ export default function ResumeAnalyzer() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* ATS Gauge Card */}
-          <div className="glass-panel p-8 rounded-3xl border border-white/10 flex flex-col items-center justify-center text-center space-y-4">
+          <div className="glass-panel p-8 rounded-3xl border border-[#262626] bg-[#181818]/60 flex flex-col items-center justify-center text-center space-y-4">
             <div className="relative w-40 h-40 flex items-center justify-center">
               {/* Radial Score Gauge Circle */}
               <svg className="w-full h-full transform -rotate-90">
@@ -170,7 +170,7 @@ export default function ResumeAnalyzer() {
                   cx="80"
                   cy="80"
                   r="70"
-                  stroke="rgba(255,255,255,0.1)"
+                  stroke="rgba(255,255,255,0.05)"
                   strokeWidth="12"
                   fill="transparent"
                 />
@@ -188,15 +188,14 @@ export default function ResumeAnalyzer() {
                 />
                 <defs>
                   <linearGradient id="atsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#6366F1" />
-                    <stop offset="50%" stopColor="#8B5CF6" />
-                    <stop offset="100%" stopColor="#06B6D4" />
+                    <stop offset="0%" stopColor="#FF6B00" />
+                    <stop offset="100%" stopColor="#FF8A3D" />
                   </linearGradient>
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-4xl font-black text-white">{atsScore}</span>
-                <span className="text-[11px] font-bold text-indigo-300 uppercase tracking-widest">ATS Score</span>
+                <span className="text-[10px] font-bold text-[#FF8A3D] uppercase tracking-widest">ATS Score</span>
               </div>
             </div>
 
@@ -204,21 +203,21 @@ export default function ResumeAnalyzer() {
               <h3 className="font-extrabold text-lg text-white">
                 {atsScore >= 80 ? 'ATS Compatible Resume!' : 'Optimization Needed'}
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-[#A8A8A8] mt-1">
                 {atsScore >= 80
                   ? 'Your resume passes most corporate ATS scanners with high match probability.'
                   : 'Follow the suggestions below to increase your interview callback rate.'}
               </p>
             </div>
 
-            <div className="w-full pt-4 border-t border-white/10 text-left text-xs space-y-2">
+            <div className="w-full pt-4 border-t border-[#262626] text-left text-xs space-y-2">
               <div className="flex justify-between">
-                <span className="text-slate-400">Filename:</span>
+                <span className="text-[#A8A8A8]">Filename:</span>
                 <span className="font-semibold text-white truncate max-w-[180px]">{activeResume.filename}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Skills Extracted:</span>
-                <span className="font-semibold text-emerald-400">{activeResume.extracted_skills?.length || 0} Skills</span>
+                <span className="text-[#A8A8A8]">Skills Extracted:</span>
+                <span className="font-semibold text-[#22C55E]">{activeResume.extracted_skills?.length || 0} Skills</span>
               </div>
             </div>
           </div>
@@ -227,9 +226,9 @@ export default function ResumeAnalyzer() {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Section Scores Grid */}
-            <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-4">
+            <div className="glass-panel p-6 rounded-3xl border border-[#262626] bg-[#181818]/60 space-y-4">
               <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                <Target className="w-5 h-5 text-indigo-400" />
+                <Target className="w-5 h-5 text-[#FF6B00]" />
                 ATS Scanner Section Scores
               </h3>
               
@@ -237,14 +236,14 @@ export default function ResumeAnalyzer() {
                 {Object.entries(atsBreakdown.breakdown || {})
                   .filter(([, val]) => val && typeof val === 'object' && 'score' in val && 'max' in val)
                   .map(([key, val]) => (
-                  <div key={key} className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+                  <div key={key} className="p-4 rounded-2xl bg-[#121212] border border-[#262626] space-y-2">
                     <div className="flex justify-between text-xs font-bold">
-                      <span className="capitalize text-slate-300">{key.replace('_', ' ')}</span>
-                      <span className="text-cyan-400">{val.score} / {val.max} pts</span>
+                      <span className="capitalize text-[#A8A8A8]">{key.replace('_', ' ')}</span>
+                      <span className="text-[#FF8A3D]">{val.score} / {val.max} pts</span>
                     </div>
-                    <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#181818] h-2 rounded-full overflow-hidden border border-[#262626]">
                       <div
-                        className="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] h-full rounded-full transition-all duration-500"
                         style={{ width: `${(val.score / val.max) * 100}%` }}
                       ></div>
                     </div>
@@ -254,16 +253,16 @@ export default function ResumeAnalyzer() {
             </div>
 
             {/* Extracted Skills List */}
-            <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-3">
+            <div className="glass-panel p-6 rounded-3xl border border-[#262626] bg-[#181818]/60 space-y-3">
               <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                <Zap className="w-5 h-5 text-emerald-400" />
+                <Zap className="w-5 h-5 text-[#22C55E]" />
                 Extracted Skills Taxonomy
               </h3>
               <div className="flex flex-wrap gap-2">
                 {activeResume.extracted_skills?.map((skill, i) => (
                   <span
                     key={i}
-                    className="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold"
+                    className="px-3 py-1 rounded-xl bg-[#22C55E]/10 text-emerald-300 border border-[#22C55E]/20 text-xs font-semibold"
                   >
                     ✓ {skill}
                   </span>
@@ -273,15 +272,15 @@ export default function ResumeAnalyzer() {
 
             {/* AI Improvement Suggestions */}
             {atsBreakdown.suggestions?.length > 0 && (
-              <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-3">
+              <div className="glass-panel p-6 rounded-3xl border border-[#262626] bg-[#181818]/60 space-y-3">
                 <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-amber-400" />
+                  <AlertTriangle className="w-5 h-5 text-[#F59E0B]" />
                   Actionable Improvement Suggestions
                 </h3>
                 <ul className="space-y-2">
                   {atsBreakdown.suggestions.map((sug, i) => (
-                    <li key={i} className="text-xs text-slate-300 flex items-start gap-2 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-                      <span className="text-amber-400 font-bold">•</span>
+                    <li key={i} className="text-xs text-slate-300 flex items-start gap-2 bg-[#F59E0B]/10 p-3 rounded-xl border border-[#F59E0B]/20">
+                      <span className="text-[#F59E0B] font-bold">•</span>
                       <span>{sug}</span>
                     </li>
                   ))}
@@ -293,7 +292,7 @@ export default function ResumeAnalyzer() {
 
         </div>
       ) : (
-        <div className="glass-panel p-12 rounded-3xl text-center text-slate-400">
+        <div className="glass-panel p-12 rounded-3xl text-center text-[#A8A8A8] border border-[#262626] bg-[#181818]/60">
           Upload a resume above to calculate your ATS Score and unlock AI career insights.
         </div>
       )}

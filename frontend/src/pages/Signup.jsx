@@ -37,27 +37,27 @@ export default function Signup() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 glass-panel p-8 rounded-3xl border border-white/10 shadow-2xl">
+      <div className="w-full max-w-md space-y-8 glass-panel p-8 rounded-3xl border border-[#262626] bg-[#181818]/80 shadow-2xl">
         
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-400 flex items-center justify-center shadow-neon-indigo">
-            <Sparkles className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-[#FF6B00] to-[#FF8A3D] flex items-center justify-center shadow-[0_4px_15px_rgba(255,107,0,0.35)]">
+            <Sparkles className="w-6 h-6 text-white animate-pulse" />
           </div>
           <h2 className="text-3xl font-extrabold text-white">Join SwipeX</h2>
-          <p className="text-sm text-slate-400">Create your account to unlock AI job matching</p>
+          <p className="text-sm text-[#A8A8A8]">Create your account to unlock AI job matching</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Account Role</label>
+            <label className="block text-xs font-semibold text-[#A8A8A8] mb-1.5">Account Role</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setRole('user')}
                 className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                   role === 'user'
-                    ? 'bg-indigo-600/30 border-indigo-500 text-white shadow-neon-indigo'
-                    : 'glass-panel border-white/10 text-slate-400 hover:text-white'
+                    ? 'bg-[#FF6B00]/10 border-[#FF6B00] text-white shadow-[0_4px_15px_rgba(255,107,0,0.25)]'
+                    : 'glass-panel border-[#262626] text-[#A8A8A8] hover:text-white'
                 }`}
               >
                 <UserCheck className="w-4 h-4" /> Job Seeker
@@ -67,8 +67,8 @@ export default function Signup() {
                 onClick={() => setRole('recruiter')}
                 className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                   role === 'recruiter'
-                    ? 'bg-violet-600/30 border-violet-500 text-white shadow-neon-indigo'
-                    : 'glass-panel border-white/10 text-slate-400 hover:text-white'
+                    ? 'bg-[#FF8A3D]/10 border-[#FF8A3D] text-white shadow-[0_4px_15px_rgba(255,138,61,0.25)]'
+                    : 'glass-panel border-[#262626] text-[#A8A8A8] hover:text-white'
                 }`}
               >
                 <Briefcase className="w-4 h-4" /> Recruiter
@@ -77,9 +77,9 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
+            <label className="block text-xs font-semibold text-[#A8A8A8] mb-1.5">Full Name</label>
             <div className="relative">
-              <User className="w-5 h-5 absolute left-3 top-3 text-slate-500" />
+              <User className="w-5 h-5 absolute left-3 top-3 text-[#A8A8A8]" />
               <input
                 type="text"
                 required
@@ -87,32 +87,32 @@ export default function Signup() {
                 maxLength={255}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm focus:outline-none"
                 placeholder="Alex Mercer"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
+            <label className="block text-xs font-semibold text-[#A8A8A8] mb-1.5">Email Address</label>
             <div className="relative">
-              <Mail className="w-5 h-5 absolute left-3 top-3 text-slate-500" />
+              <Mail className="w-5 h-5 absolute left-3 top-3 text-[#A8A8A8]" />
               <input
                 type="email"
                 required
                 maxLength={255}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm focus:outline-none"
                 placeholder="name@example.com"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Password</label>
+            <label className="block text-xs font-semibold text-[#A8A8A8] mb-1.5">Password</label>
             <div className="relative">
-              <Lock className="w-5 h-5 absolute left-3 top-3 text-slate-500" />
+              <Lock className="w-5 h-5 absolute left-3 top-3 text-[#A8A8A8]" />
               <input
                 type="password"
                 required
@@ -120,7 +120,7 @@ export default function Signup() {
                 maxLength={128}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
-                className={`w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm ${passwordError ? 'border-red-500/60' : ''}`}
+                className={`w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm focus:outline-none ${passwordError ? 'border-red-500/60' : ''}`}
                 placeholder="Minimum 10 characters"
               />
             </div>
@@ -132,15 +132,15 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 font-bold text-white bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 rounded-xl shadow-neon-indigo hover:opacity-95 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 font-bold text-white bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] rounded-xl shadow-[0_4px_15px_rgba(255,107,0,0.35)] hover:shadow-[0_4px_25px_rgba(255,107,0,0.55)] transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
           >
             {loading ? 'Creating Account...' : 'Create Free Account'}
           </button>
         </form>
 
-        <p className="text-center text-xs text-slate-400">
+        <p className="text-center text-xs text-[#A8A8A8]">
           Already registered?{' '}
-          <Link to="/login" className="text-indigo-400 font-bold hover:underline">
+          <Link to="/login" className="text-[#FF6B00] font-bold hover:underline">
             Log In
           </Link>
         </p>

@@ -12,9 +12,9 @@ import {
   ShieldCheck, 
   User, 
   LogOut, 
-  Bell,
   ChevronDown
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -25,92 +25,97 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-40 glass-panel border-b border-white/10 backdrop-blur-md">
+    <nav className="sticky top-0 z-40 glass-panel border-b border-[#262626] backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center shadow-neon-indigo">
+            <motion.div 
+              whileHover={{ rotate: 15 }}
+              className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF6B00] to-[#FF8A3D] flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.3)]"
+            >
               <Sparkles className="w-5 h-5 text-white animate-pulse" />
-            </div>
+            </motion.div>
             <span className="gradient-text text-2xl font-black">SwipeX</span>
-            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">AI Platform</span>
+            <span className="text-[10px] uppercase font-black tracking-widest px-2.5 py-0.5 rounded-full bg-[#FF6B00]/10 text-[#FF8A3D] border border-[#FF6B00]/25">
+              AI Job Hub
+            </span>
           </Link>
-
+ 
           {/* Navigation Links */}
           {user && (
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-1.5">
               <Link
                 to="/swipe"
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                   isActive('/swipe')
-                    ? 'bg-indigo-600/30 text-indigo-400 border border-indigo-500/40'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#FF6B00]/10 text-[#FF8A3D] border-[#FF6B00]/30'
+                    : 'text-[#A8A8A8] border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Layers className="w-4 h-4 text-indigo-400" />
+                <Layers className="w-4 h-4 text-[#FF6B00]" />
                 Swipe Feed
               </Link>
 
               <Link
                 to="/resume-analyzer"
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                   isActive('/resume-analyzer')
-                    ? 'bg-indigo-600/30 text-indigo-400 border border-indigo-500/40'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#FF6B00]/10 text-[#FF8A3D] border-[#FF6B00]/30'
+                    : 'text-[#A8A8A8] border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
-                <FileText className="w-4 h-4 text-cyan-400" />
+                <FileText className="w-4 h-4 text-[#FF6B00]" />
                 ATS Analyzer
               </Link>
 
               <Link
                 to="/jobs"
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                   isActive('/jobs')
-                    ? 'bg-indigo-600/30 text-indigo-400 border border-indigo-500/40'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#FF6B00]/10 text-[#FF8A3D] border-[#FF6B00]/30'
+                    : 'text-[#A8A8A8] border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Search className="w-4 h-4 text-emerald-400" />
+                <Search className="w-4 h-4 text-[#FF6B00]" />
                 Smart Search
               </Link>
 
               <Link
                 to="/dashboard"
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                   isActive('/dashboard')
-                    ? 'bg-indigo-600/30 text-indigo-400 border border-indigo-500/40'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#FF6B00]/10 text-[#FF8A3D] border-[#FF6B00]/30'
+                    : 'text-[#A8A8A8] border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
-                <BarChart3 className="w-4 h-4 text-pink-400" />
+                <BarChart3 className="w-4 h-4 text-[#FF6B00]" />
                 Analytics
               </Link>
 
               <Link
                 to="/saved"
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                   isActive('/saved')
-                    ? 'bg-indigo-600/30 text-indigo-400 border border-indigo-500/40'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#FF6B00]/10 text-[#FF8A3D] border-[#FF6B00]/30'
+                    : 'text-[#A8A8A8] border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Bookmark className="w-4 h-4 text-amber-400" />
+                <Bookmark className="w-4 h-4 text-[#FF6B00]" />
                 Saved
               </Link>
 
               {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                 <Link
                   to="/recruiter"
-                  className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                     isActive('/recruiter')
-                      ? 'bg-violet-600/30 text-violet-300 border border-violet-500/40'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#FF6B00]/10 text-[#FF8A3D] border-[#FF6B00]/30'
+                      : 'text-[#A8A8A8] border-transparent hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <Briefcase className="w-4 h-4 text-violet-400" />
+                  <Briefcase className="w-4 h-4 text-[#FF6B00]" />
                   Recruiter HQ
                 </Link>
               )}
@@ -118,10 +123,10 @@ export default function Navbar() {
               {user.role === 'admin' && (
                 <Link
                   to="/admin"
-                  className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                     isActive('/admin')
-                      ? 'bg-rose-600/30 text-rose-300 border border-rose-500/40'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                      : 'text-[#A8A8A8] border-transparent hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4 text-rose-400" />
@@ -137,72 +142,80 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-3 px-3 py-1.5 rounded-xl glass-panel hover:border-indigo-500/40 transition-all"
+                  className="flex items-center gap-3 px-3 py-1.5 rounded-xl glass-panel border border-[#262626] hover:border-[#FF6B00]/40 transition-all focus:outline-none"
                 >
                   <img
                     src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}
                     alt="Profile Avatar"
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/40"
+                    className="w-8 h-8 rounded-full object-cover ring-2 ring-[#FF6B00]/30"
                   />
                   <div className="hidden sm:block text-left">
                     <div className="text-sm font-semibold text-white leading-tight">{user.full_name}</div>
-                    <div className="text-[11px] text-indigo-300 capitalize">{user.role}</div>
+                    <div className="text-[10px] text-[#A8A8A8] capitalize font-medium">{user.role.replace('_', ' ')}</div>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                  <ChevronDown className="w-4 h-4 text-[#A8A8A8]" />
                 </button>
 
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 glass-panel rounded-2xl p-2 shadow-2xl border border-white/10 z-50">
-                    <div className="px-3 py-2 border-b border-white/10 mb-1">
-                      <p className="text-xs text-slate-400">Signed in as</p>
-                      <p className="text-sm font-bold text-white truncate">{user.email}</p>
-                    </div>
-
-                    <Link
-                      to="/profile"
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-56 glass-panel rounded-2xl p-2 shadow-2xl border border-[#262626] z-50 bg-[#121212]"
                     >
-                      <User className="w-4 h-4 text-indigo-400" />
-                      My Profile
-                    </Link>
+                      <div className="px-3 py-2 border-b border-[#262626] mb-1">
+                        <p className="text-[10px] text-[#A8A8A8] uppercase font-bold tracking-wider">Signed in as</p>
+                        <p className="text-xs font-black text-white truncate">{user.email}</p>
+                      </div>
 
-                    {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                       <Link
-                        to="/recruiter"
+                        to="/profile"
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#A8A8A8] hover:text-white hover:bg-white/5 rounded-xl transition-all"
                       >
-                        <Briefcase className="w-4 h-4 text-violet-400" />
-                        Recruiter Dashboard
+                        <User className="w-4 h-4 text-[#FF6B00]" />
+                        My Profile
                       </Link>
-                    )}
 
-                    <button
-                      onClick={() => {
-                        setDropdownOpen(false);
-                        logout();
-                        navigate('/');
-                      }}
-                      className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-pink-400 hover:bg-pink-500/10 rounded-xl transition-all mt-1"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
-                    </button>
-                  </div>
-                )}
+                      {['recruiter', 'recruiter_unverified'].includes(user.role) && (
+                        <Link
+                          to="/recruiter"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#A8A8A8] hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                        >
+                          <Briefcase className="w-4 h-4 text-[#FF6B00]" />
+                          Recruiter Dashboard
+                        </Link>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          logout();
+                          navigate('/');
+                        }}
+                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all mt-1"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+                  className="px-4 py-2 text-xs font-bold text-[#A8A8A8] hover:text-white transition-colors"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 rounded-xl shadow-neon-indigo hover:opacity-95 transition-all hover:scale-105"
+                  className="px-5 py-2 text-xs font-black text-white bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] rounded-xl shadow-[0_4px_15px_rgba(255,107,0,0.35)] hover:shadow-[0_4px_25px_rgba(255,107,0,0.55)] transition-all hover:scale-105"
                 >
                   Get Started
                 </Link>

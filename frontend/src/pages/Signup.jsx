@@ -18,10 +18,15 @@ export default function Signup() {
 
   useEffect(() => {
     /* global google */
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.warn("VITE_GOOGLE_CLIENT_ID is not configured. Google Sign-Up button will not render.");
+      return;
+    }
     if (typeof google !== 'undefined') {
       try {
         google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "369527787342-google-demo-id.apps.googleusercontent.com",
+          client_id: clientId,
           callback: handleGoogleCredentialResponse,
           cancel_on_tap_outside: false
         });

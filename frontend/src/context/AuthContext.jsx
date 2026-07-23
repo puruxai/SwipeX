@@ -71,9 +71,22 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('swipex_token');
-    localStorage.removeItem('swipex_refresh_token');
-    localStorage.removeItem('swipex_user');
+    // Clear localStorage & sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Clear all cookies
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+
+    // Reset caches if present
+    if (window.QueryClient) {
+      try { window.QueryClient.clear(); } catch (e) {}
+    }
+
     setToken(null);
     setUser(null);
   };

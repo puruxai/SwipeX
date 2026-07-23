@@ -44,7 +44,7 @@ def get_candidate_dashboard_analytics(
 
     # Target jobs for skill gap analysis
     applied_job_ids = [a.job_id for a in apps]
-    target_jobs = db.query(models.Job).filter(models.Job.id.in_(applied_job_ids)).all() if applied_job_ids else db.query(models.Job).limit(10).all()
+    target_jobs = db.query(models.Job).filter(models.Job.id.in_(applied_job_ids)).all() if applied_job_ids else []
     target_jobs_dicts = [{"required_skills": j.required_skills or []} for j in target_jobs]
 
     user_skills = profile.skills if profile else []

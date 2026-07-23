@@ -44,9 +44,11 @@ async def upload_resume(
 
     file_id = str(uuid.uuid4())
     filename = f"{file_id}{ext}"
-    file_path = os.path.join(settings.UPLOAD_DIR, filename)
+    user_upload_dir = os.path.join(settings.UPLOAD_DIR, str(current_user.id))
+    file_path = os.path.join(user_upload_dir, filename)
+    normalized_path = file_path.replace("\\", "/")
 
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+    os.makedirs(user_upload_dir, exist_ok=True)
 
     contents = await file.read()
     if len(contents) > 10 * 1024 * 1024:
@@ -78,7 +80,7 @@ async def upload_resume(
     new_resume = models.Resume(
         user_id=current_user.id,
         filename=file.filename,
-        file_path=file_path,
+        file_path=normalized_path,
         parsed_text=raw_text,
         extracted_skills=extracted_skills,
         ats_score=ats_report["ats_score"],

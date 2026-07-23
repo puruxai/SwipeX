@@ -20,6 +20,7 @@ def list_and_search_jobs(
     skills: Optional[str] = None, # Comma separated
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=100),
+    current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(get_db)
 ):
     query = db.query(models.Job).filter(models.Job.status == "active")
@@ -68,7 +69,11 @@ def list_and_search_jobs(
     return jobs
 
 @router.get("/{job_id}", response_model=schemas.JobOut)
-def get_job_by_id(job_id: int, db: Session = Depends(get_db)):
+def get_job_by_id(
+    job_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
     job = db.query(models.Job).filter(models.Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")

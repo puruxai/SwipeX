@@ -2,8 +2,12 @@ import datetime
 from sqlalchemy.orm import Session
 from app.database import engine, Base, SessionLocal
 from app import models, auth
+from app.config import settings
 
 def seed_database():
+    if settings.ENVIRONMENT == "production":
+        print("Production environment detected. Seeding database is disabled.")
+        return
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
 

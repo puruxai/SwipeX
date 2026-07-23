@@ -9,10 +9,10 @@ export default {
     extend: {
       colors: {
         dark: {
-          bg: '#0B0B0B',
-          card: '#181818',
-          border: '#262626',
-          hover: '#262626',
+          bg: 'var(--bg-color)',
+          card: 'var(--card-bg)',
+          border: 'var(--border-color)',
+          hover: 'var(--border-color)',
         },
         brand: {
           primary: '#FF6B00',
@@ -54,7 +54,7 @@ export default {
         },
         slate: {
           300: '#D1D5DB',
-          400: '#A8A8A8',
+          400: 'var(--secondary-text)',
           500: '#9CA3AF',
         },
       },

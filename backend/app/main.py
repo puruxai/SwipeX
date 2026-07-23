@@ -6,8 +6,9 @@ import os
 import time
 
 from app.config import settings
-from app.auth import get_current_admin
-from app.database import engine, Base, SessionLocal
+from app.auth import get_current_admin, get_current_user
+from app.database import engine, Base, SessionLocal, get_db
+from app import models
 from app.routers import auth, users, resumes, jobs, swipes, applications, analytics, recruiter, admin, ai_tools
 from app.seed import seed_database
 
@@ -17,11 +18,27 @@ if settings.is_production and settings.SECRET_KEY == "change-me-before-productio
 # Create tables
 Base.metadata.create_all(bind=engine)
 
-# Auto seed database on startup
-try:
-    seed_database()
-except Exception as e:
-    print(f"Startup seed notice: {e}")
+# Auto seed database on startup ONLY in development
+if settings.ENVIRONMENT != "production":
+    try:
+        seed_database()
+    except Exception as e:
+        print(f"Startup seed notice: {e}")
+else:
+    # Cleanup demo users in production
+    db_session = SessionLocal()
+    try:
+        demo_emails = ["alex@swipex.io", "recruiter@techcorp.com", "admin@swipex.io"]
+        for email in demo_emails:
+            u = db_session.query(models.User).filter(models.User.email == email).first()
+            if u:
+                db_session.delete(u)
+        db_session.commit()
+        print("Production demo users successfully deleted/cleaned up.")
+    except Exception as e:
+        print(f"Production cleanup notice: {e}")
+    finally:
+        db_session.close()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -103,7 +120,24 @@ app.add_middleware(
 
 # Ensure upload directory exists
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
+
+# Secure uploads endpoint instead of public mount
+@app.get("/uploads/{user_id}/{filename}")
+def get_user_file(
+    user_id: int,
+    filename: str,
+    current_user: models.User = Depends(get_current_user),
+    db = Depends(get_db)
+):
+    # Only the owner (or admin) can access files
+    if current_user.id != user_id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    file_path = os.path.join(settings.UPLOAD_DIR, str(user_id), filename)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+        
+    return FileResponse(file_path)
 
 # Include API routers under /api/v1
 app.include_router(auth.router, prefix=settings.API_V1_STR)

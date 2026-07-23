@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { 
   Sparkles, 
   Layers, 
@@ -12,12 +13,15 @@ import {
   ShieldCheck, 
   User, 
   LogOut, 
-  ChevronDown
+  ChevronDown,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -138,6 +142,18 @@ export default function Navbar() {
 
           {/* Right Menu (Auth / Profile Dropdown) */}
           <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl border border-[#262626] bg-[#181818]/45 hover:border-[#FF6B00]/40 text-[#A8A8A8] hover:text-white transition-all focus:outline-none"
+              aria-label="Toggle theme mode"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4.5 h-4.5 text-[#FF8A3D]" />
+              ) : (
+                <Moon className="w-4.5 h-4.5 text-[#FF6B00]" />
+              )}
+            </button>
             {user ? (
               <div className="relative">
                 <button

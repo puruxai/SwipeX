@@ -1,33 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
+import Sidebar from '../components/Sidebar';
 import { 
   FileText, 
   UploadCloud, 
-  CheckCircle2, 
+  Share2, 
+  Download, 
   AlertTriangle, 
+  CheckCircle2, 
   Sparkles, 
-  Award, 
   TrendingUp, 
-  Zap, 
-  Check,
-  Edit,
-  ArrowRight,
-  Bot
+  Users 
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function ResumeAnalyzer() {
-  const [activeTab, setActiveTab] = useState('analyzer'); // 'analyzer' | 'builder'
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [analysisData, setAnalysisData] = useState(null);
   const { addToast } = useNotification();
-
-  // Builder State
-  const [builderTargetScore, setBuilderTargetScore] = useState(98);
-  const [builderOutput, setBuilderOutput] = useState(null);
-  const [builderLoading, setBuilderLoading] = useState(false);
 
   useEffect(() => {
     fetchLatestAnalysis();
@@ -36,11 +27,9 @@ export default function ResumeAnalyzer() {
   const fetchLatestAnalysis = async () => {
     try {
       const res = await API.get('/resumes/analysis/latest');
-      if (res.data) {
-        setAnalysisData(res.data);
-      }
+      if (res.data) setAnalysisData(res.data);
     } catch (err) {
-      // no previous upload yet
+      // fallback mock
     }
   };
 
@@ -59,225 +48,190 @@ export default function ResumeAnalyzer() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setAnalysisData(res.data);
-      addToast('Resume uploaded & ATS score generated!', 'success');
+      addToast('Resume analyzed successfully!', 'success');
     } catch (err) {
-      addToast('Failed to analyze resume file.', 'error');
+      addToast('Failed to analyze resume.', 'error');
     } finally {
       setUploading(false);
     }
   };
 
-  const handleRewriteResume = async () => {
-    setBuilderLoading(true);
-    try {
-      const res = await API.post('/ai/rewrite-resume', { target_score: builderTargetScore });
-      setBuilderOutput(res.data);
-      addToast('Resume optimized for target score!', 'success');
-    } catch (err) {
-      addToast('Failed to optimize resume.', 'error');
-    } finally {
-      setBuilderLoading(false);
-    }
-  };
-
-  const atsScore = analysisData?.ats_score || 88;
+  const matchScore = analysisData?.ats_score || 82;
 
   return (
-    <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="flex min-h-[90vh] bg-[#FFF9F5] text-[#1C1917]">
       
-      {/* Header & Tabs */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
-            <FileText className="w-8 h-8 text-[#FF6B00]" />
-            AI Resume & ATS Optimizer
-          </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
-            Upload your resume for real-time 0-100 ATS evaluation, action verb extraction, and target scoring.
-          </p>
-        </div>
+      {/* Left Sidebar Shell */}
+      <Sidebar />
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => setActiveTab('analyzer')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
-              activeTab === 'analyzer'
-                ? 'bg-[#FF6B00] text-white shadow-md shadow-orange-500/25'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-            }`}
-          >
-            ATS Analyzer
-          </button>
-          <button
-            onClick={() => setActiveTab('builder')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
-              activeTab === 'builder'
-                ? 'bg-[#FF6B00] text-white shadow-md shadow-orange-500/25'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-            }`}
-          >
-            AI Resume Builder
-          </button>
-        </div>
-      </div>
-
-      {activeTab === 'analyzer' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* File Upload Dropzone (Left Column) */}
-          <div className="lg:col-span-5 space-y-6">
-            
-            <div className="luxury-card p-8 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-center space-y-4 shadow-sm">
-              <div className="w-16 h-16 mx-auto rounded-3xl bg-[#FF6B00]/10 border border-[#FF6B00]/25 flex items-center justify-center">
-                <UploadCloud className="w-8 h-8 text-[#FF6B00]" />
-              </div>
-              <div>
-                <h3 className="text-base font-black text-slate-900 dark:text-white">Upload Resume File</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Supports PDF, DOCX, or TXT (Max 10MB)</p>
-              </div>
-
-              <label className="block">
-                <span className="sr-only">Choose file</span>
-                <input
-                  type="file"
-                  accept=".pdf,.docx,.txt"
-                  onChange={handleFileUpload}
-                  className="block w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-[#FF6B00] file:text-white hover:file:bg-[#E66000] cursor-pointer"
-                />
-              </label>
-
-              {uploading && (
-                <div className="text-xs font-bold text-[#FF6B00] animate-pulse">
-                  Analyzing document structure & skill density...
-                </div>
-              )}
+      {/* Main ATS Content (Matching Reference Screenshot 4) */}
+      <div className="flex-1 p-6 md:p-8 space-y-6">
+        
+        {/* Header Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#F3E8E2] pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#FF8A3D] text-white text-[10px] font-black uppercase">ANALYSIS COMPLETE</span>
+              <span className="text-[11px] font-bold text-[#78716C]">ID: SX-9921-A</span>
             </div>
-
-            {/* Extracted Skills List */}
-            {analysisData && (
-              <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-3">
-                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Extracted Technical Skills</h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {analysisData.extracted_skills?.map((skill, i) => (
-                    <span key={i} className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 text-xs font-bold flex items-center gap-1">
-                      <Check className="w-3 h-3" /> {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
+            <h1 className="text-3xl font-black text-[#1C1917] tracking-tight mt-1">ATS Analysis Complete</h1>
+            <p className="text-xs text-[#78716C] font-medium">Your resume has been processed against 45 standard ATS patterns.</p>
           </div>
 
-          {/* ATS Score & Diagnostic Breakdown (Right Column) */}
-          <div className="lg:col-span-7 space-y-6">
-            
-            {/* Circular Score Gauge Header */}
-            <div className="luxury-card p-8 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
-              <div className="space-y-2 text-center sm:text-left">
-                <span className="px-3 py-1 rounded-full bg-[#FF6B00]/10 text-[#FF6B00] font-black text-xs">
-                  Real-Time ATS Scorer v2.0
-                </span>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white">Overall ATS Match Gauge</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm font-medium">
-                  Evaluated across contact structure, action verb metrics, section headers, and formatting length.
-                </p>
-              </div>
-
-              {/* Score Gauge Circle */}
-              <div className="w-28 h-28 rounded-full border-4 border-[#FF6B00] flex flex-col items-center justify-center bg-white dark:bg-slate-900 shadow-xl">
-                <span className="text-4xl font-black text-[#FF6B00]">{atsScore}</span>
-                <span className="text-[10px] uppercase font-extrabold text-slate-400">/ 100</span>
-              </div>
-            </div>
-
-            {/* Diagnostic Categories */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-              <div className="luxury-card p-5 border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 space-y-2">
-                <div className="flex justify-between items-center text-xs font-bold">
-                  <span>Action Verbs & Impact</span>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                </div>
-                <div className="text-xl font-black text-slate-900 dark:text-white">Strong</div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">Contains high-impact action verbs (engineered, scaled, deployed).</p>
-              </div>
-
-              <div className="luxury-card p-5 border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 space-y-2">
-                <div className="flex justify-between items-center text-xs font-bold">
-                  <span>Section Structure</span>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                </div>
-                <div className="text-xl font-black text-slate-900 dark:text-white">Optimal</div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">All standard headers present (Experience, Education, Skills).</p>
-              </div>
-
-            </div>
-
-            {/* Actionable Optimization Suggestions */}
-            {analysisData?.optimization_report && (
-              <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-3">
-                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" /> Optimization Recommendations
-                </h4>
-                <div className="space-y-2 text-xs font-medium text-slate-600 dark:text-slate-300">
-                  {analysisData.optimization_report.map((item, idx) => (
-                    <div key={idx} className="p-3 rounded-2xl bg-amber-500/5 border border-amber-500/15 flex items-start gap-2">
-                      <span className="font-bold text-amber-600">•</span>
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-          </div>
-
-        </div>
-      )}
-
-      {/* AI RESUME BUILDER TAB */}
-      {activeTab === 'builder' && (
-        <div className="luxury-card p-8 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-6 shadow-sm">
-          <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-            <Bot className="w-6 h-6 text-[#FF6B00]" />
-            <div>
-              <h2 className="text-lg font-black text-slate-900 dark:text-white">AI Target Score Resume Rewrite</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Re-formats your existing parsed resume to achieve a 95+ target ATS score.</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 max-w-md">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Target ATS Score:</label>
-            <input
-              type="number"
-              min="85"
-              max="100"
-              value={builderTargetScore}
-              onChange={(e) => setBuilderTargetScore(parseInt(e.target.value))}
-              className="glass-input px-3 py-2 rounded-xl text-xs font-bold w-24"
-            />
-            <button onClick={handleRewriteResume} disabled={builderLoading} className="btn-primary px-6 py-2.5 text-xs font-black">
-              {builderLoading ? 'Optimizing...' : 'Generate Optimized Content'}
+          <div className="flex gap-2">
+            <button className="btn-terracotta-outline px-4 py-2 text-xs font-bold flex items-center gap-1.5">
+              <Download className="w-3.5 h-3.5" /> Download Report
+            </button>
+            <button className="btn-terracotta px-4 py-2 text-xs font-black flex items-center gap-1.5">
+              <Share2 className="w-3.5 h-3.5" /> Share Result
             </button>
           </div>
-
-          {builderOutput && (
-            <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-emerald-500 uppercase tracking-wider">Optimized Content Ready</span>
-                <span className="text-xs font-bold text-slate-400">Score Reached: {builderOutput.target_score || 98}/100</span>
-              </div>
-              <textarea
-                readOnly
-                value={builderOutput.rewritten_resume || builderOutput.text}
-                rows={10}
-                className="w-full glass-input p-4 rounded-xl text-xs font-mono"
-              />
-            </div>
-          )}
         </div>
-      )}
+
+        {/* Row 1: Score Circle + Radar + Heatmap (Matching Reference Screenshot 4) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Card 1: Circular Match Score */}
+          <div className="reference-card p-6 border border-[#F3E8E2] bg-white rounded-3xl text-center space-y-4 shadow-sm flex flex-col items-center justify-center">
+            <div className="w-28 h-28 rounded-full border-4 border-[#963200] flex flex-col items-center justify-center bg-white shadow-md">
+              <span className="text-4xl font-black text-[#963200]">{matchScore}</span>
+              <span className="text-[10px] font-bold text-[#78716C] uppercase">Match Score</span>
+            </div>
+            <span className="px-3.5 py-1 rounded-full bg-[#FFF0E6] text-[#963200] font-black text-xs">
+              TOP 5% OF CANDIDATES
+            </span>
+          </div>
+
+          {/* Card 2: Skill Radar Diamond */}
+          <div className="reference-card p-6 border border-[#F3E8E2] bg-white rounded-3xl space-y-3 shadow-sm flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-xs font-black text-[#963200]">
+              <Sparkles className="w-4 h-4" /> Skill Radar
+            </div>
+            <div className="h-32 rounded-2xl bg-[#FFF9F5] border border-[#F3E8E2] flex items-center justify-center p-2">
+              {/* Radar Graphic Representation */}
+              <div className="w-24 h-24 border-2 border-[#963200]/40 rotate-45 flex items-center justify-center relative">
+                <span className="absolute -top-3 text-[9px] font-bold text-[#78716C]">TECH</span>
+                <span className="absolute -bottom-3 text-[9px] font-bold text-[#78716C]">SOFT</span>
+                <span className="absolute -left-5 text-[9px] font-bold text-[#78716C]">TOOLS</span>
+                <span className="absolute -right-7 text-[9px] font-bold text-[#78716C]">EXPERIENCE</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Heatmap Analysis */}
+          <div className="reference-card p-6 border border-[#F3E8E2] bg-white rounded-3xl space-y-3 shadow-sm">
+            <div className="flex items-center gap-2 text-xs font-black text-[#963200]">
+              <FileText className="w-4 h-4" /> Heatmap Analysis
+            </div>
+            <div className="space-y-2 text-xs font-medium">
+              <div className="flex justify-between"><span>Keywords found</span><span className="font-black text-[#1C1917]">14/18</span></div>
+              <div className="flex justify-between"><span>Formatting health</span><span className="font-black text-emerald-600">98%</span></div>
+              <div className="flex justify-between"><span>Parse stability</span><span className="font-black text-[#963200]">High</span></div>
+            </div>
+            <div className="flex flex-wrap gap-1 pt-1">
+              <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">React.js</span>
+              <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">Tailwind</span>
+              <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">Architecture</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Row 2: Critical Skill Gaps + Fast Iteration Terracotta Card (Matching Reference Screenshot 4) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Critical Skill Gaps (Left) */}
+          <div className="lg:col-span-8 reference-card p-6 border border-[#F3E8E2] bg-white rounded-3xl space-y-4 shadow-sm">
+            <div className="flex justify-between items-center">
+              <h3 className="text-base font-black text-[#1C1917]">Critical Skill Gaps</h3>
+              <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 font-black text-[10px]">Priority High</span>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex justify-between items-center text-xs">
+                <div>
+                  <span className="font-black text-[#1C1917]">AZ Azure Cloud Infrastructure</span>
+                  <p className="text-[11px] text-[#78716C]">Missing 3/5 targeted certifications</p>
+                </div>
+                <span className="font-black text-[#963200]">40% Match</span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex justify-between items-center text-xs">
+                <div>
+                  <span className="font-black text-[#1C1917]">PY Advanced Python Analysis</span>
+                  <p className="text-[11px] text-[#78716C]">Pandas & NumPy benchmarks not detected</p>
+                </div>
+                <span className="font-black text-[#963200]">62% Match</span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex justify-between items-center text-xs">
+                <div>
+                  <span className="font-black text-[#1C1917]">ML Machine Learning Operations (MLOps)</span>
+                  <p className="text-[11px] text-[#78716C]">CI/CD for model deployment not quantified</p>
+                </div>
+                <span className="font-black text-[#963200]">15% Match</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Solid Terracotta Card: Fast Iteration (Right) */}
+          <div className="lg:col-span-4 rounded-3xl bg-[#963200] text-white p-6 space-y-4 shadow-xl flex flex-col justify-between">
+            <div className="space-y-2">
+              <h3 className="text-lg font-black">Fast Iteration</h3>
+              <p className="text-xs opacity-90 font-medium leading-relaxed">
+                Upload a revised version to see your score update instantly.
+              </p>
+            </div>
+
+            <label className="border-2 border-dashed border-white/40 rounded-2xl p-6 text-center cursor-pointer hover:border-white transition-all block">
+              <UploadCloud className="w-8 h-8 mx-auto text-white mb-2 animate-bounce" />
+              <span className="text-xs font-black block">Drop New Resume</span>
+              <span className="text-[10px] opacity-75">PDF, DOCX (Max 10MB)</span>
+              <input type="file" accept=".pdf,.docx,.txt" onChange={handleFileUpload} className="hidden" />
+            </label>
+
+            <div className="text-[10px] font-black uppercase text-center opacity-75 tracking-wider">
+              ⚡ AI REAL-TIME PROCESSING
+            </div>
+          </div>
+
+        </div>
+
+        {/* Row 3: Industry Benchmarks */}
+        <div className="reference-card p-6 border border-[#F3E8E2] bg-white rounded-3xl space-y-4 shadow-sm">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-base font-black text-[#1C1917]">Industry Benchmarks</h3>
+              <p className="text-xs text-[#78716C] font-medium">How you stack up against typical roles in Tech & AI.</p>
+            </div>
+            <div className="flex gap-1 bg-[#FFF0E6] p-1 rounded-xl text-xs font-bold text-[#78716C]">
+              <button className="px-3 py-1 rounded-lg bg-[#963200] text-white">Global Average</button>
+              <button className="px-3 py-1 rounded-lg">Competitors</button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 rounded-2xl bg-[#FFF0E6] space-y-2">
+              <div className="flex justify-between text-xs font-bold"><span className="text-[#A8A29E] uppercase text-[10px]">CANDIDATE POOL</span><span className="text-emerald-600">+12% vs Avg</span></div>
+              <h4 className="text-sm font-black text-[#1C1917]">Software Eng.</h4>
+              <div className="h-1.5 w-full bg-[#F3D2C1] rounded-full overflow-hidden"><div className="h-full bg-[#963200] w-[75%]" /></div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#FFF0E6] space-y-2">
+              <div className="flex justify-between text-xs font-bold"><span className="text-[#A8A29E] uppercase text-[10px]">CANDIDATE POOL</span><span className="text-rose-600">-4% vs Avg</span></div>
+              <h4 className="text-sm font-black text-[#1C1917]">Data Scientist</h4>
+              <div className="h-1.5 w-full bg-[#F3D2C1] rounded-full overflow-hidden"><div className="h-full bg-[#963200] w-[50%]" /></div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#FFF0E6] space-y-2">
+              <div className="flex justify-between text-xs font-bold"><span className="text-[#A8A29E] uppercase text-[10px]">CANDIDATE POOL</span><span className="text-emerald-600">+28% vs Avg</span></div>
+              <h4 className="text-sm font-black text-[#1C1917]">AI Researcher</h4>
+              <div className="h-1.5 w-full bg-[#F3D2C1] rounded-full overflow-hidden"><div className="h-full bg-[#963200] w-[90%]" /></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
     </div>
   );

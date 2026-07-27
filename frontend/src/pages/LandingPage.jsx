@@ -1,414 +1,230 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Sparkles, 
   ArrowRight, 
-  Play, 
+  Cpu, 
   Layers, 
-  FileText, 
-  Zap, 
-  ShieldCheck, 
-  Bot, 
-  CheckCircle2, 
   TrendingUp, 
-  ChevronDown, 
-  ChevronUp, 
-  Building2, 
-  Star, 
-  Users, 
-  Briefcase, 
-  Award,
-  Globe,
-  Heart,
-  Check
+  Globe, 
+  Check, 
+  Building2 
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export default function LandingPage() {
-  const [activeDemoTab, setActiveDemoTab] = useState('ats'); // 'ats' | 'coach' | 'match'
-  const [openFaq, setOpenFaq] = useState(null);
-
-  const toggleFaq = (index) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
-
-  const logos = [
-    "Stripe", "Linear", "Vercel", "Framer", "OpenAI", "Raycast", "Perplexity"
-  ];
-
-  const features = [
-    {
-      icon: <Layers className="w-6 h-6 text-[#FF6B00]" />,
-      title: "Swipe Right Job Discovery",
-      description: "Tinder-style gesture card feed. Swipe right to apply instantly, swipe left to skip, swipe up to save roles for later."
-    },
-    {
-      icon: <FileText className="w-6 h-6 text-[#FF6B00]" />,
-      title: "Real-Time 0-100 ATS Gauge",
-      description: "Instantly parse PDF/DOCX resumes with NLP algorithms evaluating contact info, section structure, and action verbs."
-    },
-    {
-      icon: <Zap className="w-6 h-6 text-[#FF6B00]" />,
-      title: "TF-IDF Vector Job Matching",
-      description: "Calculate semantic cosine similarity between candidate experience vectors and job requirement matrices."
-    },
-    {
-      icon: <Bot className="w-6 h-6 text-[#FF6B00]" />,
-      title: "AI Career & Interview Coach",
-      description: "Practice behavioral and STAR method interview questions with instant automated evaluation and scoring."
-    },
-    {
-      icon: <TrendingUp className="w-6 h-6 text-[#FF6B00]" />,
-      title: "Skill Gap & Salary Predictor",
-      description: "Identify missing high-demand technical skills across postings and estimate market compensation ranges."
-    },
-    {
-      icon: <ShieldCheck className="w-6 h-6 text-[#FF6B00]" />,
-      title: "Enterprise Security & Isolation",
-      description: "Role-based access controls (RBAC), OAuth2 JWT authentication, and zero hardcoded secret data isolation."
-    }
-  ];
-
-  const faqs = [
-    {
-      question: "How does the SwipeX AI matching algorithm work?",
-      answer: "SwipeX parses your resume to extract technical skill vectors and calculates TF-IDF cosine similarity against target job descriptions. The feed adapts dynamically based on your previous swipe right interactions."
-    },
-    {
-      question: "Can I upload multiple resume formats?",
-      answer: "Yes, SwipeX supports PDF, DOCX, and TXT files. Our parser extracts section headers, action verbs, and skill matrices automatically."
-    },
-    {
-      question: "Is SwipeX free for job seekers?",
-      answer: "SwipeX is 100% free for candidates! You get unlimited swipes, ATS resume scoring, AI Career Coach interactions, and salary predictions."
-    },
-    {
-      question: "How do recruiters review applications?",
-      answer: "Recruiters access Recruiter HQ, where candidate applications are ranked automatically by AI Match % and ATS Score for instant shortlisting."
-    }
-  ];
+  const logos = ["Stripe", "Linear", "Vercel", "Framer", "OpenAI", "Raycast", "Perplexity"];
 
   return (
-    <div className="space-y-24 pb-16 overflow-hidden">
+    <div className="space-y-20 pb-16 overflow-hidden bg-[#FFF9F5] text-[#1C1917]">
       
-      {/* HERO SECTION */}
-      <section className="relative pt-12 lg:pt-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        
-        {/* Background Ambient Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#FF6B00]/10 blur-[130px] rounded-full pointer-events-none -z-10" />
-
+      {/* HERO SECTION (Matching Reference Screenshot 1) */}
+      <section className="pt-12 lg:pt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Column Text */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-7 space-y-6 text-left"
-          >
-            {/* Announcement Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-xs font-bold text-slate-800 dark:text-slate-200">
-              <span className="w-2 h-2 rounded-full bg-[#FF6B00] animate-ping" />
-              <Sparkles className="w-3.5 h-3.5 text-[#FF6B00]" />
-              <span>Next-Gen AI Job Discovery Platform</span>
+          <div className="lg:col-span-6 space-y-6 text-left">
+            
+            {/* Version Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF0E6] border border-[#F3D2C1] text-xs font-bold text-[#963200]">
+              <span className="w-2 h-2 rounded-full bg-[#963200]" />
+              <span>v2.0 Intelligence Now Live</span>
             </div>
 
-            {/* Display Headline */}
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.08]">
-              Swipe Right on Your <br />
-              <span className="gradient-text">Next Dream Career</span>
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-[#1C1917] leading-[1.1]">
+              The Intelligent Career <br />
+              <span className="text-[#963200]">Operating System.</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-xl">
-              SwipeX combines Tinder-style gesture discovery with Python TF-IDF AI matching, real-time 0-100 ATS resume scoring, and STAR interview coaching.
+            <p className="text-sm sm:text-base text-[#78716C] font-medium leading-relaxed max-w-lg">
+              SwipeX leverages proprietary neural engines to automate career workflows, analyze market shifts, and bridge the gap between talent and opportunity.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
                 to="/signup"
-                className="btn-primary px-8 py-4 text-sm font-black flex items-center justify-center gap-2.5 group shadow-[0_10px_30px_rgba(255,107,0,0.35)]"
+                className="px-7 py-3.5 rounded-xl bg-[#963200] hover:bg-[#802B00] text-white text-xs font-black shadow-[0_6px_20px_rgba(150,50,0,0.3)] transition-all hover:scale-105"
               >
-                Start Swiping Free
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Get Started
               </Link>
-
               <Link
-                to="/login"
-                className="px-8 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-extrabold text-slate-900 dark:text-white flex items-center justify-center gap-2 transition-all shadow-sm"
+                to="/jobs"
+                className="px-7 py-3.5 rounded-xl border border-[#F3E8E2] bg-white text-xs font-bold text-[#57534E] hover:bg-[#FFF0E6] hover:text-[#963200] transition-all"
               >
-                <Play className="w-4 h-4 text-[#FF6B00] fill-[#FF6B00]" />
-                Explore Demo Presets
+                View Documentation
               </Link>
             </div>
 
-            {/* Metrics Bar */}
-            <div className="pt-8 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-6">
-              <div>
-                <div className="text-2xl font-black text-slate-900 dark:text-white">98.4%</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">ATS Accuracy</div>
-              </div>
-              <div>
-                <div className="text-2xl font-black text-slate-900 dark:text-white">10k+</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Matched Roles</div>
-              </div>
-              <div>
-                <div className="text-2xl font-black text-slate-900 dark:text-white">&lt;2 sec</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Parse Speed</div>
-              </div>
+          </div>
+
+          {/* Right Column 3D Artwork Box (Matching Reference Screenshot 1) */}
+          <div className="lg:col-span-6 relative">
+            <div className="rounded-3xl border border-[#F3E8E2] bg-white p-4 shadow-xl overflow-hidden relative">
+              <img
+                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
+                alt="Neural Wireframe Art"
+                className="w-full h-80 object-cover rounded-2xl"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#FFF9F5]/80 via-transparent to-transparent pointer-events-none" />
             </div>
-
-          </motion.div>
-
-          {/* Right Column Floating Card Preview */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="lg:col-span-5 relative"
-          >
-            {/* Animated Card Container */}
-            <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 shadow-2xl space-y-6 relative z-10">
-              
-              <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-lg shadow-md">
-                    N
-                  </div>
-                  <div>
-                    <h3 className="font-black text-base text-slate-900 dark:text-white">Senior AI Engineer</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">NeuralStack Labs • San Francisco, CA</p>
-                  </div>
-                </div>
-                <div className="px-3 py-1.5 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/25 text-[#FF6B00] font-black text-xs">
-                  96% Match
-                </div>
-              </div>
-
-              {/* Card Meta Badges */}
-              <div className="flex flex-wrap gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
-                <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800">$180k - $220k</span>
-                <span className="px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border border-emerald-200 dark:border-emerald-800">100% Remote</span>
-                <span className="px-3 py-1 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 border border-purple-200 dark:border-purple-800">Growth Startup</span>
-              </div>
-
-              {/* Skills Fit Matrix */}
-              <div className="space-y-2">
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Matching Skill Matrix</div>
-                <div className="flex flex-wrap gap-1.5">
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 text-xs font-bold flex items-center gap-1">
-                    <Check className="w-3.5 h-3.5" /> Python FastAPI
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 text-xs font-bold flex items-center gap-1">
-                    <Check className="w-3.5 h-3.5" /> PyTorch
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 text-xs font-bold flex items-center gap-1">
-                    <Check className="w-3.5 h-3.5" /> React 18
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-600 text-xs font-bold">
-                    ! Docker K8s
-                  </span>
-                </div>
-              </div>
-
-              {/* Floating Action Buttons */}
-              <div className="flex items-center justify-center gap-4 pt-2">
-                <div className="w-12 h-12 rounded-full border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center font-black shadow-sm">
-                  ✕
-                </div>
-                <div className="w-14 h-14 rounded-full bg-gradient-to-r from-[#FF6B00] to-[#FF9D42] text-white flex items-center justify-center font-black text-xl shadow-[0_8px_25px_rgba(255,107,0,0.45)]">
-                  ➔
-                </div>
-              </div>
-
-            </div>
-          </motion.div>
+          </div>
 
         </div>
       </section>
 
-      {/* TRUSTED COMPANY LOGOS */}
-      <section className="border-y border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 py-10">
-        <div className="max-w-7xl mx-auto px-4 text-center space-y-4">
-          <p className="text-xs uppercase font-extrabold tracking-widest text-slate-400">Trusted by Candidates & Recruiters at Leading Tech Organizations</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
-            {logos.map((logo, i) => (
-              <span key={i} className="text-lg font-black tracking-tight text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-                {logo}
-              </span>
-            ))}
+      {/* TRUSTED BY INDUSTRY LEADERS */}
+      <section className="py-8 text-center space-y-4 max-w-7xl mx-auto px-4">
+        <p className="text-[11px] font-black uppercase tracking-widest text-[#A8A29E]">TRUSTED BY INDUSTRY LEADERS</p>
+        <div className="flex flex-wrap justify-center items-center gap-12 opacity-60">
+          {logos.map((logo, i) => (
+            <span key={i} className="text-base font-black text-[#78716C] tracking-tight hover:text-[#963200] transition-colors">
+              {logo}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* METRICS BAR */}
+      <section className="max-w-5xl mx-auto px-4">
+        <div className="rounded-2xl bg-[#FFF0E6] border border-[#F3D2C1] p-6 grid grid-cols-2 text-center divide-x divide-[#F3D2C1]">
+          <div>
+            <div className="text-2xl font-black text-[#963200]">98%</div>
+            <div className="text-[11px] font-extrabold uppercase text-[#78716C]">MATCH ACCURACY</div>
+          </div>
+          <div>
+            <div className="text-2xl font-black text-[#963200]">1,200+</div>
+            <div className="text-[11px] font-extrabold uppercase text-[#78716C]">JOBS INDEXED</div>
           </div>
         </div>
       </section>
 
-      {/* INTERACTIVE AI DEMO PREVIEW SWITCHER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-            See the AI Engine in Action
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-            Explore live interactive previews of our ATS Scorer, AI Career Strategy Coach, and TF-IDF Job Matching Matrix.
+      {/* ARCHITECTED FOR PROFESSIONAL VELOCITY */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-black text-[#1C1917] tracking-tight">Architected for Professional Velocity</h2>
+          <p className="text-xs text-[#78716C] font-medium">
+            Our core infrastructure uses high-performance compute to deliver actionable insights in milliseconds.
           </p>
         </div>
 
-        {/* Demo Tabs */}
-        <div className="flex justify-center gap-2 max-w-md mx-auto">
-          <button
-            onClick={() => setActiveDemoTab('ats')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
-              activeDemoTab === 'ats'
-                ? 'bg-[#FF6B00] text-white shadow-md shadow-orange-500/25'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-            }`}
-          >
-            ATS Scorer
-          </button>
-          <button
-            onClick={() => setActiveDemoTab('coach')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
-              activeDemoTab === 'coach'
-                ? 'bg-[#FF6B00] text-white shadow-md shadow-orange-500/25'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-            }`}
-          >
-            AI Career Coach
-          </button>
-          <button
-            onClick={() => setActiveDemoTab('match')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
-              activeDemoTab === 'match'
-                ? 'bg-[#FF6B00] text-white shadow-md shadow-orange-500/25'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-            }`}
-          >
-            Match Matrix
-          </button>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Card 1: Neural Engine */}
+          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-6 space-y-4 shadow-sm md:col-span-2">
+            <div className="w-10 h-10 rounded-xl bg-[#FFF0E6] text-[#963200] flex items-center justify-center font-bold">
+              <Cpu className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-black text-[#1C1917]">Neural Engine</h3>
+            <p className="text-xs text-[#78716C] font-medium">
+              Advanced vector embeddings that understand the nuances of career trajectory, sentiment, and latent skills better than any legacy system.
+            </p>
+            <div className="h-40 rounded-2xl bg-slate-950 p-4 text-white overflow-hidden relative">
+              <img
+                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
+                alt="Neural Network Preview"
+                className="w-full h-full object-cover rounded-xl opacity-80"
+              />
+            </div>
+          </div>
 
-        {/* Demo Content Box */}
-        <div className="luxury-card p-8 border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 shadow-xl max-w-4xl mx-auto">
-          <AnimatePresence mode="wait">
-            {activeDemoTab === 'ats' && (
-              <motion.div key="ats" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-bold">ATS Score: 94 / 100</span>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">Instant Section & Action Verb Evaluation</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                    Evaluates resume contact details, summary clarity, technical skill density, impact metrics, and section structure.
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-bold"><span>Impact Action Verbs</span><span className="text-emerald-500">Strong (18 verbs)</span></div>
-                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-emerald-500 w-[94%]" /></div>
-                  </div>
-                </div>
-                <div className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-center space-y-3">
-                  <div className="w-24 h-24 mx-auto rounded-full border-4 border-[#FF6B00] flex items-center justify-center text-3xl font-black text-[#FF6B00]">
-                    94
-                  </div>
-                  <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Resume Optimized for Enterprise ATS Software</p>
-                </div>
-              </motion.div>
-            )}
+          {/* Card 2: Workflow Logic */}
+          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-6 space-y-4 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-[#FFF0E6] text-[#963200] flex items-center justify-center font-bold">
+              <Layers className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-black text-[#1C1917]">Workflow Logic</h3>
+            <p className="text-xs text-[#78716C] font-medium">
+              Automate your entire career search pipeline with custom logic nodes and triggered responses.
+            </p>
+          </div>
 
-            {activeDemoTab === 'coach' && (
-              <motion.div key="coach" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
-                <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-                  <Bot className="w-6 h-6 text-[#FF6B00]" />
-                  <div>
-                    <h3 className="font-black text-slate-900 dark:text-white text-base">STAR Method Interview Practice Simulator</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Practice answers and receive instant scoring based on Situation, Task, Action, Result.</p>
-                  </div>
-                </div>
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 text-xs font-medium space-y-2">
-                  <p className="font-bold text-[#FF6B00]">Prompt: "Tell me about a technical bottleneck you resolved under pressure."</p>
-                  <p className="text-slate-600 dark:text-slate-300">AI Evaluation Result: STAR Score 90/100. Strong action and measurable metric result included (+45% query speed optimization).</p>
-                </div>
-              </motion.div>
-            )}
+          {/* Card 3: Market Analytics */}
+          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-6 space-y-4 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-[#FFF0E6] text-[#963200] flex items-center justify-center font-bold">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-black text-[#1C1917]">Market Analytics</h3>
+            <p className="text-xs text-[#78716C] font-medium">
+              Real-time tracking of salary benchmarks and demand shifts across 145+ industry sectors.
+            </p>
+          </div>
 
-            {activeDemoTab === 'match' && (
-              <motion.div key="match" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
-                <h3 className="text-xl font-black text-slate-900 dark:text-white">TF-IDF Vector Cosine Similarity</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                  Converts candidate experience text into mathematical skill vectors and compares against job post matrices for accurate ranking.
-                </p>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80"><div className="text-2xl font-black text-[#FF6B00]">0.88</div><div className="text-xs text-slate-400 font-bold">Cosine Score</div></div>
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80"><div className="text-2xl font-black text-emerald-500">12/14</div><div className="text-xs text-slate-400 font-bold">Skills Matched</div></div>
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80"><div className="text-2xl font-black text-purple-500">96%</div><div className="text-xs text-slate-400 font-bold">Rank Score</div></div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
-
-      {/* FEATURE MATRIX GRID */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#FF6B00]">Engineered For Success</span>
-          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
-            Comprehensive Career Intelligence
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feat, idx) => (
-            <motion.div
-              key={idx}
-              whileHover={{ y: -4 }}
-              className="luxury-card p-8 border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 space-y-4 shadow-sm"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-[#FF6B00]/10 border border-[#FF6B00]/20 flex items-center justify-center">
-                {feat.icon}
-              </div>
-              <h3 className="text-lg font-black text-slate-900 dark:text-white">{feat.title}</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                {feat.description}
+          {/* Card 4: Global Career Network (Dark Terracotta Card) */}
+          <div className="rounded-3xl bg-[#963200] text-white p-6 space-y-4 shadow-xl md:col-span-2 flex flex-col justify-between">
+            <div className="space-y-2">
+              <h3 className="text-xl font-black">Global Career Network</h3>
+              <p className="text-xs opacity-90 font-medium max-w-md">
+                Instant connectivity to hiring managers and technical recruiters at top-tier firms globally.
               </p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ SECTION */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-black text-slate-900 dark:text-white">Frequently Asked Questions</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Everything you need to know about SwipeX.</p>
-        </div>
-
-        <div className="space-y-4">
-          {faqs.map((faq, i) => (
-            <div key={i} className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer" onClick={() => toggleFaq(i)}>
-              <div className="flex justify-between items-center text-sm font-bold text-slate-900 dark:text-white">
-                <span>{faq.question}</span>
-                {openFaq === i ? <ChevronUp className="w-4 h-4 text-[#FF6B00]" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
-              </div>
-              {openFaq === i && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 leading-relaxed font-medium">
-                  {faq.answer}
-                </p>
-              )}
             </div>
-          ))}
+            <div>
+              <Link to="/signup" className="px-5 py-2.5 rounded-xl bg-white text-[#963200] text-xs font-black inline-block shadow-sm">
+                Join Network
+              </Link>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      {/* CALL TO ACTION CARD */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="luxury-card p-12 bg-gradient-to-r from-[#FF6B00] to-[#FF9D42] text-white text-center space-y-6 shadow-2xl relative overflow-hidden">
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight">Ready to Accelerate Your Career?</h2>
-          <p className="text-xs sm:text-sm font-semibold max-w-xl mx-auto opacity-90">
-            Join candidates and recruiters using SwipeX for effortless job discovery and intelligent ATS matching.
-          </p>
-          <div className="flex justify-center gap-4 pt-2">
-            <Link to="/signup" className="px-8 py-4 bg-white text-slate-900 font-black rounded-2xl text-xs hover:bg-slate-100 transition-all shadow-lg">
-              Get Started Free Now
-            </Link>
+      {/* PRICING SECTION */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="text-center space-y-2">
+          <h2 className="text-3xl font-black text-[#1C1917]">Simple, Predictable Pricing</h2>
+          <p className="text-xs text-[#78716C] font-medium">Choose the plan that matches your career velocity.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Base */}
+          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-8 space-y-6 text-center shadow-sm">
+            <div>
+              <h3 className="text-lg font-black text-[#1C1917]">Base</h3>
+              <div className="text-3xl font-black text-[#1C1917] mt-2">$0 <span className="text-xs text-[#78716C] font-bold">/mo</span></div>
+            </div>
+            <ul className="text-xs font-medium text-[#57534E] space-y-2 text-left">
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> 5 Jobs Managed</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Standard Neural Analysis</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Email Support</li>
+            </ul>
+            <Link to="/signup" className="btn-terracotta-outline w-full py-3 text-xs font-bold block">Start Free</Link>
           </div>
+
+          {/* Enterprise Pro (Featured) */}
+          <div className="rounded-3xl border-2 border-[#963200] bg-white p-8 space-y-6 text-center shadow-xl relative">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#963200] text-white text-[10px] font-black uppercase tracking-wider">
+              MOST POPULAR
+            </span>
+            <div>
+              <h3 className="text-lg font-black text-[#1C1917]">Enterprise Pro</h3>
+              <div className="text-3xl font-black text-[#963200] mt-2">$79 <span className="text-xs text-[#78716C] font-bold">/mo</span></div>
+            </div>
+            <ul className="text-xs font-medium text-[#57534E] space-y-2 text-left">
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> Unlimited Jobs</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> 10x Neural Engine Speed</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> Custom Workflow Logic</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> Priority API Access</li>
+            </ul>
+            <Link to="/signup" className="btn-terracotta w-full py-3 text-xs font-black block">Get Pro Access</Link>
+          </div>
+
+          {/* Custom */}
+          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-8 space-y-6 text-center shadow-sm">
+            <div>
+              <h3 className="text-lg font-black text-[#1C1917]">Custom</h3>
+              <div className="text-3xl font-black text-[#1C1917] mt-2">Inquire</div>
+            </div>
+            <ul className="text-xs font-medium text-[#57534E] space-y-2 text-left">
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> SLA Guarantees</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Dedicated Infrastructure</li>
+              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> On-site Training</li>
+            </ul>
+            <Link to="/signup" className="btn-terracotta-outline w-full py-3 text-xs font-bold block">Contact Sales</Link>
+          </div>
+
         </div>
       </section>
 

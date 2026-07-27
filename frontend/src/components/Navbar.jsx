@@ -4,18 +4,17 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { 
   Sparkles, 
-  Layers, 
-  FileText, 
   Search, 
-  BarChart3, 
-  Bookmark, 
-  Briefcase, 
-  ShieldCheck, 
+  Moon, 
+  Sun, 
+  ChevronDown, 
   User, 
   LogOut, 
-  ChevronDown,
-  Sun,
-  Moon,
+  Briefcase, 
+  ShieldCheck,
+  Layers,
+  FileText,
+  BarChart3,
   Bot
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,200 +25,136 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const isActive = (path) => location.pathname === path;
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate('/jobs');
+    }
+  };
+
   return (
-    <nav className="sticky top-0 z-40 glass-panel border-b border-slate-200 dark:border-neutral-800 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-50 bg-[#FFF9F5]/90 dark:bg-[#0F0D0C]/90 backdrop-blur-md border-b border-[#F3E8E2] dark:border-[#3D3835] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 gap-4">
           
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 font-extrabold text-xl tracking-tight">
-            <motion.div 
-              whileHover={{ rotate: 12, scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF6B00] to-[#FF9D42] flex items-center justify-center shadow-[0_4px_15px_rgba(255,107,0,0.35)]"
-            >
-              <Sparkles className="w-5 h-5 text-white animate-pulse" />
-            </motion.div>
-            <span className="gradient-text text-2xl font-black tracking-tight">SwipeX</span>
-            <span className="text-[10px] uppercase font-black tracking-widest px-2.5 py-0.5 rounded-full bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border border-[#FF6B00]/20">
-              AI Job Platform
-            </span>
-          </Link>
+          {/* Logo & Platform Nav */}
+          <div className="flex items-center gap-8">
+            <Link to="/" className="flex items-center gap-2 font-black text-xl tracking-tight text-[#963200] dark:text-[#FF8A3D]">
+              SwipeX
+            </Link>
 
-          {/* Navigation Links */}
-          {user && (
-            <div className="hidden md:flex items-center gap-1.5">
-              <Link
-                to="/swipe"
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                  isActive('/swipe')
-                    ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
-                    : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                }`}
-              >
-                <Layers className="w-4 h-4 text-[#FF6B00]" />
-                Swipe Feed
+            <nav className="hidden md:flex items-center gap-6 text-xs font-bold text-[#57534E] dark:text-[#A8A29E]">
+              <Link to="/swipe" className={`hover:text-[#963200] transition-colors ${isActive('/swipe') ? 'text-[#963200] font-black' : ''}`}>
+                Models
               </Link>
-
-              <Link
-                to="/resume-analyzer"
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                  isActive('/resume-analyzer')
-                    ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
-                    : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                }`}
-              >
-                <FileText className="w-4 h-4 text-[#FF6B00]" />
-                ATS Analyzer
+              <Link to="/jobs" className={`hover:text-[#963200] transition-colors ${isActive('/jobs') ? 'text-[#963200] font-black' : ''}`}>
+                Datasets
               </Link>
-
-              <Link
-                to="/ai-hub"
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                  isActive('/ai-hub')
-                    ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
-                    : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                }`}
-              >
-                <Bot className="w-4 h-4 text-[#FF6B00]" />
-                AI Studio
+              <Link to="/resume-analyzer" className={`hover:text-[#963200] transition-colors ${isActive('/resume-analyzer') ? 'text-[#963200] font-black' : ''}`}>
+                Compute
               </Link>
-
-              <Link
-                to="/jobs"
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                  isActive('/jobs')
-                    ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
-                    : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                }`}
-              >
-                <Search className="w-4 h-4 text-[#FF6B00]" />
-                Smart Search
+              <Link to="/ai-hub" className={`hover:text-[#963200] transition-colors ${isActive('/ai-hub') ? 'text-[#963200] font-black' : ''}`}>
+                API
               </Link>
+            </nav>
+          </div>
 
-              <Link
-                to="/dashboard"
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                  isActive('/dashboard')
-                    ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
-                    : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                }`}
-              >
-                <BarChart3 className="w-4 h-4 text-[#FF6B00]" />
-                Analytics
-              </Link>
+          {/* Search Bar (Matching Reference Screenshot 2, 3, 4) */}
+          <form onSubmit={handleSearchSubmit} className="hidden sm:flex flex-1 max-w-xs items-center relative">
+            <Search className="w-3.5 h-3.5 absolute left-3.5 text-[#A8A29E]" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search positions..."
+              className="w-full pl-9 pr-4 py-1.5 rounded-full bg-[#FFF5F0] dark:bg-[#1C1917] border border-[#F3E8E2] dark:border-[#3D3835] text-xs font-medium text-[#1C1917] dark:text-white focus:outline-none focus:border-[#963200]"
+            />
+          </form>
 
-              <Link
-                to="/saved"
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                  isActive('/saved')
-                    ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
-                    : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                }`}
-              >
-                <Bookmark className="w-4 h-4 text-[#FF6B00]" />
-                Saved
-              </Link>
-
-              {['recruiter', 'recruiter_unverified'].includes(user.role) && (
-                <Link
-                  to="/recruiter"
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                    isActive('/recruiter')
-                      ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
-                      : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                  }`}
-                >
-                  <Briefcase className="w-4 h-4 text-[#FF6B00]" />
-                  Recruiter HQ
-                </Link>
-              )}
-
-              {user.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
-                    isActive('/admin')
-                      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30 shadow-sm'
-                      : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
-                  }`}
-                >
-                  <ShieldCheck className="w-4 h-4 text-rose-500" />
-                  Admin
-                </Link>
-              )}
-            </div>
-          )}
-
-          {/* Right Menu (Auth / Profile Dropdown) */}
+          {/* Right Header Actions */}
           <div className="flex items-center gap-3">
-            {/* Theme Toggle Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            
+            {/* Theme Toggle Icon */}
+            <button
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl border border-slate-200 dark:border-neutral-800 bg-slate-100/80 dark:bg-neutral-800/60 hover:border-[#FF6B00]/40 text-slate-600 dark:text-neutral-300 hover:text-[#FF6B00] transition-all focus:outline-none"
-              aria-label="Toggle theme mode"
+              className="p-2 rounded-full hover:bg-[#FFF0E6] dark:hover:bg-[#262322] text-[#57534E] dark:text-[#A8A29E] transition-colors"
+              aria-label="Toggle theme"
             >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-[#FF9D42]" />
-              ) : (
-                <Moon className="w-4 h-4 text-[#FF6B00]" />
-              )}
-            </motion.button>
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-[#FF8A3D]" /> : <Moon className="w-4 h-4 text-[#57534E]" />}
+            </button>
 
+            {/* Upgrade Button (Matching Reference Screenshot Pill) */}
+            <Link
+              to="/swipe"
+              className="px-4 py-1.5 rounded-full bg-[#963200] hover:bg-[#802B00] text-white text-xs font-bold shadow-sm transition-all hover:scale-105"
+            >
+              Upgrade
+            </Link>
+
+            {/* User Profile Avatar / Auth */}
             {user ? (
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-3 px-3 py-1.5 rounded-xl glass-panel border border-slate-200 dark:border-neutral-800 hover:border-[#FF6B00]/40 transition-all focus:outline-none"
+                  className="flex items-center gap-2 focus:outline-none"
                 >
                   <img
                     src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}
-                    alt="Profile Avatar"
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-[#FF6B00]/30"
+                    alt="User Avatar"
+                    className="w-8 h-8 rounded-full object-cover ring-2 ring-[#963200]/40"
                   />
-                  <div className="hidden sm:block text-left">
-                    <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{user.full_name}</div>
-                    <div className="text-[10px] text-slate-500 dark:text-neutral-400 capitalize font-medium">{user.role.replace('_', ' ')}</div>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400 dark:text-neutral-500" />
                 </button>
 
                 <AnimatePresence>
                   {dropdownOpen && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-56 glass-panel rounded-2xl p-2 shadow-2xl border border-slate-200 dark:border-neutral-800 z-50 bg-white dark:bg-[#161616]"
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      className="absolute right-0 mt-2 w-56 rounded-2xl p-2 bg-white dark:bg-[#1C1917] border border-[#F3E8E2] dark:border-[#3D3835] shadow-xl z-50 space-y-1"
                     >
-                      <div className="px-3 py-2 border-b border-slate-100 dark:border-neutral-800 mb-1">
-                        <p className="text-[10px] text-slate-400 dark:text-neutral-500 uppercase font-bold tracking-wider">Signed in as</p>
-                        <p className="text-xs font-black text-slate-900 dark:text-white truncate">{user.email}</p>
+                      <div className="px-3 py-2 border-b border-[#F3E8E2] dark:border-[#3D3835]">
+                        <p className="text-[10px] text-[#A8A29E] uppercase font-bold">Signed in as</p>
+                        <p className="text-xs font-black text-[#1C1917] dark:text-white truncate">{user.email}</p>
                       </div>
 
                       <Link
                         to="/profile"
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-600 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60 rounded-xl transition-all"
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] rounded-xl"
                       >
-                        <User className="w-4 h-4 text-[#FF6B00]" />
-                        My Profile
+                        <User className="w-4 h-4 text-[#963200]" /> My Profile
+                      </Link>
+
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] rounded-xl"
+                      >
+                        <BarChart3 className="w-4 h-4 text-[#963200]" /> Analytics
                       </Link>
 
                       {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                         <Link
                           to="/recruiter"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-600 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60 rounded-xl transition-all"
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] rounded-xl"
                         >
-                          <Briefcase className="w-4 h-4 text-[#FF6B00]" />
-                          Recruiter Dashboard
+                          <Briefcase className="w-4 h-4 text-[#963200]" /> Recruiter HQ
+                        </Link>
+                      )}
+
+                      {user.role === 'admin' && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 rounded-xl"
+                        >
+                          <ShieldCheck className="w-4 h-4" /> Admin Console
                         </Link>
                       )}
 
@@ -229,35 +164,29 @@ export default function Navbar() {
                           logout();
                           navigate('/');
                         }}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all mt-1"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl mt-1"
                       >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
+                        <LogOut className="w-4 h-4" /> Sign Out
                       </button>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-xs font-bold text-slate-600 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white transition-colors"
-                >
+              <div className="flex items-center gap-2">
+                <Link to="/login" className="px-3.5 py-1.5 text-xs font-bold text-[#57534E] hover:text-[#963200]">
                   Log In
                 </Link>
-                <Link
-                  to="/signup"
-                  className="px-5 py-2 text-xs font-black text-white bg-gradient-to-r from-[#FF6B00] to-[#FF9D42] rounded-xl shadow-[0_4px_15px_rgba(255,107,0,0.35)] hover:shadow-[0_4px_25px_rgba(255,107,0,0.55)] transition-all hover:scale-105"
-                >
-                  Get Started
+                <Link to="/signup" className="px-4 py-1.5 rounded-full bg-[#963200] text-white text-xs font-bold shadow-sm">
+                  Sign Up
                 </Link>
               </div>
             )}
+
           </div>
 
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

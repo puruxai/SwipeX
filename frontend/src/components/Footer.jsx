@@ -1,40 +1,55 @@
 import React from 'react';
-import { Sparkles, Heart, ShieldCheck, Cpu } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowRight, Share2, Sparkles } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="glass-panel border-t border-slate-200 dark:border-neutral-800 mt-20 bg-slate-50/70 dark:bg-neutral-900/60 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-3">
-            <motion.div 
-              whileHover={{ rotate: 12 }}
-              className="w-9 h-9 rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/25 flex items-center justify-center shadow-sm"
-            >
-              <Sparkles className="w-4.5 h-4.5 text-[#FF6B00]" />
-            </motion.div>
-            <div>
-              <span className="gradient-text font-black text-xl tracking-tight">SwipeX</span>
-              <p className="text-xs text-slate-500 dark:text-neutral-400 font-medium">Next-Generation AI Career & Job Discovery Platform</p>
+    <footer className="bg-[#FFEBE0] dark:bg-[#1A1614] border-t border-[#F3D2C1] dark:border-[#3D3835] mt-20 text-[#57534E] dark:text-[#A8A29E] transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          {/* Brand Info */}
+          <div className="space-y-3 md:col-span-1">
+            <h3 className="font-black text-xl text-[#963200] dark:text-[#FF8A3D]">SwipeX AI</h3>
+            <p className="text-xs text-[#78716C] leading-relaxed font-medium">
+              Empowering the next generation of workforce with intelligent insights and predictive career mapping.
+            </p>
+            <div className="text-[11px] font-bold text-[#A8A29E] pt-2">
+              © 2026 SwipeX AI Career Platform. Built for the future of work.
             </div>
           </div>
 
-          <div className="flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-neutral-400">
-            <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700">
-              <Cpu className="w-4 h-4 text-[#FF6B00]" /> AI Recommendation Engine v1.0
-            </span>
-            <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40">
-              <ShieldCheck className="w-4 h-4 text-[#22C55E]" /> Enterprise 256-bit Security
-            </span>
+          {/* Platform Column */}
+          <div className="space-y-2 text-xs font-bold">
+            <h4 className="text-xs font-black text-[#1C1917] dark:text-white uppercase tracking-wider mb-2">Platform</h4>
+            <div><a href="#" className="hover:text-[#963200]">Privacy</a></div>
+            <div><a href="#" className="hover:text-[#963200]">Terms</a></div>
+            <div><a href="#" className="hover:text-[#963200]">AI Ethics</a></div>
           </div>
-        </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-neutral-800/60 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500 dark:text-neutral-500">
-          <p>© 2026 SwipeX Platform Inc. All rights reserved.</p>
-          <p className="flex items-center gap-1.5">
-            Built with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> using React, FastAPI, & Scikit-Learn.
-          </p>
+          {/* Developers Column */}
+          <div className="space-y-2 text-xs font-bold">
+            <h4 className="text-xs font-black text-[#1C1917] dark:text-white uppercase tracking-wider mb-2">Support</h4>
+            <div><a href="#" className="hover:text-[#963200]">API Docs</a></div>
+            <div><a href="#" className="hover:text-[#963200]">Open Source</a></div>
+            <div><a href="#" className="hover:text-[#963200]">Status</a></div>
+          </div>
+
+          {/* Newsletter Column */}
+          <div className="space-y-3 text-xs font-bold">
+            <h4 className="text-xs font-black text-[#1C1917] dark:text-white uppercase tracking-wider">Newsletter</h4>
+            <p className="text-[11px] text-[#78716C] font-medium">Get the latest insights on AI careers.</p>
+            <form onSubmit={(e) => e.preventDefault()} className="flex items-center gap-1.5">
+              <input
+                type="email"
+                placeholder="Email address"
+                className="w-full px-3.5 py-2 rounded-full bg-white dark:bg-[#262322] border border-[#F3E8E2] dark:border-[#3D3835] text-xs focus:outline-none focus:border-[#963200]"
+              />
+              <button type="submit" className="w-8 h-8 rounded-full bg-[#963200] text-white flex items-center justify-center flex-shrink-0 shadow-sm hover:scale-105 transition-all">
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
+
         </div>
       </div>
     </footer>

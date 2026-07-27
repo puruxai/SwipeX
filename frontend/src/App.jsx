@@ -21,6 +21,7 @@ const AppliedJobs = lazy(() => import('./pages/AppliedJobs'));
 const RecruiterDashboard = lazy(() => import('./pages/RecruiterDashboard'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const Profile = lazy(() => import('./pages/Profile'));
+const AICareerHub = lazy(() => import('./pages/AICareerHub'));
 const NotFoundPage = lazy(() => import('./pages/ErrorPage').then(module => ({ default: module.NotFoundPage })));
 
 // Loading skeleton fallback
@@ -63,6 +64,7 @@ export default function App() {
 
                       <Route path="/swipe" element={<ProtectedRoute><SwipeJobs /></ProtectedRoute>} />
                       <Route path="/resume-analyzer" element={<ProtectedRoute><ResumeAnalyzer /></ProtectedRoute>} />
+                      <Route path="/ai-hub" element={<ProtectedRoute><AICareerHub /></ProtectedRoute>} />
                       <Route path="/jobs" element={<ProtectedRoute><JobSearch /></ProtectedRoute>} />
                       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                       <Route path="/saved" element={<ProtectedRoute><SavedJobs /></ProtectedRoute>} />

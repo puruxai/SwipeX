@@ -15,7 +15,8 @@ import {
   LogOut, 
   ChevronDown,
   Sun,
-  Moon
+  Moon,
+  Bot
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -73,6 +74,18 @@ export default function Navbar() {
               >
                 <FileText className="w-4 h-4 text-[#FF6B00]" />
                 ATS Analyzer
+              </Link>
+
+              <Link
+                to="/ai-hub"
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
+                  isActive('/ai-hub')
+                    ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border-[#FF6B00]/30 shadow-sm'
+                    : 'text-slate-600 dark:text-neutral-400 border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
+                }`}
+              >
+                <Bot className="w-4 h-4 text-[#FF6B00]" />
+                AI Studio
               </Link>
 
               <Link

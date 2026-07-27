@@ -89,7 +89,9 @@ export const AuthProvider = ({ children }) => {
 
     // Reset caches if present
     if (window.QueryClient) {
-      try { window.QueryClient.clear(); } catch (e) {}
+      try { window.QueryClient.clear(); } catch (e) {
+        // ignore error if QueryClient is not initialized
+      }
     }
 
     setToken(null);

@@ -7,7 +7,8 @@ import {
   Briefcase, 
   Award, 
   CheckCircle2, 
-  Zap
+  Zap, 
+  ArrowUpRight
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -35,14 +36,18 @@ export default function Dashboard() {
       const res = await API.get('/analytics/dashboard');
       setData(res.data);
     } catch (err) {
-      addToast('Unable to load dashboard analytics. Please try again.', 'error');
+      addToast('Unable to load dashboard analytics.', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   if (loading || !data) {
-    return <div className="py-20 text-center text-xs font-bold text-slate-400 dark:text-neutral-500">Loading candidate analytics dashboard...</div>;
+    return (
+      <div className="py-20 text-center text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest animate-pulse">
+        Loading Candidate Analytics Dashboard...
+      </div>
+    );
   }
 
   const { summary, monthly_trends, skill_gap_report } = data;
@@ -52,29 +57,31 @@ export default function Dashboard() {
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+        <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
           <BarChart3 className="w-8 h-8 text-[#FF6B00]" />
-          Candidate Discovery Dashboard
+          Candidate Discovery Analytics
         </h1>
-        <p className="text-xs text-slate-500 dark:text-neutral-400 mt-1 font-medium">
-          Real-time analytics on applications, ATS score trends, and AI skill gap recommendations.
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          Real-time metrics on application velocity, ATS score trends, and AI skill gap readiness.
         </p>
       </div>
 
-      {/* Metrics Widgets */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI METRIC WIDGETS */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         
-        <motion.div whileHover={{ y: -4 }} className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 space-y-2 bg-white/80 dark:bg-neutral-900/80 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400 text-xs font-bold">
+        <motion.div whileHover={{ y: -4 }} className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-bold">
             <span>Total Applications</span>
             <Briefcase className="w-4 h-4 text-[#FF6B00]" />
           </div>
           <div className="text-3xl font-black text-slate-900 dark:text-white">{summary.total_applied}</div>
-          <div className="text-[11px] text-[#22C55E] font-bold">Applied via Swipe Right</div>
+          <div className="text-[11px] text-emerald-500 font-bold flex items-center gap-1">
+            <ArrowUpRight className="w-3.5 h-3.5" /> Applied via Swipe Right
+          </div>
         </motion.div>
 
-        <motion.div whileHover={{ y: -4 }} className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 space-y-2 bg-white/80 dark:bg-neutral-900/80 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400 text-xs font-bold">
+        <motion.div whileHover={{ y: -4 }} className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-bold">
             <span>Interview Rate</span>
             <TrendingUp className="w-4 h-4 text-[#FF6B00]" />
           </div>
@@ -82,54 +89,54 @@ export default function Dashboard() {
           <div className="text-[11px] text-[#FF6B00] font-bold">{summary.interviewing} Active Interviews</div>
         </motion.div>
 
-        <motion.div whileHover={{ y: -4 }} className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 space-y-2 bg-white/80 dark:bg-neutral-900/80 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400 text-xs font-bold">
+        <motion.div whileHover={{ y: -4 }} className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-bold">
             <span>Average Match Score</span>
             <Zap className="w-4 h-4 text-amber-500" />
           </div>
           <div className="text-3xl font-black text-slate-900 dark:text-white">{summary.average_match_score}%</div>
-          <div className="text-[11px] text-amber-500 font-bold">TF-IDF Vector Score</div>
+          <div className="text-[11px] text-amber-500 font-bold">TF-IDF Vector Similarity</div>
         </motion.div>
 
-        <motion.div whileHover={{ y: -4 }} className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 space-y-2 bg-white/80 dark:bg-neutral-900/80 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400 text-xs font-bold">
+        <motion.div whileHover={{ y: -4 }} className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-bold">
             <span>ATS Resume Score</span>
-            <Award className="w-4 h-4 text-[#22C55E]" />
+            <Award className="w-4 h-4 text-emerald-500" />
           </div>
           <div className="text-3xl font-black text-slate-900 dark:text-white">{summary.latest_ats_score}/100</div>
-          <div className="text-[11px] text-[#22C55E] font-bold">Active Resume Gauge</div>
+          <div className="text-[11px] text-emerald-500 font-bold">Active Resume Score</div>
         </motion.div>
 
       </div>
 
-      {/* Analytics Charts Grid */}
+      {/* CHARTS GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-        {/* Monthly Applications Chart */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 space-y-4 bg-white/80 dark:bg-neutral-900/80 shadow-sm">
+        {/* Monthly Trends Area Chart */}
+        <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-4 shadow-sm">
           <h3 className="text-base font-black text-slate-900 dark:text-white">Monthly Application Trends</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={monthly_trends}>
                 <defs>
                   <linearGradient id="colorApps" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.8}/>
+                    <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.7}/>
                     <stop offset="95%" stopColor="#FF6B00" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="month" stroke="#9CA3AF" fontSize={11} />
-                <YAxis stroke="#9CA3AF" fontSize={11} />
+                <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} />
+                <YAxis stroke="#94A3B8" fontSize={11} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#161616', borderColor: '#262626', borderRadius: '16px', color: '#FFF' }}
+                  contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B', borderRadius: '16px', color: '#FFF', fontSize: '12px' }}
                 />
-                <Area type="monotone" dataKey="applications" stroke="#FF6B00" strokeWidth={2} fillOpacity={1} fill="url(#colorApps)" />
+                <Area type="monotone" dataKey="applications" stroke="#FF6B00" strokeWidth={3} fillOpacity={1} fill="url(#colorApps)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Application Status Breakdown */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 space-y-4 bg-white/80 dark:bg-neutral-900/80 shadow-sm">
+        {/* Application Status Funnel Bar Chart */}
+        <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-4 shadow-sm">
           <h3 className="text-base font-black text-slate-900 dark:text-white">Application Status Funnel</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -139,12 +146,12 @@ export default function Dashboard() {
                 { status: 'Interviewing', count: summary.interviewing },
                 { status: 'Offered', count: summary.offered }
               ]}>
-                <XAxis dataKey="status" stroke="#9CA3AF" fontSize={11} />
-                <YAxis stroke="#9CA3AF" fontSize={11} />
+                <XAxis dataKey="status" stroke="#94A3B8" fontSize={11} />
+                <YAxis stroke="#94A3B8" fontSize={11} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#161616', borderColor: '#262626', borderRadius: '16px', color: '#FFF' }}
+                  contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B', borderRadius: '16px', color: '#FFF', fontSize: '12px' }}
                 />
-                <Bar dataKey="count" fill="#FF9D42" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="count" fill="#FF6B00" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -152,54 +159,51 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Skill Gap Analysis Widget */}
-      <div className="glass-panel p-8 rounded-3xl border border-slate-200 dark:border-neutral-800 space-y-6 bg-white/80 dark:bg-neutral-900/80 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-neutral-800 pb-4">
+      {/* SKILL GAP READINESS REPORT */}
+      <div className="luxury-card p-8 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
           <div>
             <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
               <Zap className="w-6 h-6 text-[#FF6B00]" />
               AI Skill Gap & Career Readiness Report
             </h3>
-            <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5 font-medium">
-              Identifies missing skills demanded across target job postings.
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+              Identifies top missing skills demanded across target job postings.
             </p>
           </div>
-          <div className="px-4 py-2 rounded-2xl bg-[#FF6B00]/10 border border-[#FF6B00]/25 text-[#FF6B00] dark:text-[#FF9D42] font-black text-sm">
+          <div className="px-4 py-2 rounded-2xl bg-[#FF6B00]/10 border border-[#FF6B00]/25 text-[#FF6B00] font-black text-sm">
             Readiness Index: {skill_gap_report.candidate_readiness_score}%
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Top High-Demand Missing Skills */}
           <div className="space-y-3">
             <h4 className="text-xs font-black uppercase tracking-wider text-[#FF6B00]">High-Demand Missing Skills</h4>
             <div className="space-y-2">
               {skill_gap_report.top_missing_skills?.map((item, i) => (
                 <div key={i} className="flex justify-between items-center p-3 rounded-2xl bg-[#FF6B00]/5 border border-[#FF6B00]/15 text-xs font-medium">
-                  <span className="font-bold text-[#FF6B00] dark:text-[#FF9D42]">! {item.skill}</span>
-                  <span className="text-slate-500 dark:text-neutral-400">Required in {item.count} jobs</span>
+                  <span className="font-bold text-[#FF6B00]">! {item.skill}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Required in {item.count} jobs</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Actionable Learning Recommendations */}
           <div className="space-y-3">
-            <h4 className="text-xs font-black uppercase tracking-wider text-[#22C55E]">Recommended Learning Action</h4>
+            <h4 className="text-xs font-black uppercase tracking-wider text-emerald-500">Recommended Learning Action</h4>
             <div className="space-y-2">
               {skill_gap_report.learning_recommendations?.map((rec, i) => (
-                <div key={i} className="p-3 rounded-2xl bg-slate-50 dark:bg-neutral-800/80 border border-slate-200 dark:border-neutral-700/80 text-xs space-y-1">
+                <div key={i} className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-xs space-y-1">
                   <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#22C55E]" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                     Master {rec.skill}
                   </div>
-                  <p className="text-slate-600 dark:text-neutral-400 leading-normal font-normal">{rec.suggestion}</p>
+                  <p className="text-slate-600 dark:text-slate-400 leading-normal font-normal">{rec.suggestion}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
-
       </div>
 
     </div>

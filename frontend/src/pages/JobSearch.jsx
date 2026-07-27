@@ -4,200 +4,155 @@ import { useNotification } from '../context/NotificationContext';
 import { 
   Search, 
   Filter, 
-  Building2, 
-  Globe, 
+  MapPin, 
   DollarSign, 
-  Briefcase, 
-  CheckCircle2, 
-  Sparkles,
-  ArrowRight,
-  SlidersHorizontal
+  Building2, 
+  Check, 
+  Bookmark, 
+  Zap, 
+  SlidersHorizontal,
+  ChevronDown
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function JobSearch() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Search & Filter State
-  const [searchTerm, setSearchTerm] = useState('');
-  const [companyType, setCompanyType] = useState('');
-  const [isRemote, setIsRemote] = useState(false);
-  const [isFresherFriendly, setIsFresherFriendly] = useState(false);
-  const [lowCompetition, setLowCompetition] = useState(false);
-  const [experienceLevel, setExperienceLevel] = useState('');
+
+  // Filter States
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCompanyType, setSelectedCompanyType] = useState('ALL');
+  const [selectedFlexibility, setSelectedFlexibility] = useState('ALL');
   const [minSalary, setMinSalary] = useState(0);
+  const [fresherOnly, setFresherOnly] = useState(false);
 
   const { addToast } = useNotification();
 
   useEffect(() => {
     fetchJobs();
-  }, [companyType, isRemote, isFresherFriendly, lowCompetition, experienceLevel, minSalary]);
+  }, []);
 
   const fetchJobs = async () => {
-    setLoading(true);
     try {
-      const params = {};
-      if (searchTerm) params.search = searchTerm;
-      if (companyType) params.company_type = companyType;
-      if (isRemote) params.is_remote = true;
-      if (isFresherFriendly) params.is_fresher_friendly = true;
-      if (lowCompetition) params.low_competition = true;
-      if (experienceLevel) params.experience_level = experienceLevel;
-      if (minSalary > 0) params.min_salary = minSalary;
-
-      const res = await API.get('/jobs/', { params });
+      const res = await API.get('/jobs/');
       setJobs(res.data);
     } catch (err) {
-      addToast('Unable to load jobs. Please try again.', 'error');
+      addToast('Unable to load job postings.', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    fetchJobs();
+  const filteredJobs = jobs.filter((job) => {
+    // Search query match
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const titleMatch = job.title?.toLowerCase().includes(query);
+      const companyMatch = job.company?.toLowerCase().includes(query);
+      const skillMatch = job.required_skills?.some((s) => s.toLowerCase().includes(query));
+      if (!titleMatch && !companyMatch && !skillMatch) return false;
+    }
+
+    // Company type match
+    if (selectedCompanyType !== 'ALL' && job.company_type !== selectedCompanyType) {
+      return false;
+    }
+
+    // Flexibility match
+    if (selectedFlexibility === 'REMOTE' && !job.is_remote) return false;
+
+    // Minimum salary match
+    if (minSalary > 0 && (job.salary_max || 0) < minSalary) return false;
+
+    // Fresher friendly match
+    if (fresherOnly && !job.fresher_friendly) return false;
+
+    return true;
+  });
+
+  const handleApply = async (job) => {
+    try {
+      await API.post('/swipes/', { job_id: job.id, action: 'apply' });
+      addToast(`Successfully applied to ${job.title} at ${job.company}!`, 'success');
+    } catch (err) {
+      addToast('Failed to submit application.', 'error');
+    }
   };
 
-  const handleQuickApply = async (job) => {
+  const handleBookmark = async (job) => {
     try {
-      await API.post('/swipes/action', {
-        job_id: job.id,
-        action: 'like'
-      });
-      addToast(`Applied for ${job.title} at ${job.company}!`, 'success');
+      await API.post('/swipes/', { job_id: job.id, action: 'bookmark' });
+      addToast(`Bookmarked ${job.title}!`, 'info');
     } catch (err) {
-      addToast('Application failed', 'error');
+      addToast('Failed to bookmark job.', 'error');
     }
   };
 
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       
-      {/* Header & Search Bar */}
-      <div className="space-y-4">
-        <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
           <Search className="w-8 h-8 text-[#FF6B00]" />
-          Smart Job Search & AI Filters
+          Smart Multi-Criteria Job Discovery
         </h1>
-        <p className="text-xs text-slate-500 dark:text-neutral-400 font-medium">
-          Filter jobs by MNC vs Startup, Remote roles, Salary range, and Fresher friendly badges.
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          Search and filter target roles by company type, annual compensation, remote flexibility, and competition index.
         </p>
-
-        <form onSubmit={handleSearchSubmit} className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="w-4.5 h-4.5 absolute left-4 top-3.5 text-slate-400 dark:text-neutral-500" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by job title, company, or skills (e.g. React, Python, FastAPI)..."
-              className="w-full pl-11 pr-4 py-3 rounded-2xl glass-input text-xs font-medium focus:outline-none"
-            />
-          </div>
-          <button
-            type="submit"
-            className="px-6 py-3 bg-gradient-to-r from-[#FF6B00] to-[#FF9D42] font-black text-xs text-white rounded-2xl shadow-[0_4px_15px_rgba(255,107,0,0.35)] hover:scale-105 transition-all shrink-0"
-          >
-            Search Jobs
-          </button>
-        </form>
       </div>
 
-      {/* Main Grid: Filters Sidebar + Results */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* SEARCH BAR & FILTER CONTROLS */}
+      <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 space-y-6 shadow-sm">
         
-        {/* Filters Sidebar */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-6 h-fit shadow-sm">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-neutral-800">
-            <span className="font-black text-slate-900 dark:text-white flex items-center gap-2 text-xs">
-              <SlidersHorizontal className="w-4 h-4 text-[#FF6B00]" /> Filters
-            </span>
-            <button
-              onClick={() => {
-                setCompanyType('');
-                setIsRemote(false);
-                setIsFresherFriendly(false);
-                setLowCompetition(false);
-                setExperienceLevel('');
-                setMinSalary(0);
-                setSearchTerm('');
-              }}
-              className="text-xs text-[#FF6B00] font-bold hover:underline"
-            >
-              Reset All
-            </button>
-          </div>
+        {/* Search Input Bar */}
+        <div className="relative">
+          <Search className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by job title, company, or technical skill (e.g. Python, React, NeuralStack)..."
+            className="w-full pl-12 pr-4 py-3 rounded-2xl glass-input text-xs font-semibold focus:outline-none"
+          />
+        </div>
 
-          {/* Company Type */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-wider">Company Type</label>
+        {/* Filter Badges & Controls */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          {/* Company Type Filter */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Company Type</label>
             <select
-              value={companyType}
-              onChange={(e) => setCompanyType(e.target.value)}
-              className="w-full p-2.5 rounded-xl glass-input text-xs font-bold bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 text-slate-900 dark:text-white focus:outline-none"
+              value={selectedCompanyType}
+              onChange={(e) => setSelectedCompanyType(e.target.value)}
+              className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs font-bold"
             >
-              <option value="" className="bg-white dark:bg-neutral-900">All Company Types</option>
-              <option value="MNC" className="bg-white dark:bg-neutral-900">MNC (Multi-National)</option>
-              <option value="Startup" className="bg-white dark:bg-neutral-900">Startup</option>
-              <option value="Newly Founded Startup" className="bg-white dark:bg-neutral-900">Newly Founded Startup</option>
+              <option value="ALL">All Company Types</option>
+              <option value="MNC">MNC / Enterprise</option>
+              <option value="Startup">Growth Startup</option>
+              <option value="Newly Founded Startup">Early Stage Startup</option>
             </select>
           </div>
 
-          {/* Experience Level */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-wider">Experience Level</label>
+          {/* Remote Flexibility Filter */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Location Flexibility</label>
             <select
-              value={experienceLevel}
-              onChange={(e) => setExperienceLevel(e.target.value)}
-              className="w-full p-2.5 rounded-xl glass-input text-xs font-bold bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 text-slate-900 dark:text-white focus:outline-none"
+              value={selectedFlexibility}
+              onChange={(e) => setSelectedFlexibility(e.target.value)}
+              className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs font-bold"
             >
-              <option value="" className="bg-white dark:bg-neutral-900">All Levels</option>
-              <option value="Entry Level" className="bg-white dark:bg-neutral-900">Entry Level</option>
-              <option value="Mid Level" className="bg-white dark:bg-neutral-900">Mid Level</option>
-              <option value="Senior" className="bg-white dark:bg-neutral-900">Senior</option>
+              <option value="ALL">All Locations</option>
+              <option value="REMOTE">100% Remote Only</option>
             </select>
           </div>
 
-          {/* Quick Checkbox Filters */}
-          <div className="space-y-3 pt-2">
-            <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-neutral-300 font-medium cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isRemote}
-                onChange={(e) => setIsRemote(e.target.checked)}
-                className="rounded border-slate-300 dark:border-neutral-700 bg-slate-100 dark:bg-neutral-800 text-[#FF6B00] focus:ring-[#FF6B00] w-4 h-4"
-              />
-              100% Remote Roles Only
-            </label>
-
-            <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-neutral-300 font-medium cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isFresherFriendly}
-                onChange={(e) => setIsFresherFriendly(e.target.checked)}
-                className="rounded border-slate-300 dark:border-neutral-700 bg-slate-100 dark:bg-neutral-800 text-[#FF6B00] focus:ring-[#FF6B00] w-4 h-4"
-              />
-              Fresher Friendly
-            </label>
-
-            <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-neutral-300 font-medium cursor-pointer">
-              <input
-                type="checkbox"
-                checked={lowCompetition}
-                onChange={(e) => setLowCompetition(e.target.checked)}
-                className="rounded border-slate-300 dark:border-neutral-700 bg-slate-100 dark:bg-neutral-800 text-[#FF6B00] focus:ring-[#FF6B00] w-4 h-4"
-              />
-              Low Competition Badge
-            </label>
-          </div>
-
-          {/* Min Salary Slider */}
-          <div className="space-y-2 pt-2">
-            <div className="flex justify-between text-xs font-bold">
-              <span className="text-slate-500 dark:text-neutral-400">Minimum Salary</span>
-              <span className="text-[#FF6B00]">${minSalary.toLocaleString()} / yr</span>
+          {/* Minimum Salary Slider */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+              <span>Min Salary:</span>
+              <span className="text-[#FF6B00]">${minSalary.toLocaleString()} USD</span>
             </div>
             <input
               type="range"
@@ -206,82 +161,86 @@ export default function JobSearch() {
               step="10000"
               value={minSalary}
               onChange={(e) => setMinSalary(parseInt(e.target.value))}
-              className="w-full accent-[#FF6B00] bg-slate-200 dark:bg-neutral-700"
+              className="w-full accent-[#FF6B00] cursor-pointer"
             />
           </div>
 
-        </div>
-
-        {/* Job Cards Grid */}
-        <div className="lg:col-span-3 space-y-4">
-          <div className="text-xs text-slate-500 dark:text-neutral-400 font-bold">
-            Showing {jobs.length} jobs
+          {/* Fresher Toggle */}
+          <div className="flex items-center gap-2 pt-6">
+            <input
+              type="checkbox"
+              id="fresherCheck"
+              checked={fresherOnly}
+              onChange={(e) => setFresherOnly(e.target.checked)}
+              className="w-4 h-4 rounded text-[#FF6B00] focus:ring-[#FF6B00] accent-[#FF6B00]"
+            />
+            <label htmlFor="fresherCheck" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+              Fresher Friendly Roles Only
+            </label>
           </div>
 
-          {loading ? (
-            <div className="text-center py-12 text-slate-400 font-medium">Loading jobs...</div>
-          ) : jobs.length === 0 ? (
-            <div className="glass-panel p-12 rounded-3xl text-center text-slate-500 dark:text-neutral-400 border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 font-medium">
-              No jobs match your search filters. Try adjusting your preferences.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {jobs.map((job) => (
-                <motion.div
-                  whileHover={{ y: -3 }}
-                  key={job.id}
-                  className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:border-[#FF6B00]/40 transition-all flex flex-col justify-between space-y-4 shadow-sm"
-                >
-                  <div>
-                    <div className="flex justify-between items-start gap-2 mb-3">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={job.company_logo || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80"}
-                          alt={job.company}
-                          className="w-12 h-12 rounded-xl object-cover ring-1 ring-[#FF6B00]/20 shadow-sm"
-                        />
-                        <div>
-                          <h3 className="font-black text-base text-slate-900 dark:text-white line-clamp-1">{job.title}</h3>
-                          <p className="text-xs text-[#FF6B00] font-bold">{job.company}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-slate-600 dark:text-neutral-300 line-clamp-3 mb-3 leading-relaxed font-normal">{job.description}</p>
-
-                    <div className="flex flex-wrap gap-1.5 text-xs">
-                      <span className="px-2.5 py-0.5 rounded-lg bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border border-[#FF6B00]/20 font-bold">
-                        {job.company_type}
-                      </span>
-                      {job.is_remote && (
-                        <span className="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40 font-bold">
-                          Remote
-                        </span>
-                      )}
-                      {job.salary_max > 0 && (
-                        <span className="px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-neutral-700 font-bold">
-                          ${(job.salary_min / 1000).toFixed(0)}k - ${(job.salary_max / 1000).toFixed(0)}k
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-100 dark:border-neutral-800 flex justify-between items-center">
-                    <span className="text-[11px] text-slate-500 dark:text-neutral-400 font-medium">{job.location}</span>
-                    <button
-                      onClick={() => handleQuickApply(job)}
-                      className="px-4 py-1.5 bg-gradient-to-r from-[#FF6B00] to-[#FF9D42] text-white font-black rounded-xl text-xs shadow-[0_4px_15px_rgba(255,107,0,0.3)] transition-all hover:scale-105"
-                    >
-                      Instant Apply
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
         </div>
 
       </div>
+
+      {/* JOBS GRID */}
+      {loading ? (
+        <div className="py-20 text-center text-xs font-black text-slate-400 uppercase tracking-widest animate-pulse">Loading Job Postings...</div>
+      ) : filteredJobs.length === 0 ? (
+        <div className="py-20 text-center space-y-3">
+          <h3 className="text-xl font-black text-slate-900 dark:text-white">No Matching Roles Found</h3>
+          <p className="text-xs text-slate-500 font-medium">Try adjusting your search criteria or salary slider.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredJobs.map((job) => (
+            <motion.div
+              key={job.id}
+              whileHover={{ y: -4 }}
+              className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-4 flex flex-col justify-between shadow-sm"
+            >
+              <div className="space-y-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-slate-900 text-white font-black text-base flex items-center justify-center shadow-sm">
+                      {job.company ? job.company[0] : 'C'}
+                    </div>
+                    <div>
+                      <h3 className="font-black text-base text-slate-900 dark:text-white leading-tight">{job.title}</h3>
+                      <p className="text-xs text-slate-500 font-bold">{job.company}</p>
+                    </div>
+                  </div>
+
+                  <button onClick={() => handleBookmark(job)} className="p-2 rounded-xl text-slate-400 hover:text-[#FF6B00] hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <Bookmark className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300">
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800">${job.salary_min?.toLocaleString()} - ${job.salary_max?.toLocaleString()}</span>
+                  {job.is_remote && <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600">Remote</span>}
+                  {job.fresher_friendly && <span className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600">Fresher Friendly</span>}
+                </div>
+
+                <div className="flex flex-wrap gap-1">
+                  {job.required_skills?.map((skill, i) => (
+                    <span key={i} className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <span className="text-xs font-black text-[#FF6B00]">{job.match_score || 94}% AI Match</span>
+                <button onClick={() => handleApply(job)} className="btn-primary px-5 py-2 text-xs font-black">
+                  Apply Now
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
     </div>
   );

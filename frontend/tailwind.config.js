@@ -9,11 +9,14 @@ export default {
     extend: {
       colors: {
         brand: {
-          orange: '#F97316',
-          'orange-hover': '#EA580C',
+          primary: '#FF6B00',
+          secondary: '#FF9D42',
+          orange: '#FF6B00',
+          'orange-hover': '#E66000',
           'orange-light': '#FFF7ED',
           'orange-border': '#FFD8A8',
           slate: '#0F172A',
+          dark: '#111827',
           muted: '#64748B',
           surface: '#F8FAFC',
           border: '#E2E8F0',
@@ -29,26 +32,33 @@ export default {
           700: '#334155',
           800: '#1E293B',
           900: '#0F172A',
+          950: '#0B0F17',
         }
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
       },
       boxShadow: {
-        'glass-sm': '0 2px 10px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.05)',
-        'glass-md': '0 8px 30px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04)',
-        'glass-lg': '0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05)',
-        'orange-glow': '0 10px 25px -5px rgba(249, 115, 22, 0.35)',
-        'orange-glow-lg': '0 20px 35px -5px rgba(249, 115, 22, 0.45)',
+        'luxury': '0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.02)',
+        'luxury-hover': '0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(255, 107, 0, 0.12)',
+        'orange-glow': '0 10px 30px -5px rgba(255, 107, 0, 0.35)',
+        'orange-glow-lg': '0 20px 40px -5px rgba(255, 107, 0, 0.45)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.04)',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'float': 'float 3.5s ease-in-out infinite',
+        'float': 'float 4s ease-in-out infinite',
+        'shimmer': 'shimmer 2.5s infinite linear',
       },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         }
       }
     },

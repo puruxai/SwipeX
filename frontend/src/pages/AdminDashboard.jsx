@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
-import { ShieldCheck, Users, Briefcase, Layers, Cpu, Activity, Lock } from 'lucide-react';
+import { 
+  ShieldCheck, 
+  Users, 
+  Briefcase, 
+  Layers, 
+  Activity, 
+  Lock, 
+  Unlock, 
+  CheckCircle2, 
+  Search,
+  AlertTriangle
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState(null);
-  const [users, setUsers] = useState([]);
+  const [telemetry, setTelemetry] = useState(null);
+  const [usersList, setUsersList] = useState([]);
+  const [auditLogs, setAuditLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchUser, setSearchUser] = useState('');
 
   const { addToast } = useNotification();
 
@@ -17,148 +30,161 @@ export default function AdminDashboard() {
 
   const fetchAdminData = async () => {
     try {
-      const statsRes = await API.get('/admin/stats');
-      const usersRes = await API.get('/admin/users');
-      setStats(statsRes.data);
-      setUsers(usersRes.data);
+      const [telemetryRes, usersRes, logsRes] = await Promise.all([
+        API.get('/admin/telemetry'),
+        API.get('/admin/users'),
+        API.get('/admin/audit-logs')
+      ]);
+
+      setTelemetry(telemetryRes.data);
+      setUsersList(usersRes.data);
+      setAuditLogs(logsRes.data);
     } catch (err) {
-      addToast('Unable to load admin data. Please try again.', 'error');
+      addToast('Unable to load admin control data.', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggleUserStatus = async (userId, currentStatus) => {
+  const handleToggleUserActive = async (userId, currentActive) => {
     try {
-      await API.put(`/admin/users/${userId}/status?is_active=${!currentStatus}`);
-      addToast(`Updated user active status`, 'success');
-      fetchAdminData();
+      await API.put(`/admin/users/${userId}/status`, { is_active: !currentActive });
+      setUsersList((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, is_active: !currentActive } : u))
+      );
+      addToast(`User account status updated.`, 'success');
     } catch (err) {
-      addToast('Status toggle failed', 'error');
+      addToast('Failed to update user status.', 'error');
     }
   };
 
-  if (loading || !stats) {
-    return <div className="py-20 text-center text-xs font-bold text-slate-400 dark:text-neutral-500">Loading admin control panel...</div>;
-  }
+  const filteredUsers = usersList.filter(
+    (u) =>
+      u.email.toLowerCase().includes(searchUser.toLowerCase()) ||
+      u.full_name.toLowerCase().includes(searchUser.toLowerCase())
+  );
 
-  const { metrics, security_logs } = stats;
+  if (loading) {
+    return <div className="py-20 text-center text-xs font-black text-slate-400 uppercase tracking-widest animate-pulse">Loading Admin Platform Controls...</div>;
+  }
 
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-          <ShieldCheck className="w-8 h-8 text-[#FF6B00]" />
-          Platform Admin & Security Control
+        <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+          <ShieldCheck className="w-8 h-8 text-rose-500" />
+          Platform Admin Security Console
         </h1>
-        <p className="text-xs text-slate-500 dark:text-neutral-400 mt-1 font-medium">
-          Monitor platform metrics, user management, recruiter approvals, and security audit logs.
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          System telemetry metrics, user account permissions, and security audit event logs.
         </p>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* TELEMETRY CARDS */}
+      {telemetry && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+            <div className="flex justify-between items-center text-xs font-bold text-slate-500">
+              <span>Total Users</span>
+              <Users className="w-4 h-4 text-[#FF6B00]" />
+            </div>
+            <div className="text-3xl font-black text-slate-900 dark:text-white">{telemetry.total_users}</div>
+            <div className="text-[11px] text-slate-400 font-semibold">{telemetry.candidates_count} Candidates / {telemetry.recruiters_count} Recruiters</div>
+          </div>
+
+          <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+            <div className="flex justify-between items-center text-xs font-bold text-slate-500">
+              <span>Job Postings</span>
+              <Briefcase className="w-4 h-4 text-[#FF6B00]" />
+            </div>
+            <div className="text-3xl font-black text-slate-900 dark:text-white">{telemetry.total_jobs}</div>
+            <div className="text-[11px] text-emerald-500 font-bold">Active Roles</div>
+          </div>
+
+          <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+            <div className="flex justify-between items-center text-xs font-bold text-slate-500">
+              <span>Swipe Volume</span>
+              <Layers className="w-4 h-4 text-[#FF6B00]" />
+            </div>
+            <div className="text-3xl font-black text-slate-900 dark:text-white">{telemetry.total_swipes}</div>
+            <div className="text-[11px] text-[#FF6B00] font-bold">Total Interactions</div>
+          </div>
+
+          <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-2 shadow-sm">
+            <div className="flex justify-between items-center text-xs font-bold text-slate-500">
+              <span>Conversion Rate</span>
+              <Activity className="w-4 h-4 text-emerald-500" />
+            </div>
+            <div className="text-3xl font-black text-slate-900 dark:text-white">{telemetry.swipe_apply_conversion_rate}%</div>
+            <div className="text-[11px] text-emerald-500 font-bold">Swipe Right Ratio</div>
+          </div>
+
+        </div>
+      )}
+
+      {/* USER MANAGEMENT TABLE */}
+      <div className="luxury-card p-6 border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 space-y-4 shadow-sm">
         
-        <motion.div whileHover={{ y: -3 }} className="glass-panel p-5 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-1 shadow-sm">
-          <div className="text-xs font-bold text-slate-500 dark:text-neutral-400">Job Seekers</div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white">{metrics.total_candidates}</div>
-        </motion.div>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <Users className="w-5 h-5 text-[#FF6B00]" /> User Accounts & Role Permissions
+          </h2>
 
-        <motion.div whileHover={{ y: -3 }} className="glass-panel p-5 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-1 shadow-sm">
-          <div className="text-xs font-bold text-slate-500 dark:text-neutral-400">Recruiters</div>
-          <div className="text-2xl font-black text-[#FF6B00] dark:text-[#FF9D42]">{metrics.total_recruiters}</div>
-        </motion.div>
-
-        <motion.div whileHover={{ y: -3 }} className="glass-panel p-5 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-1 shadow-sm">
-          <div className="text-xs font-bold text-slate-500 dark:text-neutral-400">Total Jobs</div>
-          <div className="text-2xl font-black text-[#FF6B00] dark:text-[#FF9D42]">{metrics.total_jobs_posted}</div>
-        </motion.div>
-
-        <motion.div whileHover={{ y: -3 }} className="glass-panel p-5 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-1 shadow-sm">
-          <div className="text-xs font-bold text-slate-500 dark:text-neutral-400">Total Swipes</div>
-          <div className="text-2xl font-black text-[#FF6B00]">{metrics.total_swipes}</div>
-        </motion.div>
-
-        <motion.div whileHover={{ y: -3 }} className="glass-panel p-5 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-1 shadow-sm">
-          <div className="text-xs font-bold text-slate-500 dark:text-neutral-400">Applications</div>
-          <div className="text-2xl font-black text-[#22C55E]">{metrics.total_applications}</div>
-        </motion.div>
-
-      </div>
-
-      {/* User Management Table & Logs Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* User Management */}
-        <div className="lg:col-span-2 glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-4 shadow-sm">
-          <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-[#FF6B00]" /> User & Recruiter Accounts ({users.length})
-          </h3>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-medium">
-              <thead>
-                <tr className="border-b border-slate-100 dark:border-neutral-800 text-slate-400 dark:text-neutral-500 uppercase font-black">
-                  <th className="py-2.5 px-3">User</th>
-                  <th className="py-2.5 px-3">Role</th>
-                  <th className="py-2.5 px-3">Status</th>
-                  <th className="py-2.5 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
-                {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-neutral-800/40 transition-colors">
-                    <td className="py-3 px-3">
-                      <div className="font-bold text-slate-900 dark:text-white">{u.full_name}</div>
-                      <div className="text-[11px] text-slate-500 dark:text-neutral-400 font-normal">{u.email}</div>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase ${
-                        u.role === 'admin' ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800' :
-                        u.role === 'recruiter' ? 'bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border border-[#FF6B00]/20' : 'bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-neutral-700'
-                      }`}>
-                        {u.role}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className={`font-bold ${u.is_active ? 'text-[#22C55E]' : 'text-rose-500'}`}>
-                        {u.is_active ? 'Active' : 'Disabled'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 text-right">
-                      <button
-                        onClick={() => handleToggleUserStatus(u.id, u.is_active)}
-                        className="px-3 py-1 bg-slate-100 dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 hover:bg-slate-200 dark:hover:bg-neutral-700 text-xs font-bold rounded-xl text-slate-700 dark:text-neutral-300 transition-colors"
-                      >
-                        {u.is_active ? 'Disable' : 'Enable'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+            <input
+              type="text"
+              value={searchUser}
+              onChange={(e) => setSearchUser(e.target.value)}
+              placeholder="Search user..."
+              className="w-full pl-9 pr-3 py-2 rounded-xl glass-input text-xs"
+            />
           </div>
         </div>
 
-        {/* Security Audit Logs */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 space-y-4 shadow-sm">
-          <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <Lock className="w-5 h-5 text-rose-500" /> System Audit Logs
-          </h3>
-
-          <div className="space-y-3">
-            {security_logs?.map((log, i) => (
-              <div key={i} className="p-3 rounded-2xl bg-slate-50 dark:bg-neutral-800/80 border border-slate-200 dark:border-neutral-700/80 text-xs space-y-1">
-                <div className="flex justify-between items-center text-slate-500 dark:text-neutral-400">
-                  <span className="font-bold text-slate-900 dark:text-white">{log.event}</span>
-                  <span className="text-[10px] font-medium">{log.timestamp}</span>
-                </div>
-                <p className="text-slate-600 dark:text-neutral-400 text-[11px] font-normal">{log.detail}</p>
-              </div>
-            ))}
-          </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-medium">
+            <thead className="bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
+              <tr>
+                <th className="p-3">User</th>
+                <th className="p-3">Email</th>
+                <th className="p-3">Role</th>
+                <th className="p-3">Status</th>
+                <th className="p-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {filteredUsers.map((u) => (
+                <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                  <td className="p-3 font-bold text-slate-900 dark:text-white">{u.full_name}</td>
+                  <td className="p-3 text-slate-500">{u.email}</td>
+                  <td className="p-3 font-bold capitalize text-[#FF6B00]">{u.role.replace('_', ' ')}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                      u.is_active ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'
+                    }`}>
+                      {u.is_active ? 'Active' : 'Disabled'}
+                    </span>
+                  </td>
+                  <td className="p-3 text-right">
+                    <button
+                      onClick={() => handleToggleUserActive(u.id, u.is_active)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold ${
+                        u.is_active
+                          ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 border border-rose-200'
+                          : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border border-emerald-200'
+                      }`}
+                    >
+                      {u.is_active ? 'Disable' : 'Enable'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
       </div>

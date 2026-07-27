@@ -15,8 +15,6 @@ import {
   Briefcase, 
   CheckCircle2, 
   AlertCircle, 
-  Info, 
-  ChevronRight,
   Zap,
   Globe
 } from 'lucide-react';
@@ -104,17 +102,17 @@ export default function SwipeJobs() {
     return (
       <div className="py-20 max-w-lg mx-auto text-center px-4 space-y-6">
         <div className="w-20 h-20 mx-auto rounded-3xl bg-[#FF6B00]/10 border border-[#FF6B00]/25 flex items-center justify-center">
-          <Sparkles className="w-10 h-10 text-[#FF8A3D] animate-bounce" />
+          <Sparkles className="w-10 h-10 text-[#FF6B00] animate-bounce" />
         </div>
-        <h2 className="text-3xl font-extrabold text-white">All Caught Up!</h2>
-        <p className="text-sm text-[#A8A8A8]">
+        <h2 className="text-3xl font-black text-slate-900 dark:text-white">All Caught Up!</h2>
+        <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed font-medium">
           You've swiped through all recommended jobs in your feed. The AI has learned your preferences and is constantly indexing new roles.
         </p>
         <button
           onClick={fetchSwipeFeed}
-          className="px-6 py-3 font-bold text-white bg-gradient-to-r from-[#FF6B00] to-[#FF8A3D] rounded-xl shadow-[0_4px_15px_rgba(255,107,0,0.35)] hover:scale-105 transition-all inline-flex items-center gap-2"
+          className="px-6 py-3.5 font-black text-xs text-white bg-gradient-to-r from-[#FF6B00] to-[#FF9D42] rounded-xl shadow-[0_4px_20px_rgba(255,107,0,0.35)] hover:scale-105 transition-all inline-flex items-center gap-2"
         >
-          <RotateCcw className="w-4 h-4" /> Refresh Job Recommendations
+          <RotateCcw className="w-4 h-4" /> Refresh Job Feed
         </button>
       </div>
     );
@@ -124,13 +122,13 @@ export default function SwipeJobs() {
     <div className="py-8 max-w-lg mx-auto px-4 space-y-6">
       
       {/* Top Header & Feed Info */}
-      <div className="flex justify-between items-center text-xs text-[#A8A8A8]">
-        <span className="flex items-center gap-1.5 font-semibold text-[#FF8A3D]">
+      <div className="flex justify-between items-center text-xs font-bold">
+        <span className="flex items-center gap-1.5 text-[#FF6B00]">
           <Zap className="w-4 h-4 text-[#FF6B00]" />
-          AI Learning Active
+          AI Vector Engine Active
         </span>
-        <span className="font-medium">
-          Card {currentIndex + 1} of {jobs.length}
+        <span className="text-slate-500 dark:text-neutral-400">
+          Job {currentIndex + 1} of {jobs.length}
         </span>
       </div>
 
@@ -139,7 +137,7 @@ export default function SwipeJobs() {
         
         {/* Next Card Background Preview */}
         {jobs[currentIndex + 1] && (
-          <div className="absolute inset-0 w-full h-full rounded-3xl glass-panel p-6 opacity-40 scale-95 translate-y-3 pointer-events-none border border-white/10" />
+          <div className="absolute inset-0 w-full h-full rounded-3xl glass-panel p-6 opacity-40 scale-95 translate-y-3 pointer-events-none border border-slate-200 dark:border-neutral-800" />
         )}
 
         {/* Current Active Card */}
@@ -154,19 +152,19 @@ export default function SwipeJobs() {
               handleSwipe('left');
             }
           }}
-          className="absolute inset-0 w-full h-full rounded-3xl glass-panel p-6 border border-[#262626] shadow-glass flex flex-col justify-between cursor-grab active:cursor-grabbing overflow-hidden select-none bg-[#181818]/95 backdrop-blur-2xl"
+          className="absolute inset-0 w-full h-full rounded-3xl glass-panel p-6 border border-slate-200 dark:border-neutral-800 shadow-2xl flex flex-col justify-between cursor-grab active:cursor-grabbing overflow-hidden select-none bg-white/95 dark:bg-neutral-900/95 backdrop-blur-2xl"
         >
           {/* Overlay Indicators for Swipe Gesture */}
           <motion.div
             style={{ opacity: opacityLike }}
-            className="absolute top-6 left-6 z-30 px-4 py-1.5 rounded-xl border-2 border-[#22C55E] bg-[#22C55E]/20 text-[#22C55E] font-extrabold text-sm uppercase tracking-wider shadow-md flex items-center gap-1"
+            className="absolute top-6 left-6 z-30 px-4 py-1.5 rounded-xl border-2 border-emerald-500 bg-emerald-500/20 text-[#22C55E] font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-1.5"
           >
             <Heart className="w-4 h-4 fill-[#22C55E]" /> APPLY NOW
           </motion.div>
 
           <motion.div
             style={{ opacity: opacitySkip }}
-            className="absolute top-6 right-6 z-30 px-4 py-1.5 rounded-xl border-2 border-rose-500 bg-rose-500/20 text-rose-300 font-extrabold text-sm uppercase tracking-wider flex items-center gap-1"
+            className="absolute top-6 right-6 z-30 px-4 py-1.5 rounded-xl border-2 border-rose-500 bg-rose-500/20 text-rose-500 font-black text-xs uppercase tracking-wider flex items-center gap-1.5"
           >
             <X className="w-4 h-4" /> SKIP
           </motion.div>
@@ -178,11 +176,11 @@ export default function SwipeJobs() {
                 <img
                   src={currentJob.company_logo || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80"}
                   alt={currentJob.company}
-                  className="w-14 h-14 rounded-2xl object-cover ring-2 ring-[#FF6B00]/30"
+                  className="w-14 h-14 rounded-2xl object-cover ring-2 ring-[#FF6B00]/30 shadow-sm"
                 />
                 <div>
-                  <h3 className="font-extrabold text-xl text-white leading-tight line-clamp-1">{currentJob.title}</h3>
-                  <div className="flex items-center gap-1.5 text-xs text-[#FF8A3D] font-medium">
+                  <h3 className="font-black text-xl text-slate-900 dark:text-white leading-tight line-clamp-1">{currentJob.title}</h3>
+                  <div className="flex items-center gap-1.5 text-xs text-[#FF6B00] font-bold">
                     <Building2 className="w-3.5 h-3.5" />
                     {currentJob.company}
                   </div>
@@ -190,24 +188,24 @@ export default function SwipeJobs() {
               </div>
 
               {/* Match Score Badge */}
-              <div className="px-3 py-1 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF8A3D] text-xs font-bold shrink-0">
+              <div className="px-3 py-1 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] dark:text-[#FF9D42] text-xs font-black shrink-0 shadow-sm">
                 {currentJob.match_percentage || 85}% Match
               </div>
             </div>
 
             {/* Badges Bar */}
             <div className="flex flex-wrap gap-2 text-xs">
-              <span className="px-2.5 py-1 rounded-lg bg-[#FF6B00]/10 text-[#FF8A3D] border border-[#FF6B00]/20 font-semibold flex items-center gap-1">
-                <Globe className="w-3 h-3 text-[#FF6B00]" />
+              <span className="px-2.5 py-1 rounded-lg bg-[#FF6B00]/10 text-[#FF6B00] dark:text-[#FF9D42] border border-[#FF6B00]/20 font-bold flex items-center gap-1">
+                <Globe className="w-3.5 h-3.5 text-[#FF6B00]" />
                 {currentJob.is_remote ? 'Remote' : currentJob.location}
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-[#121212] text-[#A8A8A8] border border-[#262626] font-semibold flex items-center gap-1">
-                <Briefcase className="w-3 h-3" />
+              <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-neutral-700 font-bold flex items-center gap-1">
+                <Briefcase className="w-3.5 h-3.5" />
                 {currentJob.company_type}
               </span>
               {currentJob.salary_max > 0 && (
-                <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-semibold flex items-center gap-1">
-                  <DollarSign className="w-3 h-3" />
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40 font-bold flex items-center gap-1">
+                  <DollarSign className="w-3.5 h-3.5" />
                   ${(currentJob.salary_min / 1000).toFixed(0)}k - ${(currentJob.salary_max / 1000).toFixed(0)}k
                 </span>
               )}
@@ -215,35 +213,35 @@ export default function SwipeJobs() {
 
             {/* AI Recommendation Reason */}
             {currentJob.recommendation_reason && (
-              <div className="p-3 rounded-2xl bg-[#FF6B00]/5 border border-[#FF6B00]/15 text-xs text-[#A8A8A8] flex items-start gap-2">
-                <Sparkles className="w-4 h-4 text-[#FF8A3D] shrink-0 mt-0.5" />
+              <div className="p-3 rounded-2xl bg-[#FF6B00]/5 border border-[#FF6B00]/15 text-xs text-slate-600 dark:text-neutral-300 flex items-start gap-2 font-medium">
+                <Sparkles className="w-4 h-4 text-[#FF6B00] shrink-0 mt-0.5" />
                 <span>{currentJob.recommendation_reason}</span>
               </div>
             )}
 
-            {/* Description or Expanded Toggle */}
+            {/* Description */}
             <div className="space-y-2">
-              <p className="text-xs text-slate-300 leading-relaxed line-clamp-4">
+              <p className="text-xs text-slate-600 dark:text-neutral-300 leading-relaxed line-clamp-4 font-normal">
                 {currentJob.description}
               </p>
             </div>
 
             {/* Skills Pills */}
             <div className="space-y-1.5">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Required Skills</div>
+              <div className="text-[10px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-wider">Required Skills</div>
               <div className="flex flex-wrap gap-1.5">
                 {currentJob.required_skills?.map((skill, idx) => {
                   const isMatched = currentJob.matched_skills?.includes(skill);
                   return (
                     <span
                       key={idx}
-                      className={`px-2.5 py-0.5 rounded-md text-xs font-medium flex items-center gap-1 ${
+                      className={`px-2.5 py-0.5 rounded-lg text-xs font-bold flex items-center gap-1 ${
                         isMatched
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                          : 'bg-[#121212] text-[#A8A8A8] border border-[#262626]'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40'
+                          : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-neutral-700'
                       }`}
                     >
-                      {isMatched && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
+                      {isMatched && <CheckCircle2 className="w-3 h-3 text-[#22C55E]" />}
                       {skill}
                     </span>
                   );
@@ -253,15 +251,15 @@ export default function SwipeJobs() {
 
             {/* Missing Skills Warning if any */}
             {currentJob.missing_skills?.length > 0 && (
-              <div className="text-xs text-[#F59E0B]/80 flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5 text-[#F59E0B]" />
+              <div className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 font-semibold">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
                 Missing skills: {currentJob.missing_skills.slice(0, 3).join(', ')}
               </div>
             )}
           </div>
 
-          <div className="text-center pt-2 text-[11px] text-slate-500">
-            Swipe Right to Apply • Swipe Left to Skip
+          <div className="text-center pt-2 text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider">
+            Swipe Right = Apply • Swipe Left = Skip
           </div>
         </motion.div>
       </div>
@@ -270,41 +268,49 @@ export default function SwipeJobs() {
       <div className="flex items-center justify-around pt-4">
         
         {/* Undo Button */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={handleUndo}
           disabled={swipeHistory.length === 0}
-          className="w-12 h-12 rounded-full glass-panel border border-[#262626] flex items-center justify-center text-[#A8A8A8] hover:text-white hover:border-[#FF6B00]/40 disabled:opacity-40 transition-all shadow-lg"
+          className="w-12 h-12 rounded-full glass-panel border border-slate-200 dark:border-neutral-800 flex items-center justify-center text-slate-500 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white hover:border-[#FF6B00]/40 disabled:opacity-40 transition-all shadow-md"
           title="Undo last swipe"
         >
           <RotateCcw className="w-5 h-5" />
-        </button>
+        </motion.button>
 
         {/* Swipe Left (Pass/Skip) */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => handleSwipe('left')}
-          className="w-16 h-16 rounded-full glass-panel border border-rose-500/40 text-[#EF4444] hover:bg-rose-500/10 hover:scale-110 flex items-center justify-center transition-all shadow-[0_0_15px_rgba(239,68,68,0.25)]"
+          className="w-16 h-16 rounded-full glass-panel border border-rose-500/40 text-rose-500 hover:bg-rose-500/10 flex items-center justify-center transition-all shadow-lg"
           title="Skip Job"
         >
           <X className="w-8 h-8" />
-        </button>
+        </motion.button>
 
         {/* Save/Bookmark */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => handleSwipe('up')}
-          className="w-12 h-12 rounded-full glass-panel border border-[#F59E0B]/40 text-[#F59E0B] hover:bg-[#F59E0B]/10 hover:scale-110 flex items-center justify-center transition-all"
+          className="w-12 h-12 rounded-full glass-panel border border-amber-500/40 text-amber-500 hover:bg-amber-500/10 flex items-center justify-center transition-all shadow-md"
           title="Bookmark Job"
         >
           <Bookmark className="w-5 h-5" />
-        </button>
+        </motion.button>
 
         {/* Swipe Right (Apply) */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => handleSwipe('right')}
-          className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#22C55E] to-[#4ADE80] text-slate-950 hover:scale-110 flex items-center justify-center transition-all shadow-[0_4px_15px_rgba(34,197,94,0.35)]"
+          className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#22C55E] to-[#4ADE80] text-white flex items-center justify-center transition-all shadow-[0_4px_20px_rgba(34,197,94,0.4)]"
           title="Apply Now"
         >
-          <Heart className="w-8 h-8 fill-slate-950" />
-        </button>
+          <Heart className="w-8 h-8 fill-white" />
+        </motion.button>
       </div>
 
     </div>

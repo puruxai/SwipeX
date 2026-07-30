@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
 import Sidebar from '../components/Sidebar';
@@ -10,18 +11,21 @@ import {
   Bookmark, 
   Check, 
   Zap, 
-  SlidersHorizontal 
+  SlidersHorizontal,
+  Loader2 
 } from 'lucide-react';
 
 export default function JobSearch() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [applyingJobId, setApplyingJobId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCompanyType, setSelectedCompanyType] = useState('ALL');
   const [selectedFlexibility, setSelectedFlexibility] = useState('ALL');
   const [minSalary, setMinSalary] = useState(0);
 
   const { addToast } = useNotification();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchJobs();
@@ -32,7 +36,12 @@ export default function JobSearch() {
       const res = await API.get('/jobs/');
       setJobs(res.data);
     } catch (err) {
-      addToast('Unable to load job postings.', 'error');
+      if (err.response?.status === 401) {
+        addToast('Session expired. Please log in.', 'error');
+        navigate('/login');
+      } else {
+        addToast('Unable to load job postings.', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -53,11 +62,28 @@ export default function JobSearch() {
   });
 
   const handleApply = async (job) => {
+    if (applyingJobId === job.id) return;
+    setApplyingJobId(job.id);
+
     try {
-      await API.post('/swipes/', { job_id: job.id, action: 'apply' });
-      addToast(`Applied to ${job.title} at ${job.company}!`, 'success');
+      await API.post('/swipes/action', { job_id: job.id, action: 'apply' });
+      addToast(`Application submitted successfully for ${job.title}!`, 'success');
     } catch (err) {
-      addToast('Failed to submit application.', 'error');
+      const status = err.response?.status;
+      const detail = err.response?.data?.detail;
+
+      if (status === 409 || (typeof detail === 'string' && detail.toLowerCase().includes('already applied'))) {
+        addToast(`You have already applied for ${job.title}.`, 'info');
+      } else if (status === 401) {
+        addToast('Session expired. Please log in.', 'error');
+        navigate('/login');
+      } else if (status === 404) {
+        addToast('Job posting not found.', 'error');
+      } else {
+        addToast(detail || 'Application submission failed. Please try again.', 'error');
+      }
+    } finally {
+      setApplyingJobId(null);
     }
   };
 
@@ -68,7 +94,7 @@ export default function JobSearch() {
       <div className="flex-1 p-6 md:p-8 space-y-6">
         
         <div>
-          <h1 className="text-3xl font-black text-[#1C1917] tracking-tight">Job Search & Filter Engine</h1>
+          <h1 className="text-3xl font-black text-[#1C1917] tracking-tight">Smart Multi-Criteria Job Search</h1>
           <p className="text-xs text-[#78716C] font-medium mt-0.5">Explore positions matching your skill matrix across global tech hubs.</p>
         </div>
 
@@ -128,7 +154,9 @@ export default function JobSearch() {
 
         {/* Jobs Grid */}
         {loading ? (
-          <div className="py-20 text-center text-xs font-black text-[#A8A29E] uppercase tracking-widest animate-pulse">Loading Positions...</div>
+          <div className="py-20 text-center text-xs font-black text-[#A8A29E] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin text-[#963200]" /> Loading Positions...
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredJobs.map((job) => (
@@ -157,8 +185,18 @@ export default function JobSearch() {
                   </div>
                 </div>
 
-                <button onClick={() => handleApply(job)} className="btn-terracotta w-full py-2.5 text-xs font-black">
-                  Quick Apply
+                <button 
+                  onClick={() => handleApply(job)}
+                  disabled={applyingJobId === job.id}
+                  className="btn-terracotta w-full py-2.5 text-xs font-black flex items-center justify-center gap-1.5 disabled:opacity-50"
+                >
+                  {applyingJobId === job.id ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" /> Submitting...
+                    </>
+                  ) : (
+                    'Quick Apply'
+                  )}
                 </button>
               </div>
             ))}

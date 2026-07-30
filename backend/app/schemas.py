@@ -161,14 +161,15 @@ class JobOut(BaseModel):
 # Swipe Schema
 class SwipeCreate(BaseModel):
     job_id: int
-    action: str # like, skip, save
+    action: str # like, apply, skip, save, bookmark, pass, dislike
 
     @field_validator("action")
     @classmethod
     def validate_action(cls, value: str) -> str:
-        if value not in {"like", "skip", "save"}:
-            raise ValueError("Action must be like, skip, or save")
-        return value
+        valid_actions = {"like", "apply", "skip", "save", "bookmark", "pass", "dislike"}
+        if value.lower() not in valid_actions:
+            raise ValueError(f"Action must be one of {valid_actions}")
+        return value.lower()
 
 class ApplicationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)

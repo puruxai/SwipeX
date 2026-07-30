@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -100,6 +100,8 @@ def get_swipe_recommendation_feed(
     return ranked_jobs[:limit]
 
 @router.post("/action")
+@router.post("")
+@router.post("/")
 def record_swipe_action(
     swipe_in: schemas.SwipeCreate,
     current_user: models.User = Depends(auth.get_current_user),
@@ -109,30 +111,44 @@ def record_swipe_action(
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
 
+    raw_action = swipe_in.action.lower()
+    # Normalize action alias
+    if raw_action == "bookmark":
+        action = "save"
+    elif raw_action in ["pass", "dislike"]:
+        action = "skip"
+    elif raw_action == "apply":
+        action = "like"
+    else:
+        action = raw_action
+
     existing_swipe = db.query(models.SwipeAction).filter(
         models.SwipeAction.user_id == current_user.id,
         models.SwipeAction.job_id == swipe_in.job_id
     ).first()
 
     if existing_swipe:
-        existing_swipe.action = swipe_in.action
+        existing_swipe.action = action
     else:
         new_swipe = models.SwipeAction(
             user_id=current_user.id,
             job_id=swipe_in.job_id,
-            action=swipe_in.action
+            action=action
         )
         db.add(new_swipe)
 
     db.commit()
 
-    if swipe_in.action == "like":
+    if action in ["like", "apply"]:
         existing_app = db.query(models.Application).filter(
             models.Application.user_id == current_user.id,
             models.Application.job_id == swipe_in.job_id
         ).first()
 
-        if not existing_app:
+        if existing_app:
+            if raw_action == "apply":
+                raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="You have already applied for this job.")
+        else:
             primary_resume = db.query(models.Resume).filter(
                 models.Resume.user_id == current_user.id,
                 models.Resume.is_primary == True
@@ -170,4 +186,4 @@ def record_swipe_action(
             db.add(notif)
             db.commit()
 
-    return {"message": f"Recorded swipe '{swipe_in.action}' for job {job.title}", "action": swipe_in.action}
+    return {"message": "Application submitted successfully.", "action": action, "job_title": job.title}

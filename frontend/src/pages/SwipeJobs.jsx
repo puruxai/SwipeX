@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
 import Sidebar from '../components/Sidebar';
@@ -12,14 +13,18 @@ import {
   Zap, 
   Search, 
   ChevronRight,
-  RotateCcw
+  RotateCcw,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SwipeJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [applyingJobId, setApplyingJobId] = useState(null);
+  const [savingJobId, setSavingJobId] = useState(null);
   const { addToast } = useNotification();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchJobs();
@@ -30,27 +35,61 @@ export default function SwipeJobs() {
       const res = await API.get('/swipes/feed');
       setJobs(res.data);
     } catch (err) {
-      addToast('Unable to load curated job feed.', 'error');
+      if (err.response?.status === 401) {
+        addToast('Session expired. Please log in.', 'error');
+        navigate('/login');
+      } else {
+        addToast('Unable to load curated job feed.', 'error');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleApply = async (job) => {
+    if (applyingJobId === job.id) return;
+    setApplyingJobId(job.id);
+
     try {
-      await API.post('/swipes/', { job_id: job.id, action: 'apply' });
-      addToast(`Applied to ${job.title} at ${job.company}!`, 'success');
+      await API.post('/swipes/action', { job_id: job.id, action: 'apply' });
+      addToast(`Application submitted successfully for ${job.title}!`, 'success');
+      // Filter out applied job from feed
+      setJobs((prev) => prev.filter((j) => j.id !== job.id));
     } catch (err) {
-      addToast('Failed to submit application.', 'error');
+      const status = err.response?.status;
+      const detail = err.response?.data?.detail;
+
+      if (status === 409 || (typeof detail === 'string' && detail.toLowerCase().includes('already applied'))) {
+        addToast(`You have already applied for ${job.title}.`, 'info');
+      } else if (status === 401) {
+        addToast('Session expired. Please log in.', 'error');
+        navigate('/login');
+      } else if (status === 404) {
+        addToast('Job posting not found.', 'error');
+      } else {
+        addToast(detail || 'Application submission failed. Please try again.', 'error');
+      }
+    } finally {
+      setApplyingJobId(null);
     }
   };
 
   const handleSave = async (job) => {
+    if (savingJobId === job.id) return;
+    setSavingJobId(job.id);
+
     try {
-      await API.post('/swipes/', { job_id: job.id, action: 'bookmark' });
+      await API.post('/swipes/action', { job_id: job.id, action: 'save' });
       addToast(`Saved ${job.title}!`, 'info');
     } catch (err) {
-      addToast('Failed to save role.', 'error');
+      if (err.response?.status === 401) {
+        addToast('Session expired. Please log in.', 'error');
+        navigate('/login');
+      } else {
+        addToast('Failed to save role.', 'error');
+      }
+    } finally {
+      setSavingJobId(null);
     }
   };
 
@@ -63,13 +102,13 @@ export default function SwipeJobs() {
       {/* Main Content Area + Right Sidebar Container */}
       <div className="flex-1 p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* Main Feed Column (Matching Reference Screenshot 2) */}
+        {/* Main Feed Column */}
         <div className="lg:col-span-8 space-y-6">
           
           {/* Header */}
           <div className="flex justify-between items-end border-b border-[#F3E8E2] pb-4">
             <div>
-              <h1 className="text-3xl font-black text-[#1C1917] tracking-tight">Curated for You</h1>
+              <h1 className="text-3xl font-black text-[#1C1917] tracking-tight">AI Swipe Discovery Feed</h1>
               <p className="text-xs text-[#78716C] font-medium mt-1">
                 Neural matching based on your expertise in Generative Architectures and Scalable Systems.
               </p>
@@ -80,14 +119,25 @@ export default function SwipeJobs() {
                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50" className="w-6 h-6 rounded-full border border-white" alt="Avatar" />
                 <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50" className="w-6 h-6 rounded-full border border-white" alt="Avatar" />
               </div>
-              <span className="text-[11px] font-bold text-[#78716C]">42 Active Matches</span>
+              <span className="text-[11px] font-bold text-[#78716C]">{jobs.length} Active Matches</span>
             </div>
           </div>
 
           {/* Job Feed Cards */}
           {loading ? (
-            <div className="py-20 text-center text-xs font-black text-[#A8A29E] uppercase tracking-widest animate-pulse">
-              Loading Neural Feed...
+            <div className="py-20 text-center text-xs font-black text-[#A8A29E] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-[#963200]" /> Loading Neural Feed...
+            </div>
+          ) : jobs.length === 0 ? (
+            <div className="reference-card p-12 text-center space-y-3 bg-white border border-[#F3E8E2] rounded-3xl">
+              <Sparkles className="w-8 h-8 text-[#FF8A3D] mx-auto" />
+              <h3 className="text-lg font-black text-[#1C1917]">You're All Caught Up!</h3>
+              <p className="text-xs text-[#78716C] font-medium max-w-sm mx-auto">
+                You have reviewed all available active job matches. Check back soon for new neural recommendations.
+              </p>
+              <button onClick={fetchJobs} className="btn-terracotta px-5 py-2 text-xs font-black">
+                Refresh Feed
+              </button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -131,7 +181,7 @@ export default function SwipeJobs() {
                   {/* Center Circular Match Ring */}
                   <div className="flex flex-col items-center justify-center text-center flex-shrink-0 px-4">
                     <div className="w-16 h-16 rounded-full border-4 border-[#963200] flex items-center justify-center font-black text-base text-[#963200]">
-                      {job.match_score || 94}%
+                      {job.match_score || job.match_percentage || 94}%
                     </div>
                     <span className="text-[10px] font-black uppercase text-[#963200] tracking-wider mt-1">NEURAL MATCH</span>
                   </div>
@@ -140,13 +190,21 @@ export default function SwipeJobs() {
                   <div className="flex flex-col gap-2 flex-shrink-0 w-full md:w-36">
                     <button
                       onClick={() => handleApply(job)}
-                      className="btn-terracotta py-2.5 px-4 text-xs font-black w-full"
+                      disabled={applyingJobId === job.id}
+                      className="btn-terracotta py-2.5 px-4 text-xs font-black w-full flex items-center justify-center gap-1.5 disabled:opacity-50"
                     >
-                      Quick Apply
+                      {applyingJobId === job.id ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" /> Submitting...
+                        </>
+                      ) : (
+                        'Quick Apply'
+                      )}
                     </button>
                     <button
                       onClick={() => handleSave(job)}
-                      className="btn-terracotta-outline py-2.5 px-4 text-xs font-bold w-full"
+                      disabled={savingJobId === job.id}
+                      className="btn-terracotta-outline py-2.5 px-4 text-xs font-bold w-full disabled:opacity-50"
                     >
                       Save Role
                     </button>
@@ -159,7 +217,7 @@ export default function SwipeJobs() {
 
         </div>
 
-        {/* Right Sidebar Column (Matching Reference Screenshot 2) */}
+        {/* Right Sidebar Column */}
         <div className="lg:col-span-4 space-y-6">
           
           {/* Saved Searches Card */}

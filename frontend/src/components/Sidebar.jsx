@@ -14,8 +14,7 @@ import {
   HelpCircle, 
   BookOpen, 
   Plus,
-  Cpu,
-  Zap
+  Bot
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -43,10 +42,10 @@ export default function Sidebar() {
           to="/swipe"
           className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#FF8A3D] to-[#F97316] text-white font-black text-xs shadow-[0_6px_20px_rgba(255,138,61,0.35)] flex items-center justify-center gap-2 hover:scale-[1.02] transition-all"
         >
-          <Plus className="w-4 h-4" /> New Experiment
+          <Plus className="w-4 h-4" /> Start Swiping
         </Link>
 
-        {/* Primary Navigation Menu */}
+        {/* Primary Navigation Menu - Restored SwipeX Names */}
         <nav className="space-y-1">
           <Link
             to="/swipe"
@@ -56,18 +55,7 @@ export default function Sidebar() {
                 : 'text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] hover:text-[#963200]'
             }`}
           >
-            <Zap className="w-4 h-4" /> Intelligence
-          </Link>
-
-          <Link
-            to="/jobs"
-            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-              isActive('/jobs')
-                ? 'bg-[#FF8A3D] text-white shadow-md'
-                : 'text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] hover:text-[#963200]'
-            }`}
-          >
-            <Layers className="w-4 h-4" /> Workflows
+            <Layers className="w-4 h-4" /> Swipe Feed
           </Link>
 
           <Link
@@ -78,7 +66,29 @@ export default function Sidebar() {
                 : 'text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] hover:text-[#963200]'
             }`}
           >
-            <Cpu className="w-4 h-4" /> Neural Engine
+            <FileText className="w-4 h-4" /> ATS Analyzer
+          </Link>
+
+          <Link
+            to="/ai-hub"
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              isActive('/ai-hub')
+                ? 'bg-[#FF8A3D] text-white shadow-md'
+                : 'text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] hover:text-[#963200]'
+            }`}
+          >
+            <Bot className="w-4 h-4" /> AI Studio
+          </Link>
+
+          <Link
+            to="/jobs"
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              isActive('/jobs')
+                ? 'bg-[#FF8A3D] text-white shadow-md'
+                : 'text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] hover:text-[#963200]'
+            }`}
+          >
+            <Search className="w-4 h-4" /> Smart Search
           </Link>
 
           <Link
@@ -93,6 +103,17 @@ export default function Sidebar() {
           </Link>
 
           <Link
+            to="/saved"
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              isActive('/saved')
+                ? 'bg-[#FF8A3D] text-white shadow-md'
+                : 'text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] hover:text-[#963200]'
+            }`}
+          >
+            <Bookmark className="w-4 h-4" /> Saved Jobs
+          </Link>
+
+          <Link
             to="/profile"
             className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
               isActive('/profile')
@@ -100,22 +121,21 @@ export default function Sidebar() {
                 : 'text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] hover:text-[#963200]'
             }`}
           >
-            <Settings className="w-4 h-4" /> Settings
+            <User className="w-4 h-4" /> My Profile
           </Link>
         </nav>
 
       </div>
 
-      {/* Sidebar Footer Cards & Help Links */}
+      {/* Sidebar Footer */}
       <div className="space-y-4 pt-4 border-t border-[#F3E8E2] dark:border-[#3D3835]">
         
-        {/* Active Experiment Promo Box */}
         <div className="p-3.5 rounded-2xl bg-[#FFF0E6] dark:bg-[#262322] border border-[#F3D2C1] dark:border-[#3D3835] space-y-2">
-          <div className="text-[10px] font-black uppercase tracking-wider text-[#963200] dark:text-[#FF8A3D]">ACTIVE EXPERIMENT</div>
-          <div className="text-xs font-extrabold text-[#1C1917] dark:text-white">LMM-9 Optimization</div>
-          <button className="w-full py-1.5 px-3 rounded-lg bg-[#FF8A3D] text-white text-[11px] font-black shadow-sm">
-            New Experiment
-          </button>
+          <div className="text-[10px] font-black uppercase tracking-wider text-[#963200] dark:text-[#FF8A3D]">AI ENGINE ACTIVE</div>
+          <div className="text-xs font-extrabold text-[#1C1917] dark:text-white">TF-IDF Match v2.0</div>
+          <Link to="/swipe" className="block text-center py-1.5 px-3 rounded-lg bg-[#FF8A3D] text-white text-[11px] font-black shadow-sm">
+            Explore Feed
+          </Link>
         </div>
 
         <div className="space-y-1">

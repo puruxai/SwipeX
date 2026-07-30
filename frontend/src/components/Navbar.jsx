@@ -15,6 +15,7 @@ import {
   Layers,
   FileText,
   BarChart3,
+  Bookmark,
   Bot
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -41,36 +42,103 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           
-          {/* Logo & Platform Nav */}
-          <div className="flex items-center gap-8">
+          {/* Brand Logo */}
+          <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2 font-black text-xl tracking-tight text-[#963200] dark:text-[#FF8A3D]">
-              SwipeX
+              <Sparkles className="w-5 h-5 text-[#963200] dark:text-[#FF8A3D]" />
+              <span>SwipeX</span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-6 text-xs font-bold text-[#57534E] dark:text-[#A8A29E]">
-              <Link to="/swipe" className={`hover:text-[#963200] transition-colors ${isActive('/swipe') ? 'text-[#963200] font-black' : ''}`}>
-                Models
-              </Link>
-              <Link to="/jobs" className={`hover:text-[#963200] transition-colors ${isActive('/jobs') ? 'text-[#963200] font-black' : ''}`}>
-                Datasets
-              </Link>
-              <Link to="/resume-analyzer" className={`hover:text-[#963200] transition-colors ${isActive('/resume-analyzer') ? 'text-[#963200] font-black' : ''}`}>
-                Compute
-              </Link>
-              <Link to="/ai-hub" className={`hover:text-[#963200] transition-colors ${isActive('/ai-hub') ? 'text-[#963200] font-black' : ''}`}>
-                API
-              </Link>
-            </nav>
+            {/* Original SwipeX Navigation Links */}
+            {user && (
+              <nav className="hidden lg:flex items-center gap-4 text-xs font-bold text-[#57534E] dark:text-[#A8A29E]">
+                <Link
+                  to="/swipe"
+                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
+                    isActive('/swipe') ? 'text-[#963200] font-black' : ''
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" /> Swipe Feed
+                </Link>
+
+                <Link
+                  to="/resume-analyzer"
+                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
+                    isActive('/resume-analyzer') ? 'text-[#963200] font-black' : ''
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5" /> ATS Analyzer
+                </Link>
+
+                <Link
+                  to="/ai-hub"
+                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
+                    isActive('/ai-hub') ? 'text-[#963200] font-black' : ''
+                  }`}
+                >
+                  <Bot className="w-3.5 h-3.5" /> AI Studio
+                </Link>
+
+                <Link
+                  to="/jobs"
+                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
+                    isActive('/jobs') ? 'text-[#963200] font-black' : ''
+                  }`}
+                >
+                  <Search className="w-3.5 h-3.5" /> Smart Search
+                </Link>
+
+                <Link
+                  to="/dashboard"
+                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
+                    isActive('/dashboard') ? 'text-[#963200] font-black' : ''
+                  }`}
+                >
+                  <BarChart3 className="w-3.5 h-3.5" /> Analytics
+                </Link>
+
+                <Link
+                  to="/saved"
+                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
+                    isActive('/saved') ? 'text-[#963200] font-black' : ''
+                  }`}
+                >
+                  <Bookmark className="w-3.5 h-3.5" /> Saved
+                </Link>
+
+                {['recruiter', 'recruiter_unverified'].includes(user.role) && (
+                  <Link
+                    to="/recruiter"
+                    className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
+                      isActive('/recruiter') ? 'text-[#963200] font-black' : ''
+                    }`}
+                  >
+                    <Briefcase className="w-3.5 h-3.5" /> Recruiter HQ
+                  </Link>
+                )}
+
+                {user.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className={`hover:text-rose-600 transition-colors flex items-center gap-1.5 ${
+                      isActive('/admin') ? 'text-rose-600 font-black' : ''
+                    }`}
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-rose-500" /> Admin
+                  </Link>
+                )}
+              </nav>
+            )}
           </div>
 
-          {/* Search Bar (Matching Reference Screenshot 2, 3, 4) */}
+          {/* Search Bar */}
           <form onSubmit={handleSearchSubmit} className="hidden sm:flex flex-1 max-w-xs items-center relative">
             <Search className="w-3.5 h-3.5 absolute left-3.5 text-[#A8A29E]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search positions..."
+              placeholder="Search jobs, skills, or companies..."
               className="w-full pl-9 pr-4 py-1.5 rounded-full bg-[#FFF5F0] dark:bg-[#1C1917] border border-[#F3E8E2] dark:border-[#3D3835] text-xs font-medium text-[#1C1917] dark:text-white focus:outline-none focus:border-[#963200]"
             />
           </form>
@@ -87,7 +155,7 @@ export default function Navbar() {
               {theme === 'dark' ? <Sun className="w-4 h-4 text-[#FF8A3D]" /> : <Moon className="w-4 h-4 text-[#57534E]" />}
             </button>
 
-            {/* Upgrade Button (Matching Reference Screenshot Pill) */}
+            {/* Upgrade Button */}
             <Link
               to="/swipe"
               className="px-4 py-1.5 rounded-full bg-[#963200] hover:bg-[#802B00] text-white text-xs font-bold shadow-sm transition-all hover:scale-105"

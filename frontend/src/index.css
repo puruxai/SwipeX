@@ -12,22 +12,26 @@
   --terracotta: #963200;
   --terracotta-hover: #802B00;
   --orange-accent: #FF8A3D;
-  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-bg: rgba(255, 255, 255, 0.95);
   --glass-border: rgba(243, 232, 226, 0.9);
+  --chip-bg: #FFF0E6;
+  --chip-text: #963200;
 }
 
 .dark {
   --bg-color: #0F0D0C;
   --section-bg: #1C1917;
-  --card-bg: #262322;
+  --card-bg: #1C1917;
   --text-color: #FAFAF9;
   --secondary-text: #A8A29E;
   --border-color: #3D3835;
-  --terracotta: #F97316;
-  --terracotta-hover: #EA580C;
+  --terracotta: #FF8A3D;
+  --terracotta-hover: #F97316;
   --orange-accent: #FF8A3D;
-  --glass-bg: rgba(38, 35, 34, 0.92);
+  --glass-bg: rgba(28, 25, 23, 0.95);
   --glass-border: rgba(61, 56, 53, 0.9);
+  --chip-bg: #292524;
+  --chip-text: #FF8A3D;
 }
 
 @layer base {
@@ -54,6 +58,10 @@
   background: rgba(150, 50, 0, 0.18);
   color: #963200;
 }
+.dark ::selection {
+  background: rgba(255, 138, 61, 0.25);
+  color: #FF8A3D;
+}
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
@@ -67,6 +75,9 @@
   background: rgba(150, 50, 0, 0.25);
   border-radius: 9999px;
 }
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 138, 61, 0.35);
+}
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(150, 50, 0, 0.55);
 }
@@ -78,67 +89,94 @@
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   color: var(--text-color);
-  box-shadow: 0 8px 30px rgba(150, 50, 0, 0.03);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
   transition: all 0.25s ease-in-out;
+}
+.dark .glass-panel {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .reference-card {
-  background: var(--card-bg);
+  background-color: var(--card-bg);
   border: 1px solid var(--border-color);
+  color: var(--text-color);
   border-radius: 1.5rem;
   box-shadow: 0 8px 30px rgba(150, 50, 0, 0.03);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.dark .reference-card {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
 .reference-card:hover {
-  border-color: rgba(150, 50, 0, 0.3);
+  border-color: var(--terracotta);
   transform: translateY(-2px);
   box-shadow: 0 14px 35px rgba(150, 50, 0, 0.07);
 }
+.dark .reference-card:hover {
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
+}
 
 .glass-input {
-  background: var(--card-bg);
+  background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   color: var(--text-color);
   transition: all 0.2s ease-in-out;
 }
 .glass-input:focus {
   outline: none;
-  border-color: #963200;
+  border-color: var(--terracotta);
   box-shadow: 0 0 0 3px rgba(150, 50, 0, 0.12);
+}
+.dark .glass-input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.2);
 }
 
 .btn-terracotta {
-  background: #963200;
+  background-color: #963200;
   color: #FFFFFF;
   font-weight: 700;
   border-radius: 0.75rem;
   box-shadow: 0 4px 16px rgba(150, 50, 0, 0.3);
   transition: all 0.2s ease-in-out;
 }
+.dark .btn-terracotta {
+  background-color: #FF8A3D;
+  color: #0F0D0C;
+  box-shadow: 0 4px 16px rgba(255, 138, 61, 0.35);
+}
 .btn-terracotta:hover {
-  background: #802B00;
+  background-color: #802B00;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(150, 50, 0, 0.4);
+}
+.dark .btn-terracotta:hover {
+  background-color: #F97316;
+  box-shadow: 0 6px 20px rgba(255, 138, 61, 0.45);
 }
 .btn-terracotta:active {
   transform: translateY(0);
 }
 
 .btn-terracotta-outline {
-  background: transparent;
-  color: #963200;
-  border: 1px solid rgba(150, 50, 0, 0.3);
+  background-color: transparent;
+  color: var(--terracotta);
+  border: 1px solid var(--border-color);
   font-weight: 700;
   border-radius: 0.75rem;
   transition: all 0.2s ease-in-out;
 }
 .btn-terracotta-outline:hover {
-  background: #FFF0E6;
-  border-color: #963200;
+  background-color: var(--chip-bg);
+  border-color: var(--terracotta);
 }
 
 .gradient-terracotta-text {
   background: linear-gradient(135deg, #963200 0%, #C44C0C 50%, #802B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dark .gradient-terracotta-text {
+  background: linear-gradient(135deg, #FF8A3D 0%, #F97316 50%, #FFB07C 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

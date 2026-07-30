@@ -8,7 +8,13 @@ import {
   TrendingUp, 
   Globe, 
   Check, 
-  Building2 
+  Building2,
+  FileText,
+  Zap,
+  Target,
+  BarChart2,
+  CheckCircle2,
+  Award
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -18,11 +24,16 @@ export default function LandingPage() {
   return (
     <div className="space-y-20 pb-16 overflow-hidden bg-[#FFF9F5] text-[#1C1917]">
       
-      {/* HERO SECTION (Matching Reference Screenshot 1) */}
-      <section className="pt-12 lg:pt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* HERO SECTION WITH ENHANCED MULTI-LAYERED VISUAL WORKSPACE */}
+      <section className="pt-12 lg:pt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        
+        {/* Soft Background Gradient Blobs */}
+        <div className="absolute top-10 right-10 w-96 h-96 bg-[#963200]/10 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse-slow" />
+        <div className="absolute top-40 right-48 w-80 h-80 bg-[#FF8A3D]/15 rounded-full blur-2xl pointer-events-none -z-10" />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left Column Text */}
+          {/* Left Column Text (Preserved 100% Original Content) */}
           <div className="lg:col-span-6 space-y-6 text-left">
             
             {/* Version Badge */}
@@ -60,16 +71,109 @@ export default function LandingPage() {
 
           </div>
 
-          {/* Right Column 3D Artwork Box (Matching Reference Screenshot 1) */}
+          {/* Right Column: Premium AI Career Dashboard Mockup & Floating Glass UI Cards */}
           <div className="lg:col-span-6 relative">
-            <div className="rounded-3xl border border-[#F3E8E2] bg-white p-4 shadow-xl overflow-hidden relative">
-              <img
-                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
-                alt="Neural Wireframe Art"
-                className="w-full h-80 object-cover rounded-2xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#FFF9F5]/80 via-transparent to-transparent pointer-events-none" />
+            
+            {/* Top Left Floating Badge */}
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute -top-4 -left-4 z-20 px-3.5 py-1.5 rounded-2xl bg-white border border-[#F3E8E2] shadow-lg flex items-center gap-2"
+            >
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span className="text-[11px] font-black text-[#1C1917]">TOP 5% CANDIDATE POOL</span>
+            </motion.div>
+
+            {/* Top Right Floating Job Match Card */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="absolute -top-6 -right-4 z-20 p-4 rounded-3xl bg-white/95 backdrop-blur-md border border-[#F3E8E2] shadow-2xl max-w-xs space-y-2.5 hidden sm:block"
+            >
+              <div className="flex justify-between items-center">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#FFF0E6] text-[#963200] text-[10px] font-black uppercase">
+                  96% NEURAL MATCH
+                </span>
+                <span className="text-[10px] text-emerald-600 font-bold">100% Remote</span>
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-[#1C1917]">Senior AI Engineer</h4>
+                <p className="text-[11px] text-[#78716C] font-semibold">NeuralStack Labs • $180k - $220k</p>
+              </div>
+              <div className="flex gap-1">
+                <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">Python</span>
+                <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">FastAPI</span>
+                <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">PyTorch</span>
+              </div>
+            </motion.div>
+
+            {/* Primary Main Workspace Center Frame */}
+            <div className="rounded-3xl border border-[#F3E8E2] bg-white p-5 shadow-2xl space-y-4 relative z-10">
+              
+              {/* Workspace App Header */}
+              <div className="flex justify-between items-center border-b border-[#F3E8E2] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-rose-400" />
+                  <div className="w-3 h-3 rounded-full bg-amber-400" />
+                  <div className="w-3 h-3 rounded-full bg-emerald-400" />
+                  <span className="text-[11px] font-bold text-[#78716C] ml-2">SwipeX AI Studio • Career Network</span>
+                </div>
+                <div className="px-2.5 py-0.5 rounded-full bg-[#FFF0E6] text-[#963200] text-[10px] font-black uppercase">
+                  LIVE TELEMETRY
+                </div>
+              </div>
+
+              {/* Main Image Graphic (AI Career & Vector Graph Visualization) */}
+              <div className="h-56 rounded-2xl overflow-hidden relative border border-[#F3E8E2]">
+                <img
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
+                  alt="AI Career Analytics Dashboard Workspace"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 flex flex-col justify-end text-white">
+                  <div className="text-xs font-black uppercase tracking-wider text-[#FF8A3D]">NEURAL VECTOR MATCHING</div>
+                  <div className="text-sm font-extrabold">Full-Stack AI & Infrastructure Engineering</div>
+                </div>
+              </div>
+
+              {/* Quick Metrics Bar inside Workspace */}
+              <div className="grid grid-cols-3 gap-2 text-center pt-1">
+                <div className="p-2 rounded-xl bg-[#FFF0E6] border border-[#F3D2C1]">
+                  <div className="text-xs font-black text-[#963200]">98.4%</div>
+                  <div className="text-[9px] font-bold text-[#78716C] uppercase">ATS PARSE</div>
+                </div>
+                <div className="p-2 rounded-xl bg-[#FFF0E6] border border-[#F3D2C1]">
+                  <div className="text-xs font-black text-[#963200]">124</div>
+                  <div className="text-[9px] font-bold text-[#78716C] uppercase">MATCHES</div>
+                </div>
+                <div className="p-2 rounded-xl bg-[#FFF0E6] border border-[#F3D2C1]">
+                  <div className="text-xs font-black text-[#963200]">$195k</div>
+                  <div className="text-[9px] font-bold text-[#78716C] uppercase">MEDIAN</div>
+                </div>
+              </div>
+
             </div>
+
+            {/* Bottom Left Floating ATS Score Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="absolute -bottom-6 -left-6 z-20 p-4 rounded-3xl bg-white/95 backdrop-blur-md border border-[#F3E8E2] shadow-2xl flex items-center gap-4 hidden sm:flex"
+            >
+              <div className="w-14 h-14 rounded-full border-4 border-[#963200] flex flex-col items-center justify-center flex-shrink-0 bg-[#FFF0E6]">
+                <span className="text-base font-black text-[#963200]">94</span>
+                <span className="text-[8px] font-bold text-[#78716C] uppercase">ATS</span>
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-[#1C1917]">ATS Resume Diagnostics</h4>
+                <p className="text-[11px] text-[#78716C] font-medium">Impact Action Verbs: 98% • Optimal Structure</p>
+                <div className="text-[10px] font-black text-[#963200] mt-1">VERIFIED FIT ⚡</div>
+              </div>
+            </motion.div>
+
           </div>
 
         </div>

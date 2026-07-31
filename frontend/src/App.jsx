@@ -7,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AppErrorBoundary from './components/AppErrorBoundary';
+import PageTransition from './components/PageTransition';
 
 // Lazy load page components
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -58,29 +59,37 @@ export default function App() {
                 <main className="flex-1">
                   <Suspense fallback={<PageSkeleton />}>
                     <Routes>
-                      <Route path="/" element={<LandingPage />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/signup" element={<Signup />} />
+                      <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
+                      <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
+                      <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />
 
-                      <Route path="/swipe" element={<ProtectedRoute><SwipeJobs /></ProtectedRoute>} />
-                      <Route path="/resume-analyzer" element={<ProtectedRoute><ResumeAnalyzer /></ProtectedRoute>} />
-                      <Route path="/ai-hub" element={<ProtectedRoute><AICareerHub /></ProtectedRoute>} />
-                      <Route path="/jobs" element={<ProtectedRoute><JobSearch /></ProtectedRoute>} />
-                      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                      <Route path="/saved" element={<ProtectedRoute><SavedJobs /></ProtectedRoute>} />
-                      <Route path="/applied" element={<ProtectedRoute><AppliedJobs /></ProtectedRoute>} />
-                      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                      <Route path="/swipe" element={<ProtectedRoute><PageTransition><SwipeJobs /></PageTransition></ProtectedRoute>} />
+                      <Route path="/resume-analyzer" element={<ProtectedRoute><PageTransition><ResumeAnalyzer /></PageTransition></ProtectedRoute>} />
+                      <Route path="/ai-hub" element={<ProtectedRoute><PageTransition><AICareerHub /></PageTransition></ProtectedRoute>} />
+                      <Route path="/jobs" element={<ProtectedRoute><PageTransition><JobSearch /></PageTransition></ProtectedRoute>} />
+                      <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
+                      <Route path="/saved" element={<ProtectedRoute><PageTransition><SavedJobs /></PageTransition></ProtectedRoute>} />
+                      <Route path="/applied" element={<ProtectedRoute><PageTransition><AppliedJobs /></PageTransition></ProtectedRoute>} />
+                      <Route path="/profile" element={<ProtectedRoute><PageTransition><Profile /></PageTransition></ProtectedRoute>} />
 
                       <Route
                         path="/recruiter"
-                        element={<ProtectedRoute roles={['recruiter', 'recruiter_unverified', 'admin']}><RecruiterDashboard /></ProtectedRoute>}
+                        element={
+                          <ProtectedRoute roles={['recruiter', 'recruiter_unverified', 'admin']}>
+                            <PageTransition><RecruiterDashboard /></PageTransition>
+                          </ProtectedRoute>
+                        }
                       />
                       <Route
                         path="/admin"
-                        element={<ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute>}
+                        element={
+                          <ProtectedRoute roles={['admin']}>
+                            <PageTransition><AdminDashboard /></PageTransition>
+                          </ProtectedRoute>
+                        }
                       />
 
-                      <Route path="*" element={<NotFoundPage />} />
+                      <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />
                     </Routes>
                   </Suspense>
                 </main>

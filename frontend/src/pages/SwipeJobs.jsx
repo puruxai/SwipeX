@@ -92,6 +92,28 @@ export default function SwipeJobs() {
     }
   };
 
+  // Motion animation parameters
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 24, scale: 0.98, filter: 'blur(4px)' },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1, 
+      filter: 'blur(0px)',
+      transition: { type: 'spring', stiffness: 100, damping: 15 } 
+    }
+  };
+
   return (
     <div className="flex min-h-[90vh] bg-[#fff8f6] dark:bg-[#0c1322] text-[#261812] dark:text-[#dce2f7] transition-colors">
       
@@ -104,7 +126,7 @@ export default function SwipeJobs() {
         {/* Main Feed Column */}
         <div className="lg:col-span-8 space-y-8">
           
-          {/* Header (Exist ONLY inside the content area) */}
+          {/* Header */}
           <div className="flex justify-between items-end border-b border-[#e2bfb0]/30 dark:border-white/5 pb-6">
             <div>
               <h1 className="text-3xl font-extrabold text-[#261812] dark:text-white tracking-tight">AI Swipe Discovery Feed</h1>
@@ -128,8 +150,12 @@ export default function SwipeJobs() {
               <Loader2 className="w-4 h-4 animate-spin text-[#ff6b00]" /> Loading Neural Feed...
             </div>
           ) : jobs.length === 0 ? (
-            <div className="reference-card p-14 text-center space-y-4">
-              <Sparkles className="w-8 h-8 text-[#ff6b00] dark:text-[#ffb693] mx-auto" />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="reference-card p-14 text-center space-y-4 bg-white dark:bg-[#191f2f]/80"
+            >
+              <Sparkles className="w-8 h-8 text-[#ff6b00] dark:text-[#ffb693] mx-auto animate-bounce" />
               <h3 className="text-lg font-bold text-[#261812] dark:text-white">You're All Caught Up!</h3>
               <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-medium max-w-sm mx-auto leading-relaxed">
                 You have reviewed all available active job matches. Check back soon for new neural recommendations.
@@ -137,14 +163,22 @@ export default function SwipeJobs() {
               <button onClick={fetchJobs} className="btn-terracotta px-6 py-2.5 text-xs font-bold shadow-md">
                 Refresh Feed
               </button>
-            </div>
+            </motion.div>
           ) : (
-            <div className="space-y-6">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="space-y-6"
+            >
               {jobs.map((job) => (
-                <div
+                <motion.div
                   key={job.id}
-                  className="reference-card p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden"
+                  variants={cardVariants}
+                  whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                  className="reference-card p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden bg-white dark:bg-[#191f2f]/80"
                 >
+                  
                   {/* Left Role Info */}
                   <div className="space-y-4 flex-1 w-full">
                     <div className="flex items-start gap-5">
@@ -208,9 +242,9 @@ export default function SwipeJobs() {
                     </button>
                   </div>
 
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
 
         </div>
@@ -219,7 +253,7 @@ export default function SwipeJobs() {
         <div className="lg:col-span-4 space-y-8">
           
           {/* Saved Searches Card */}
-          <div className="reference-card p-6 space-y-4">
+          <div className="reference-card p-6 space-y-4 bg-white dark:bg-[#191f2f]/80">
             <h3 className="text-xs font-black text-[#261812] dark:text-white uppercase tracking-widest border-b border-[#e2bfb0]/20 dark:border-white/5 pb-2.5">Saved Searches</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3.5 rounded-2xl bg-white/40 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-xs font-bold hover:scale-[1.01] transition-transform cursor-pointer">
@@ -234,7 +268,7 @@ export default function SwipeJobs() {
           </div>
 
           {/* Recommended Skills Card */}
-          <div className="reference-card p-6 space-y-4">
+          <div className="reference-card p-6 space-y-4 bg-white dark:bg-[#191f2f]/80">
             <h3 className="text-xs font-black text-[#261812] dark:text-white uppercase tracking-widest border-b border-[#e2bfb0]/20 dark:border-white/5 pb-2.5">Recommended Skills</h3>
             <div className="flex flex-wrap gap-2 text-xs font-bold">
               <span className="px-3.5 py-2 rounded-xl bg-white/40 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-[#5a4136] dark:text-[#e2bfb0] hover:border-[#ff6b00] transition-colors cursor-pointer">RLHF Training</span>
@@ -248,7 +282,7 @@ export default function SwipeJobs() {
           <div className="rounded-3xl bg-gradient-to-br from-[#1c1917] to-[#0c1322] border border-white/5 text-white p-7 space-y-5 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff6b00]/10 blur-xl rounded-full" />
             <h3 className="text-base font-extrabold tracking-wide">Unlock SwipeX Premium</h3>
-            <p className="text-xs opacity-80 font-medium leading-relaxed">
+            <p className="text-xs opacity-85 font-medium leading-relaxed">
               Get priority placement for your neural profile and direct DM access to lead recruiters.
             </p>
             <button className="w-full py-3.5 rounded-xl bg-[#ff6b00] dark:bg-[#ffb693] text-white dark:text-[#561f00] text-xs font-black shadow-md hover:scale-[1.01] active:scale-98 transition-all">

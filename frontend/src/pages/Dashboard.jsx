@@ -27,6 +27,7 @@ import {
   YAxis, 
   Tooltip 
 } from 'recharts';
+import { motion } from 'framer-motion';
 
 // Component-Level Error Boundary for Analytics
 class AnalyticsErrorBoundary extends Component {
@@ -143,6 +144,22 @@ function DashboardContent() {
   const monthlyTrends = Array.isArray(data.monthly_trends) ? data.monthly_trends : [];
   const skillGap = data.skill_gap_report || {};
 
+  // Stagger parameters
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15, scale: 0.98 },
+    show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 120 } }
+  };
+
   return (
     <div className="flex min-h-[90vh] bg-[#fff8f6] dark:bg-[#0c1322] text-[#261812] dark:text-[#dce2f7] transition-colors">
       
@@ -150,10 +167,18 @@ function DashboardContent() {
       <Sidebar />
 
       {/* Main Content Dashboard Layout */}
-      <div className="flex-1 p-8 lg:p-10 space-y-8">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="flex-1 p-8 lg:p-10 space-y-8"
+      >
         
-        {/* Page Header (Exist ONLY inside the content area) */}
-        <div className="flex justify-between items-end border-b border-[#e2bfb0]/30 dark:border-white/5 pb-6">
+        {/* Page Header */}
+        <motion.div 
+          variants={itemVariants}
+          className="flex justify-between items-end border-b border-[#e2bfb0]/30 dark:border-white/5 pb-6"
+        >
           <div>
             <h1 className="text-3xl font-extrabold text-[#261812] dark:text-white tracking-tight">Candidate Discovery Dashboard</h1>
             <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-medium mt-1.5">
@@ -166,13 +191,15 @@ function DashboardContent() {
           >
             <RefreshCw className="w-3.5 h-3.5" /> Refresh Data
           </button>
-        </div>
+        </motion.div>
         
         {/* Top 4 KPI Metric Widgets */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          
+        <motion.div 
+          variants={itemVariants}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6"
+        >
           {/* APPLIED */}
-          <div className="reference-card p-6 space-y-2 relative overflow-hidden group">
+          <div className="reference-card p-6 space-y-2 relative overflow-hidden group bg-white dark:bg-[#191f2f]/85">
             <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-[#5a4136] dark:text-[#e2bfb0]">
               <span>TOTAL APPLICATIONS</span>
               <Send className="w-4 h-4 text-[#a04100] dark:text-[#ffb693]" />
@@ -184,7 +211,7 @@ function DashboardContent() {
           </div>
 
           {/* INTERVIEWS */}
-          <div className="reference-card p-6 space-y-2 relative overflow-hidden group">
+          <div className="reference-card p-6 space-y-2 relative overflow-hidden group bg-white dark:bg-[#191f2f]/85">
             <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-[#5a4136] dark:text-[#e2bfb0]">
               <span>INTERVIEW RATE</span>
               <Video className="w-4 h-4 text-[#a04100] dark:text-[#ffb693]" />
@@ -194,7 +221,7 @@ function DashboardContent() {
           </div>
 
           {/* OFFERS */}
-          <div className="reference-card p-6 space-y-2 relative overflow-hidden group">
+          <div className="reference-card p-6 space-y-2 relative overflow-hidden group bg-white dark:bg-[#191f2f]/85">
             <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-[#5a4136] dark:text-[#e2bfb0]">
               <span>OFFERS RECEIVED</span>
               <CheckCheck className="w-4 h-4 text-[#a04100] dark:text-[#ffb693]" />
@@ -204,7 +231,7 @@ function DashboardContent() {
           </div>
 
           {/* AI MATCH SCORE */}
-          <div className="reference-card p-6 space-y-2 relative overflow-hidden group">
+          <div className="reference-card p-6 space-y-2 relative overflow-hidden group bg-white dark:bg-[#191f2f]/85">
             <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-[#5a4136] dark:text-[#e2bfb0]">
               <span>AVERAGE MATCH SCORE</span>
               <div className="w-5 h-5 rounded-full border-2 border-[#ff6b00] dark:border-[#ffb693] flex items-center justify-center text-[#ff6b00] dark:text-[#ffb693] text-[10px] font-black">⚡</div>
@@ -212,14 +239,16 @@ function DashboardContent() {
             <div className="text-3xl font-extrabold text-[#261812] dark:text-white">{summary.average_match_score ?? 78.5}%</div>
             <div className="text-[11px] text-[#5a4136] dark:text-[#e2bfb0] font-bold">ATS Score: {summary.latest_ats_score ?? 82}/100</div>
           </div>
-
-        </div>
+        </motion.div>
 
         {/* Middle Section: Chart + Right Promo Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Chart: Monthly Application Trends */}
-          <div className="lg:col-span-8 reference-card p-8 space-y-6">
+          <motion.div 
+            variants={itemVariants}
+            className="lg:col-span-8 reference-card p-8 space-y-6 bg-white dark:bg-[#191f2f]/85"
+          >
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-[#261812] dark:text-white">Monthly Application Trends</h3>
@@ -258,13 +287,16 @@ function DashboardContent() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column Promo Cards */}
           <div className="lg:col-span-4 space-y-8">
             
             {/* Strategic Move */}
-            <div className="rounded-3xl bg-gradient-to-br from-[#1c1917] to-[#0c1322] border border-white/5 text-white p-7 space-y-5 shadow-2xl relative overflow-hidden group">
+            <motion.div 
+              variants={itemVariants}
+              className="rounded-3xl bg-gradient-to-br from-[#1c1917] to-[#0c1322] border border-white/5 text-white p-7 space-y-5 shadow-2xl relative overflow-hidden group"
+            >
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff6b00]/10 blur-xl rounded-full" />
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-[#ffb693]" />
@@ -276,10 +308,13 @@ function DashboardContent() {
               <button className="w-full py-3.5 rounded-xl bg-[#ff6b00] dark:bg-[#ffb693] text-white dark:text-[#561f00] text-xs font-black flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] transition-transform">
                 View Priority Matches <ArrowRight className="w-4 h-4" />
               </button>
-            </div>
+            </motion.div>
 
             {/* Skill Gap & Career Readiness Report */}
-            <div className="reference-card p-6 space-y-4">
+            <motion.div 
+              variants={itemVariants}
+              className="reference-card p-6 space-y-4 bg-white dark:bg-[#191f2f]/85"
+            >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-xs font-black text-[#a04100] dark:text-[#ffb693] uppercase tracking-wider">
                   <AlertTriangle className="w-4 h-4 text-amber-500" /> AI Skill Gap Report
@@ -303,14 +338,17 @@ function DashboardContent() {
               <a href="/resume-analyzer" className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#a04100] dark:text-[#ffb693] hover:underline pt-2.5">
                 Open Resume Optimization <ExternalLink className="w-3.5 h-3.5" />
               </a>
-            </div>
+            </motion.div>
 
           </div>
 
         </div>
 
         {/* Bottom Section: Recent Activity Table */}
-        <div className="reference-card p-8 space-y-6">
+        <motion.div 
+          variants={itemVariants}
+          className="reference-card p-8 space-y-6 bg-white dark:bg-[#191f2f]/85"
+        >
           <div className="flex justify-between items-center">
             <h3 className="text-base font-bold text-[#261812] dark:text-white">Recent Application Activity</h3>
             <a href="/applied" className="text-xs font-bold text-[#a04100] dark:text-[#ffb693] hover:underline">View all applications</a>
@@ -333,9 +371,9 @@ function DashboardContent() {
               </a>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-      </div>
+      </motion.div>
 
       <div className="hidden">
         <BarChart3 className="w-1" />

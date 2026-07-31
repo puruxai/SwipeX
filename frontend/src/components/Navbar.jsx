@@ -7,7 +7,6 @@ import {
   Search, 
   Moon, 
   Sun, 
-  ChevronDown, 
   User, 
   LogOut, 
   Briefcase, 
@@ -38,24 +37,24 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FFF9F5]/90 dark:bg-[#0F0D0C]/90 backdrop-blur-md border-b border-[#F3E8E2] dark:border-[#3D3835] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
+    <header className="sticky top-0 z-50 bg-[#fff8f6]/85 dark:bg-[#0c1322]/85 backdrop-blur-xl border-b border-[#e2bfb0]/30 dark:border-white/5 transition-all">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="flex items-center justify-between h-20 gap-6">
           
-          {/* Brand Logo */}
-          <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-2 font-black text-xl tracking-tight text-[#963200] dark:text-[#FF8A3D]">
-              <Sparkles className="w-5 h-5 text-[#963200] dark:text-[#FF8A3D]" />
-              <span>SwipeX</span>
+          {/* Brand Logo & Global Nav Links */}
+          <div className="flex items-center gap-12">
+            <Link to="/" className="flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight text-[#a04100] dark:text-[#ffb693]">
+              <Sparkles className="w-5 h-5 text-[#ff6b00] dark:text-[#ffb693]" />
+              <span>SwipeX AI</span>
             </Link>
 
-            {/* Original SwipeX Navigation Links */}
+            {/* Original SwipeX Navigation Links (Header-Level for Candidate Actions) */}
             {user && (
-              <nav className="hidden lg:flex items-center gap-4 text-xs font-bold text-[#57534E] dark:text-[#A8A29E]">
+              <nav className="hidden xl:flex items-center gap-6 text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0]/80">
                 <Link
                   to="/swipe"
-                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
-                    isActive('/swipe') ? 'text-[#963200] font-black' : ''
+                  className={`hover:text-[#a04100] dark:hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
+                    isActive('/swipe') ? 'text-[#a04100] dark:text-[#ffb693] font-black' : ''
                   }`}
                 >
                   <Layers className="w-3.5 h-3.5" /> Swipe Feed
@@ -63,8 +62,8 @@ export default function Navbar() {
 
                 <Link
                   to="/resume-analyzer"
-                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
-                    isActive('/resume-analyzer') ? 'text-[#963200] font-black' : ''
+                  className={`hover:text-[#a04100] dark:hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
+                    isActive('/resume-analyzer') ? 'text-[#a04100] dark:text-[#ffb693] font-black' : ''
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" /> ATS Analyzer
@@ -72,8 +71,8 @@ export default function Navbar() {
 
                 <Link
                   to="/ai-hub"
-                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
-                    isActive('/ai-hub') ? 'text-[#963200] font-black' : ''
+                  className={`hover:text-[#a04100] dark:hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
+                    isActive('/ai-hub') ? 'text-[#a04100] dark:text-[#ffb693] font-black' : ''
                   }`}
                 >
                   <Bot className="w-3.5 h-3.5" /> AI Studio
@@ -81,8 +80,8 @@ export default function Navbar() {
 
                 <Link
                   to="/jobs"
-                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
-                    isActive('/jobs') ? 'text-[#963200] font-black' : ''
+                  className={`hover:text-[#a04100] dark:hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
+                    isActive('/jobs') ? 'text-[#a04100] dark:text-[#ffb693] font-black' : ''
                   }`}
                 >
                   <Search className="w-3.5 h-3.5" /> Smart Search
@@ -90,8 +89,8 @@ export default function Navbar() {
 
                 <Link
                   to="/dashboard"
-                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
-                    isActive('/dashboard') ? 'text-[#963200] font-black' : ''
+                  className={`hover:text-[#a04100] dark:hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
+                    isActive('/dashboard') ? 'text-[#a04100] dark:text-[#ffb693] font-black' : ''
                   }`}
                 >
                   <BarChart3 className="w-3.5 h-3.5" /> Analytics
@@ -99,8 +98,8 @@ export default function Navbar() {
 
                 <Link
                   to="/saved"
-                  className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
-                    isActive('/saved') ? 'text-[#963200] font-black' : ''
+                  className={`hover:text-[#a04100] dark:hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
+                    isActive('/saved') ? 'text-[#a04100] dark:text-[#ffb693] font-black' : ''
                   }`}
                 >
                   <Bookmark className="w-3.5 h-3.5" /> Saved
@@ -109,8 +108,8 @@ export default function Navbar() {
                 {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                   <Link
                     to="/recruiter"
-                    className={`hover:text-[#963200] transition-colors flex items-center gap-1.5 ${
-                      isActive('/recruiter') ? 'text-[#963200] font-black' : ''
+                    className={`hover:text-[#a04100] dark:hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
+                      isActive('/recruiter') ? 'text-[#a04100] dark:text-[#ffb693] font-black' : ''
                     }`}
                   >
                     <Briefcase className="w-3.5 h-3.5" /> Recruiter HQ
@@ -131,39 +130,39 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearchSubmit} className="hidden sm:flex flex-1 max-w-xs items-center relative">
-            <Search className="w-3.5 h-3.5 absolute left-3.5 text-[#A8A29E]" />
+          {/* Elegant Search Bar */}
+          <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-sm items-center relative group">
+            <Search className="w-4 h-4 absolute left-4 text-[#5a4136] dark:text-[#e2bfb0]/70 group-focus-within:text-[#ff6b00]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search jobs, skills, or companies..."
-              className="w-full pl-9 pr-4 py-1.5 rounded-full bg-[#FFF5F0] dark:bg-[#1C1917] border border-[#F3E8E2] dark:border-[#3D3835] text-xs font-medium text-[#1C1917] dark:text-white focus:outline-none focus:border-[#963200]"
+              placeholder="Search neural insights..."
+              className="w-full pl-11 pr-5 py-2.5 rounded-full bg-white/40 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-xs font-semibold text-[#261812] dark:text-white focus:outline-none focus:border-[#ff6b00] focus:ring-1 focus:ring-[#ff6b00]/30 transition-all placeholder-[#5a4136]/50 dark:placeholder-[#e2bfb0]/40"
             />
           </form>
 
-          {/* Right Header Actions */}
-          <div className="flex items-center gap-3">
+          {/* Right Action Icons Block */}
+          <div className="flex items-center gap-4">
             
-            {/* Theme Toggle Icon */}
+            {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-[#FFF0E6] dark:hover:bg-[#262322] text-[#57534E] dark:text-[#A8A29E] transition-colors"
+              className="p-2.5 rounded-full hover:bg-white/50 dark:hover:bg-white/5 text-[#5a4136] dark:text-[#e2bfb0] transition-colors border border-transparent hover:border-[#e2bfb0]/30 dark:hover:border-white/5"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-[#FF8A3D]" /> : <Moon className="w-4 h-4 text-[#57534E]" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-[#ffb693]" /> : <Moon className="w-4 h-4 text-[#5a4136]" />}
             </button>
 
-            {/* Upgrade Button */}
+            {/* Upgrade CTA */}
             <Link
               to="/swipe"
-              className="px-4 py-1.5 rounded-full bg-[#963200] hover:bg-[#802B00] text-white text-xs font-bold shadow-sm transition-all hover:scale-105"
+              className="px-6 py-2.5 rounded-full bg-[#ff6b00] dark:bg-[#ffb693] text-white dark:text-[#561f00] text-xs font-black shadow-lg shadow-[#ff6b00]/15 dark:shadow-[#ffb693]/10 hover:scale-105 active:scale-95 transition-all"
             >
               Upgrade
             </Link>
 
-            {/* User Profile Avatar / Auth */}
+            {/* User Profile Avatar Drawer */}
             {user ? (
               <div className="relative">
                 <button
@@ -173,7 +172,7 @@ export default function Navbar() {
                   <img
                     src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}
                     alt="User Avatar"
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-[#963200]/40"
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-[#ff6b00]/25 dark:ring-[#ffb693]/25 cursor-pointer hover:scale-102 transition-transform"
                   />
                 </button>
 
@@ -183,36 +182,36 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: 8, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-56 rounded-2xl p-2 bg-white dark:bg-[#1C1917] border border-[#F3E8E2] dark:border-[#3D3835] shadow-xl z-50 space-y-1"
+                      className="absolute right-0 mt-3 w-56 rounded-2xl p-2.5 bg-white dark:bg-[#141b2b] border border-[#e2bfb0]/40 dark:border-white/10 shadow-2xl z-50 space-y-1"
                     >
-                      <div className="px-3 py-2 border-b border-[#F3E8E2] dark:border-[#3D3835]">
-                        <p className="text-[10px] text-[#A8A29E] uppercase font-bold">Signed in as</p>
-                        <p className="text-xs font-black text-[#1C1917] dark:text-white truncate">{user.email}</p>
+                      <div className="px-3.5 py-2.5 border-b border-[#e2bfb0]/20 dark:border-white/5">
+                        <p className="text-[9px] text-[#5a4136] dark:text-[#e2bfb0]/60 uppercase font-black tracking-wider">Signed in as</p>
+                        <p className="text-xs font-black text-[#261812] dark:text-white truncate mt-0.5">{user.email}</p>
                       </div>
 
                       <Link
                         to="/profile"
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] rounded-xl"
+                        className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] hover:bg-[#fff1eb] dark:hover:bg-white/5 rounded-xl transition-colors"
                       >
-                        <User className="w-4 h-4 text-[#963200]" /> My Profile
+                        <User className="w-4 h-4 text-[#ff6b00] dark:text-[#ffb693]" /> My Profile
                       </Link>
 
                       <Link
                         to="/dashboard"
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] rounded-xl"
+                        className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] hover:bg-[#fff1eb] dark:hover:bg-white/5 rounded-xl transition-colors"
                       >
-                        <BarChart3 className="w-4 h-4 text-[#963200]" /> Analytics
+                        <BarChart3 className="w-4 h-4 text-[#ff6b00] dark:text-[#ffb693]" /> Analytics
                       </Link>
 
                       {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                         <Link
                           to="/recruiter"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#57534E] dark:text-[#A8A29E] hover:bg-[#FFF0E6] dark:hover:bg-[#262322] rounded-xl"
+                          className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] hover:bg-[#fff1eb] dark:hover:bg-white/5 rounded-xl transition-colors"
                         >
-                          <Briefcase className="w-4 h-4 text-[#963200]" /> Recruiter HQ
+                          <Briefcase className="w-4 h-4 text-[#ff6b00] dark:text-[#ffb693]" /> Recruiter HQ
                         </Link>
                       )}
 
@@ -220,7 +219,7 @@ export default function Navbar() {
                         <Link
                           to="/admin"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 rounded-xl"
+                          className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-rose-600 rounded-xl"
                         >
                           <ShieldCheck className="w-4 h-4" /> Admin Console
                         </Link>
@@ -232,7 +231,7 @@ export default function Navbar() {
                           logout();
                           navigate('/');
                         }}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl mt-1"
+                        className="w-full text-left flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-xl mt-1.5"
                       >
                         <LogOut className="w-4 h-4" /> Sign Out
                       </button>
@@ -241,11 +240,11 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login" className="px-3.5 py-1.5 text-xs font-bold text-[#57534E] hover:text-[#963200]">
+              <div className="flex items-center gap-3">
+                <Link to="/login" className="px-4 py-2 text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] hover:text-[#ff6b00]">
                   Log In
                 </Link>
-                <Link to="/signup" className="px-4 py-1.5 rounded-full bg-[#963200] text-white text-xs font-bold shadow-sm">
+                <Link to="/signup" className="px-5 py-2.5 rounded-full bg-[#ff6b00] dark:bg-[#ffb693] text-white dark:text-[#561f00] text-xs font-black shadow-md">
                   Sign Up
                 </Link>
               </div>

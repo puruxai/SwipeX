@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Sparkles, 
@@ -16,161 +16,230 @@ import {
   CheckCircle2,
   Award
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 export default function LandingPage() {
   const logos = ["Stripe", "Linear", "Vercel", "Framer", "OpenAI", "Raycast", "Perplexity"];
+  
+  // Parallax mouse hover effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  const handleMouseMove = (e) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    const x = (clientX / innerWidth - 0.5) * 40;
+    const y = (clientY / innerHeight - 0.5) * 40;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const parallaxX = useTransform(mouseX, (value) => value);
+  const parallaxY = useTransform(mouseY, (value) => value);
+
+  // Stats Counters
+  const [accuracy, setAccuracy] = useState(0);
+  const [jobs, setJobs] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const element = document.getElementById('stats-bar-trigger');
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        // Animate count values
+        let accVal = 0;
+        let jobVal = 0;
+        const timer = setInterval(() => {
+          if (accVal < 98) {
+            accVal += 2;
+            setAccuracy(accVal);
+          }
+          if (jobVal < 1200) {
+            jobVal += 30;
+            setJobs(jobVal);
+          }
+          if (accVal >= 98 && jobVal >= 1200) {
+            clearInterval(timer);
+          }
+        }, 30);
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="space-y-20 pb-16 overflow-hidden bg-[#FFF9F5] text-[#1C1917]">
+    <div 
+      onMouseMove={handleMouseMove}
+      className="space-y-28 pb-20 overflow-hidden bg-[#fff8f6] dark:bg-[#0c1322] text-[#261812] dark:text-[#dce2f7] transition-colors relative"
+    >
+      {/* Background Gradient Mesh */}
+      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-br from-primary/5 dark:from-primary/10 to-transparent blur-[120px] rounded-full" />
+        <div className="absolute top-[30%] right-[-10%] w-[600px] h-[600px] bg-secondary-container/5 dark:bg-secondary-container/10 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[700px] h-[700px] bg-tertiary-container/5 dark:bg-tertiary-container/10 blur-[180px] rounded-full" />
+      </div>
       
       {/* HERO SECTION WITH ENHANCED MULTI-LAYERED VISUAL WORKSPACE */}
-      <section className="pt-12 lg:pt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        
-        {/* Soft Background Gradient Blobs */}
-        <div className="absolute top-10 right-10 w-96 h-96 bg-[#963200]/10 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse-slow" />
-        <div className="absolute top-40 right-48 w-80 h-80 bg-[#FF8A3D]/15 rounded-full blur-2xl pointer-events-none -z-10" />
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="pt-16 lg:pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative min-h-[90vh] flex items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full relative z-10">
           
           {/* Left Column Text (Preserved 100% Original Content) */}
-          <div className="lg:col-span-6 space-y-6 text-left">
+          <div className="lg:col-span-6 space-y-8 text-left">
             
             {/* Version Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF0E6] border border-[#F3D2C1] text-xs font-bold text-[#963200]">
-              <span className="w-2 h-2 rounded-full bg-[#963200]" />
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2.5 px-4.5 py-1.5 rounded-full bg-white/40 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-xs font-bold text-[#a04100] dark:text-[#ffb693] backdrop-blur-md"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-[#ff6b00] dark:bg-[#ffb693] animate-pulse" />
               <span>v2.0 Intelligence Now Live</span>
-            </div>
+            </motion.div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-[#1C1917] leading-[1.1]">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#261812] dark:text-white leading-[1.1]"
+            >
               The Intelligent Career <br />
-              <span className="text-[#963200]">Operating System.</span>
-            </h1>
+              <span className="gradient-terracotta-text">Operating System.</span>
+            </motion.h1>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-[#78716C] font-medium leading-relaxed max-w-lg">
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-sm sm:text-base text-[#5a4136] dark:text-[#e2bfb0] font-medium leading-relaxed max-w-lg"
+            >
               SwipeX leverages proprietary neural engines to automate career workflows, analyze market shifts, and bridge the gap between talent and opportunity.
-            </p>
+            </motion.p>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="flex flex-wrap items-center gap-4 pt-2"
+            >
               <Link
                 to="/signup"
-                className="px-7 py-3.5 rounded-xl bg-[#963200] hover:bg-[#802B00] text-white text-xs font-black shadow-[0_6px_20px_rgba(150,50,0,0.3)] transition-all hover:scale-105"
+                className="btn-terracotta px-8 py-4 text-xs font-bold shadow-xl shadow-primary/20 hover:shadow-primary/40 active:scale-95 transition-all"
               >
                 Get Started
               </Link>
               <Link
                 to="/jobs"
-                className="px-7 py-3.5 rounded-xl border border-[#F3E8E2] bg-white text-xs font-bold text-[#57534E] hover:bg-[#FFF0E6] hover:text-[#963200] transition-all"
+                className="btn-terracotta-outline px-8 py-4 text-xs font-bold transition-all"
               >
                 View Documentation
               </Link>
-            </div>
+            </motion.div>
 
           </div>
 
           {/* Right Column: Premium AI Career Dashboard Mockup & Floating Glass UI Cards */}
-          <div className="lg:col-span-6 relative">
+          <div className="lg:col-span-6 relative flex justify-center items-center">
             
             {/* Top Left Floating Badge */}
             <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="absolute -top-4 -left-4 z-20 px-3.5 py-1.5 rounded-2xl bg-white border border-[#F3E8E2] shadow-lg flex items-center gap-2"
+              style={{ x: parallaxX, y: parallaxY }}
+              className="absolute -top-6 -left-6 z-20 px-4 py-2.5 rounded-2xl bg-white/80 dark:bg-[#191f2f]/80 backdrop-blur-xl border border-[#e2bfb0] dark:border-white/10 shadow-xl flex items-center gap-2.5"
             >
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span className="text-[11px] font-black text-[#1C1917]">TOP 5% CANDIDATE POOL</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-[11px] font-extrabold text-[#261812] dark:text-white tracking-wide">TOP 5% CANDIDATE POOL</span>
             </motion.div>
-
+ 
             {/* Top Right Floating Job Match Card */}
             <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="absolute -top-6 -right-4 z-20 p-4 rounded-3xl bg-white/95 backdrop-blur-md border border-[#F3E8E2] shadow-2xl max-w-xs space-y-2.5 hidden sm:block"
+              style={{ x: parallaxX, y: parallaxY }}
+              className="absolute -top-8 -right-8 z-20 p-5 rounded-3xl bg-white/85 dark:bg-[#191f2f]/85 backdrop-blur-xl border border-[#e2bfb0] dark:border-white/10 shadow-2xl max-w-xs space-y-3.5 hidden sm:block"
             >
               <div className="flex justify-between items-center">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#FFF0E6] text-[#963200] text-[10px] font-black uppercase">
+                <span className="px-3 py-1 rounded-full bg-white/50 dark:bg-white/5 text-[#a04100] dark:text-[#ffb693] text-[10px] font-black uppercase tracking-wider border border-[#e2bfb0]/40 dark:border-white/10">
                   96% NEURAL MATCH
                 </span>
-                <span className="text-[10px] text-emerald-600 font-bold">100% Remote</span>
+                <span className="text-[10px] text-emerald-500 font-bold">100% Remote</span>
               </div>
               <div>
-                <h4 className="text-xs font-black text-[#1C1917]">Senior AI Engineer</h4>
-                <p className="text-[11px] text-[#78716C] font-semibold">NeuralStack Labs • $180k - $220k</p>
+                <h4 className="text-xs font-bold text-[#261812] dark:text-white">Senior AI Engineer</h4>
+                <p className="text-[11px] text-[#5a4136] dark:text-[#e2bfb0] font-semibold mt-1">NeuralStack Labs • $180k - $220k</p>
               </div>
-              <div className="flex gap-1">
-                <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">Python</span>
-                <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">FastAPI</span>
-                <span className="px-2 py-0.5 rounded bg-[#FFF0E6] text-[10px] font-bold text-[#57534E]">PyTorch</span>
+              <div className="flex gap-1.5 pt-1">
+                <span className="px-2.5 py-1 rounded-lg bg-white/40 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-[9px] font-bold text-[#5a4136] dark:text-[#e2bfb0]">Python</span>
+                <span className="px-2.5 py-1 rounded-lg bg-white/40 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-[9px] font-bold text-[#5a4136] dark:text-[#e2bfb0]">FastAPI</span>
+                <span className="px-2.5 py-1 rounded-lg bg-white/40 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-[9px] font-bold text-[#5a4136] dark:text-[#e2bfb0]">PyTorch</span>
               </div>
             </motion.div>
 
             {/* Primary Main Workspace Center Frame */}
-            <div className="rounded-3xl border border-[#F3E8E2] bg-white p-5 shadow-2xl space-y-4 relative z-10">
-              
-              {/* Workspace App Header */}
-              <div className="flex justify-between items-center border-b border-[#F3E8E2] pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-rose-400" />
-                  <div className="w-3 h-3 rounded-full bg-amber-400" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                  <span className="text-[11px] font-bold text-[#78716C] ml-2">SwipeX AI Studio • Career Network</span>
+            <div className="moving-border p-[2px] w-full max-w-lg shadow-2xl">
+              <div className="rounded-3xl bg-white dark:bg-[#191f2f]/80 backdrop-blur-xl p-6 space-y-5 relative z-10">
+                
+                {/* Workspace App Header */}
+                <div className="flex justify-between items-center border-b border-[#e2bfb0]/30 dark:border-white/5 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-rose-400" />
+                    <div className="w-3 h-3 rounded-full bg-amber-400" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-400" />
+                    <span className="text-[11px] font-bold text-[#5a4136] dark:text-[#e2bfb0] ml-2">SwipeX AI Studio • Career Network</span>
+                  </div>
+                  <div className="px-3 py-1 rounded-full bg-[#ff6b00]/10 text-[#a04100] dark:text-[#ffb693] text-[9px] font-black uppercase tracking-wider border border-[#ff6b00]/20">
+                    LIVE TELEMETRY
+                  </div>
                 </div>
-                <div className="px-2.5 py-0.5 rounded-full bg-[#FFF0E6] text-[#963200] text-[10px] font-black uppercase">
-                  LIVE TELEMETRY
-                </div>
-              </div>
 
-              {/* Main Image Graphic (AI Career & Vector Graph Visualization) */}
-              <div className="h-56 rounded-2xl overflow-hidden relative border border-[#F3E8E2]">
-                <img
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
-                  alt="AI Career Analytics Dashboard Workspace"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 flex flex-col justify-end text-white">
-                  <div className="text-xs font-black uppercase tracking-wider text-[#FF8A3D]">NEURAL VECTOR MATCHING</div>
-                  <div className="text-sm font-extrabold">Full-Stack AI & Infrastructure Engineering</div>
+                {/* Main Image Graphic (AI Career & Vector Graph Visualization) */}
+                <div className="h-56 rounded-2xl overflow-hidden relative border border-[#e2bfb0] dark:border-white/10 group">
+                  <img
+                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
+                    alt="AI Career Analytics Dashboard Workspace"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-5 flex flex-col justify-end text-white">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-[#ffb693] mb-1">NEURAL VECTOR MATCHING</div>
+                    <div className="text-sm font-extrabold tracking-wide">Full-Stack AI & Infrastructure Engineering</div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Quick Metrics Bar inside Workspace */}
-              <div className="grid grid-cols-3 gap-2 text-center pt-1">
-                <div className="p-2 rounded-xl bg-[#FFF0E6] border border-[#F3D2C1]">
-                  <div className="text-xs font-black text-[#963200]">98.4%</div>
-                  <div className="text-[9px] font-bold text-[#78716C] uppercase">ATS PARSE</div>
+                {/* Quick Metrics Bar inside Workspace */}
+                <div className="grid grid-cols-3 gap-3 pt-1">
+                  <div className="p-3.5 rounded-2xl bg-white/50 dark:bg-white/5 border border-[#e2bfb0]/50 dark:border-white/10 text-center">
+                    <div className="text-sm font-black text-[#a04100] dark:text-[#ffb693]">98.4%</div>
+                    <div className="text-[9px] font-bold text-[#5a4136] dark:text-[#e2bfb0] uppercase tracking-wider mt-0.5">ATS PARSE</div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-white/50 dark:bg-white/5 border border-[#e2bfb0]/50 dark:border-white/10 text-center">
+                    <div className="text-sm font-black text-[#a04100] dark:text-[#ffb693]">124</div>
+                    <div className="text-[9px] font-bold text-[#5a4136] dark:text-[#e2bfb0] uppercase tracking-wider mt-0.5">MATCHES</div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-white/50 dark:bg-white/5 border border-[#e2bfb0]/50 dark:border-white/10 text-center">
+                    <div className="text-sm font-black text-[#a04100] dark:text-[#ffb693]">$195k</div>
+                    <div className="text-[9px] font-bold text-[#5a4136] dark:text-[#e2bfb0] uppercase tracking-wider mt-0.5">MEDIAN</div>
+                  </div>
                 </div>
-                <div className="p-2 rounded-xl bg-[#FFF0E6] border border-[#F3D2C1]">
-                  <div className="text-xs font-black text-[#963200]">124</div>
-                  <div className="text-[9px] font-bold text-[#78716C] uppercase">MATCHES</div>
-                </div>
-                <div className="p-2 rounded-xl bg-[#FFF0E6] border border-[#F3D2C1]">
-                  <div className="text-xs font-black text-[#963200]">$195k</div>
-                  <div className="text-[9px] font-bold text-[#78716C] uppercase">MEDIAN</div>
-                </div>
-              </div>
 
+              </div>
             </div>
 
             {/* Bottom Left Floating ATS Score Card */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="absolute -bottom-6 -left-6 z-20 p-4 rounded-3xl bg-white/95 backdrop-blur-md border border-[#F3E8E2] shadow-2xl flex items-center gap-4 hidden sm:flex"
+              style={{ x: parallaxX, y: parallaxY }}
+              className="absolute -bottom-8 -left-8 z-20 p-5 rounded-3xl bg-white/90 dark:bg-[#191f2f]/90 backdrop-blur-xl border border-[#e2bfb0] dark:border-white/10 shadow-2xl flex items-center gap-4.5 hidden sm:flex"
             >
-              <div className="w-14 h-14 rounded-full border-4 border-[#963200] flex flex-col items-center justify-center flex-shrink-0 bg-[#FFF0E6]">
-                <span className="text-base font-black text-[#963200]">94</span>
-                <span className="text-[8px] font-bold text-[#78716C] uppercase">ATS</span>
+              <div className="w-14 h-14 rounded-full border-4 border-[#ff6b00] dark:border-[#ffb693] flex flex-col items-center justify-center flex-shrink-0 bg-white/50 dark:bg-white/5">
+                <span className="text-base font-black text-[#a04100] dark:text-white">94</span>
+                <span className="text-[8px] font-bold text-[#5a4136] dark:text-[#e2bfb0] uppercase mt-0.5">ATS</span>
               </div>
               <div>
-                <h4 className="text-xs font-black text-[#1C1917]">ATS Resume Diagnostics</h4>
-                <p className="text-[11px] text-[#78716C] font-medium">Impact Action Verbs: 98% • Optimal Structure</p>
-                <div className="text-[10px] font-black text-[#963200] mt-1">VERIFIED FIT ⚡</div>
+                <h4 className="text-xs font-bold text-[#261812] dark:text-white">ATS Resume Diagnostics</h4>
+                <p className="text-[11px] text-[#5a4136] dark:text-[#e2bfb0] font-medium mt-0.5">Impact Action Verbs: 98% • Optimal Structure</p>
+                <div className="text-[10px] font-black text-[#a04100] dark:text-[#ffb693] mt-1.5 flex items-center gap-1">VERIFIED FIT ⚡</div>
               </div>
             </motion.div>
 
@@ -180,11 +249,11 @@ export default function LandingPage() {
       </section>
 
       {/* TRUSTED BY INDUSTRY LEADERS */}
-      <section className="py-8 text-center space-y-4 max-w-7xl mx-auto px-4">
-        <p className="text-[11px] font-black uppercase tracking-widest text-[#A8A29E]">TRUSTED BY INDUSTRY LEADERS</p>
-        <div className="flex flex-wrap justify-center items-center gap-12 opacity-60">
+      <section className="py-12 text-center space-y-6 max-w-7xl mx-auto px-4 relative z-10">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-[#5a4136] dark:text-[#e2bfb0] opacity-80">TRUSTED BY INDUSTRY LEADERS</p>
+        <div className="flex flex-wrap justify-center items-center gap-12 sm:gap-16 opacity-50 dark:opacity-40">
           {logos.map((logo, i) => (
-            <span key={i} className="text-base font-black text-[#78716C] tracking-tight hover:text-[#963200] transition-colors">
+            <span key={i} className="text-base font-black text-[#261812] dark:text-white tracking-tight hover:text-[#ff6b00] dark:hover:text-[#ffb693] transition-colors cursor-pointer">
               {logo}
             </span>
           ))}
@@ -192,80 +261,84 @@ export default function LandingPage() {
       </section>
 
       {/* METRICS BAR */}
-      <section className="max-w-5xl mx-auto px-4">
-        <div className="rounded-2xl bg-[#FFF0E6] border border-[#F3D2C1] p-6 grid grid-cols-2 text-center divide-x divide-[#F3D2C1]">
+      <section id="stats-bar-trigger" className="max-w-5xl mx-auto px-4 relative z-10">
+        <div className="rounded-3xl bg-white/40 dark:bg-[#141b2b]/40 backdrop-blur-xl border border-[#e2bfb0] dark:border-white/10 p-8 grid grid-cols-2 text-center divide-x divide-[#e2bfb0]/40 dark:divide-white/10 shadow-lg">
           <div>
-            <div className="text-2xl font-black text-[#963200]">98%</div>
-            <div className="text-[11px] font-extrabold uppercase text-[#78716C]">MATCH ACCURACY</div>
+            <div className="text-3xl font-black text-[#a04100] dark:text-[#ffb693] tracking-tight">{accuracy}%</div>
+            <div className="text-[10px] font-black uppercase text-[#5a4136] dark:text-[#e2bfb0] tracking-widest mt-1">MATCH ACCURACY</div>
           </div>
           <div>
-            <div className="text-2xl font-black text-[#963200]">1,200+</div>
-            <div className="text-[11px] font-extrabold uppercase text-[#78716C]">JOBS INDEXED</div>
+            <div className="text-3xl font-black text-[#a04100] dark:text-[#ffb693] tracking-tight">{jobs}+</div>
+            <div className="text-[10px] font-black uppercase text-[#5a4136] dark:text-[#e2bfb0] tracking-widest mt-1">JOBS INDEXED</div>
           </div>
         </div>
       </section>
 
       {/* ARCHITECTED FOR PROFESSIONAL VELOCITY */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <h2 className="text-3xl font-black text-[#1C1917] tracking-tight">Architected for Professional Velocity</h2>
-          <p className="text-xs text-[#78716C] font-medium">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+        <div className="text-center space-y-3 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-extrabold text-[#261812] dark:text-white tracking-tight">Architected for Professional Velocity</h2>
+          <p className="text-sm text-[#5a4136] dark:text-[#e2bfb0] font-medium leading-relaxed">
             Our core infrastructure uses high-performance compute to deliver actionable insights in milliseconds.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
           {/* Card 1: Neural Engine */}
-          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-6 space-y-4 shadow-sm md:col-span-2">
-            <div className="w-10 h-10 rounded-xl bg-[#FFF0E6] text-[#963200] flex items-center justify-center font-bold">
+          <div className="reference-card p-8 space-y-5 md:col-span-2">
+            <div className="w-12 h-12 rounded-2xl bg-white/50 dark:bg-white/5 text-[#a04100] dark:text-[#ffb693] flex items-center justify-center border border-[#e2bfb0]/50 dark:border-white/10">
               <Cpu className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-black text-[#1C1917]">Neural Engine</h3>
-            <p className="text-xs text-[#78716C] font-medium">
+            <h3 className="text-xl font-bold">Neural Engine</h3>
+            <p className="text-sm text-[#5a4136] dark:text-[#e2bfb0] leading-relaxed">
               Advanced vector embeddings that understand the nuances of career trajectory, sentiment, and latent skills better than any legacy system.
             </p>
-            <div className="h-40 rounded-2xl bg-slate-950 p-4 text-white overflow-hidden relative">
+            <div className="h-48 rounded-2xl overflow-hidden relative border border-[#e2bfb0] dark:border-white/10">
               <img
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
                 alt="Neural Network Preview"
-                className="w-full h-full object-cover rounded-xl opacity-80"
+                className="w-full h-full object-cover opacity-90 dark:opacity-80"
               />
             </div>
           </div>
 
           {/* Card 2: Workflow Logic */}
-          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-6 space-y-4 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-[#FFF0E6] text-[#963200] flex items-center justify-center font-bold">
+          <div className="reference-card p-8 space-y-5">
+            <div className="w-12 h-12 rounded-2xl bg-white/50 dark:bg-white/5 text-[#a04100] dark:text-[#ffb693] flex items-center justify-center border border-[#e2bfb0]/50 dark:border-white/10">
               <Layers className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-black text-[#1C1917]">Workflow Logic</h3>
-            <p className="text-xs text-[#78716C] font-medium">
+            <h3 className="text-xl font-bold">Workflow Logic</h3>
+            <p className="text-sm text-[#5a4136] dark:text-[#e2bfb0] leading-relaxed">
               Automate your entire career search pipeline with custom logic nodes and triggered responses.
             </p>
           </div>
 
           {/* Card 3: Market Analytics */}
-          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-6 space-y-4 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-[#FFF0E6] text-[#963200] flex items-center justify-center font-bold">
+          <div className="reference-card p-8 space-y-5">
+            <div className="w-12 h-12 rounded-2xl bg-white/50 dark:bg-white/5 text-[#a04100] dark:text-[#ffb693] flex items-center justify-center border border-[#e2bfb0]/50 dark:border-white/10">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-black text-[#1C1917]">Market Analytics</h3>
-            <p className="text-xs text-[#78716C] font-medium">
+            <h3 className="text-xl font-bold">Market Analytics</h3>
+            <p className="text-sm text-[#5a4136] dark:text-[#e2bfb0] leading-relaxed">
               Real-time tracking of salary benchmarks and demand shifts across 145+ industry sectors.
             </p>
           </div>
 
           {/* Card 4: Global Career Network (Dark Terracotta Card) */}
-          <div className="rounded-3xl bg-[#963200] text-white p-6 space-y-4 shadow-xl md:col-span-2 flex flex-col justify-between">
-            <div className="space-y-2">
-              <h3 className="text-xl font-black">Global Career Network</h3>
-              <p className="text-xs opacity-90 font-medium max-w-md">
+          <div className="reference-card bg-gradient-to-br from-[#a04100] to-[#ff6b00] dark:from-[#191f2f] dark:to-[#0c1322] border-none text-white p-8 space-y-6 md:col-span-2 flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-2xl rounded-full" />
+            <div className="space-y-3 relative z-10">
+              <h3 className="text-2xl font-extrabold tracking-tight">Global Career Network</h3>
+              <p className="text-sm opacity-90 font-medium max-w-md leading-relaxed">
                 Instant connectivity to hiring managers and technical recruiters at top-tier firms globally.
               </p>
             </div>
-            <div>
-              <Link to="/signup" className="px-5 py-2.5 rounded-xl bg-white text-[#963200] text-xs font-black inline-block shadow-sm">
+            <div className="relative z-10 pt-2">
+              <Link 
+                to="/signup" 
+                className="px-8 py-3.5 rounded-full bg-white dark:bg-[#ffb693] text-[#a04100] dark:text-[#0c1322] text-xs font-black shadow-lg transition-transform hover:scale-105 active:scale-95 inline-block"
+              >
                 Join Network
               </Link>
             </div>
@@ -275,58 +348,72 @@ export default function LandingPage() {
       </section>
 
       {/* PRICING SECTION */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-black text-[#1C1917]">Simple, Predictable Pricing</h2>
-          <p className="text-xs text-[#78716C] font-medium">Choose the plan that matches your career velocity.</p>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+        <div className="text-center space-y-3">
+          <h2 className="text-3xl font-extrabold text-[#261812] dark:text-white tracking-tight">Simple, Predictable Pricing</h2>
+          <p className="text-sm text-[#5a4136] dark:text-[#e2bfb0] font-medium">Choose the plan that matches your career velocity.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
           
           {/* Base */}
-          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-8 space-y-6 text-center shadow-sm">
-            <div>
-              <h3 className="text-lg font-black text-[#1C1917]">Base</h3>
-              <div className="text-3xl font-black text-[#1C1917] mt-2">$0 <span className="text-xs text-[#78716C] font-bold">/mo</span></div>
+          <div className="reference-card p-8 flex flex-col justify-between text-center relative group">
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-[#261812] dark:text-white">Base</h3>
+                <div className="text-4xl font-black text-[#261812] dark:text-white mt-3">$0 <span className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-bold">/mo</span></div>
+              </div>
+              <ul className="text-xs font-medium text-[#5a4136] dark:text-[#e2bfb0] space-y-3.5 text-left border-t border-[#e2bfb0]/30 dark:border-white/5 pt-5">
+                <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-emerald-500" /> 5 Jobs Managed</li>
+                <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-emerald-500" /> Standard Neural Analysis</li>
+                <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-emerald-500" /> Email Support</li>
+              </ul>
             </div>
-            <ul className="text-xs font-medium text-[#57534E] space-y-2 text-left">
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> 5 Jobs Managed</li>
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Standard Neural Analysis</li>
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Email Support</li>
-            </ul>
-            <Link to="/signup" className="btn-terracotta-outline w-full py-3 text-xs font-bold block">Start Free</Link>
+            <div className="pt-8">
+              <Link to="/signup" className="btn-terracotta-outline w-full py-3.5 text-xs font-bold block text-center">Start Free</Link>
+            </div>
           </div>
 
           {/* Enterprise Pro (Featured) */}
-          <div className="rounded-3xl border-2 border-[#963200] bg-white p-8 space-y-6 text-center shadow-xl relative">
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#963200] text-white text-[10px] font-black uppercase tracking-wider">
-              MOST POPULAR
-            </span>
-            <div>
-              <h3 className="text-lg font-black text-[#1C1917]">Enterprise Pro</h3>
-              <div className="text-3xl font-black text-[#963200] mt-2">$79 <span className="text-xs text-[#78716C] font-bold">/mo</span></div>
+          <div className="moving-border p-[2px] flex relative transform scale-105 z-20">
+            <div className="reference-card w-full p-8 flex flex-col justify-between text-center relative bg-white dark:bg-[#191f2f] border-none">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#ff6b00] dark:bg-[#ffb693] text-white dark:text-[#561f00] text-[9px] font-black uppercase tracking-widest shadow-md">
+                MOST POPULAR
+              </span>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-bold text-[#261812] dark:text-white mt-1">Enterprise Pro</h3>
+                  <div className="text-4xl font-black text-[#a04100] dark:text-[#ffb693] mt-3">$79 <span className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-bold">/mo</span></div>
+                </div>
+                <ul className="text-xs font-medium text-[#5a4136] dark:text-[#e2bfb0] space-y-3.5 text-left border-t border-[#e2bfb0]/30 dark:border-white/5 pt-5">
+                  <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-[#ff6b00] dark:text-[#ffb693]" /> Unlimited Jobs</li>
+                  <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-[#ff6b00] dark:text-[#ffb693]" /> 10x Neural Engine Speed</li>
+                  <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-[#ff6b00] dark:text-[#ffb693]" /> Custom Workflow Logic</li>
+                  <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-[#ff6b00] dark:text-[#ffb693]" /> Priority API Access</li>
+                </ul>
+              </div>
+              <div className="pt-8">
+                <Link to="/signup" className="btn-terracotta w-full py-3.5 text-xs font-black block text-center shadow-lg">Get Pro Access</Link>
+              </div>
             </div>
-            <ul className="text-xs font-medium text-[#57534E] space-y-2 text-left">
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> Unlimited Jobs</li>
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> 10x Neural Engine Speed</li>
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> Custom Workflow Logic</li>
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#963200]" /> Priority API Access</li>
-            </ul>
-            <Link to="/signup" className="btn-terracotta w-full py-3 text-xs font-black block">Get Pro Access</Link>
           </div>
 
           {/* Custom */}
-          <div className="rounded-3xl border border-[#F3E8E2] bg-white p-8 space-y-6 text-center shadow-sm">
-            <div>
-              <h3 className="text-lg font-black text-[#1C1917]">Custom</h3>
-              <div className="text-3xl font-black text-[#1C1917] mt-2">Inquire</div>
+          <div className="reference-card p-8 flex flex-col justify-between text-center relative group">
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-[#261812] dark:text-white">Custom</h3>
+                <div className="text-4xl font-black text-[#261812] dark:text-white mt-3">Inquire</div>
+              </div>
+              <ul className="text-xs font-medium text-[#5a4136] dark:text-[#e2bfb0] space-y-3.5 text-left border-t border-[#e2bfb0]/30 dark:border-white/5 pt-5">
+                <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-emerald-500" /> SLA Guarantees</li>
+                <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-emerald-500" /> Dedicated Infrastructure</li>
+                <li className="flex items-center gap-2.5"><Check className="w-4 h-4 text-emerald-500" /> On-site Training</li>
+              </ul>
             </div>
-            <ul className="text-xs font-medium text-[#57534E] space-y-2 text-left">
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> SLA Guarantees</li>
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> Dedicated Infrastructure</li>
-              <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-500" /> On-site Training</li>
-            </ul>
-            <Link to="/signup" className="btn-terracotta-outline w-full py-3 text-xs font-bold block">Contact Sales</Link>
+            <div className="pt-8">
+              <Link to="/signup" className="btn-terracotta-outline w-full py-3.5 text-xs font-bold block text-center">Contact Sales</Link>
+            </div>
           </div>
 
         </div>

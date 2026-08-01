@@ -6,7 +6,7 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('swipex_theme');
     if (savedTheme) return savedTheme;
-    return 'light';
+    return 'dark';
   });
 
   useEffect(() => {

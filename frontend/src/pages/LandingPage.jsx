@@ -17,6 +17,7 @@ import {
   Award
 } from 'lucide-react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
+import ThreeScene from '../components/ThreeScene';
 
 export default function LandingPage() {
   const logos = ["Stripe", "Linear", "Vercel", "Framer", "OpenAI", "Raycast", "Perplexity"];
@@ -75,6 +76,9 @@ export default function LandingPage() {
       onMouseMove={handleMouseMove}
       className="space-y-28 pb-20 overflow-hidden bg-[#fff8f6] dark:bg-[#0c1322] text-[#261812] dark:text-[#dce2f7] transition-colors relative"
     >
+      {/* 3D Premium Experience Background */}
+      <ThreeScene />
+
       {/* Background Gradient Mesh */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-br from-primary/5 dark:from-primary/10 to-transparent blur-[120px] rounded-full" />

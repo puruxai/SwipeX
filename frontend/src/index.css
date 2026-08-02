@@ -1,168 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg-color: #fff8f6;
-  --section-bg: #ffeae1;
-  --card-bg: #ffffff;
-  --text-color: #261812;
-  --secondary-text: #5a4136;
-  --border-color: #e2bfb0;
-  --terracotta: #a04100;
-  --terracotta-hover: #7a3000;
-  --orange-accent: #ff6b00;
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(243, 232, 226, 0.9);
-  --chip-bg: #fff1eb;
-  --chip-text: #a04100;
-  --shadow-color: rgba(17, 24, 39, 0.04);
-}
-
-/* Rebuilt Dark-First Theme variables matching Google Stitch */
-.dark, :root {
-  --bg-color: #05070e;
-  --section-bg: #0d1426;
-  --card-bg: rgba(13, 20, 38, 0.65);
-  --text-color: #dce2f7;
-  --secondary-text: #e2bfb0;
+  --bg-color: #030509;
+  --section-bg: #060913;
+  --card-bg: rgba(6, 9, 19, 0.45);
+  --text-color: #f1f5f9;
+  --secondary-text: #94a3b8;
   --border-color: rgba(255, 107, 0, 0.08);
-  --terracotta: #ffb693;
-  --terracotta-hover: #ff6b00;
+  --terracotta: #ff6b00;
+  --terracotta-hover: #ff8533;
   --orange-accent: #ff6b00;
-  --glass-bg: rgba(13, 20, 38, 0.65);
-  --glass-border: rgba(255, 107, 0, 0.08);
-  --chip-bg: rgba(255, 255, 255, 0.05);
-  --chip-text: #ffb693;
-  --shadow-color: rgba(0, 0, 0, 0.4);
+  --glass-bg: rgba(6, 9, 19, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.04);
+  --chip-bg: rgba(255, 107, 0, 0.05);
+  --chip-text: #ff8533;
+  --shadow-color: rgba(0, 0, 0, 0.85);
 }
 
 @layer base {
   body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     background-image: 
-      radial-gradient(at 0% 0%, hsla(20, 100%, 80%, 0.1) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(0, 0%, 100%, 0.05) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(20, 100%, 70%, 0.05) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(255, 107, 0, 0.06) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.04) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(255, 107, 0, 0.04) 0px, transparent 50%);
     background-attachment: fixed;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-x: hidden;
   }
 }
 
 ::selection {
-  background: rgba(255, 182, 147, 0.3);
-  color: #ffb693;
+  background: rgba(255, 107, 0, 0.25);
+  color: #ffffff;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar matching OpenAI/Apple aesthetics */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #232a3a;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 0, 0.4);
 }
 
-/* Rebuilt Glassmorphic Bento Cards */
+/* Premium 3D floating glass panels */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-border);
   color: var(--text-color);
-  box-shadow: 0 20px 40px var(--shadow-color), inset 0 1px 1px rgba(255, 255, 255, 0.03);
-  transition: all 0.35s cubic-bezier(0.2, 0, 0.2, 1);
+  box-shadow: 
+    0 30px 60px -15px var(--shadow-color),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Bento grid cards with magnetic lift effects */
 .reference-card {
-  background-color: var(--card-bg);
+  background: rgba(6, 9, 19, 0.55);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--text-color);
   border-radius: 1.5rem;
-  box-shadow: 0 20px 40px var(--shadow-color), inset 0 1px 1px rgba(255, 255, 255, 0.03);
-  transition: all 0.35s cubic-bezier(0.2, 0, 0.2, 1);
+  box-shadow: 
+    0 20px 40px -10px var(--shadow-color),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reference-card:hover {
-  border-color: var(--terracotta-hover);
-  transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 30px 60px var(--shadow-color), 0 0 20px rgba(255, 182, 147, 0.1);
+  border-color: rgba(255, 107, 0, 0.25);
+  transform: translateY(-6px);
+  box-shadow: 
+    0 40px 80px -20px var(--shadow-color),
+    0 0 30px 2px rgba(255, 107, 0, 0.03);
 }
 
+/* inputs */
 .glass-input {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-  transition: all 0.2s ease-in-out;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glass-input:focus {
   outline: none;
-  border-color: var(--terracotta-hover);
-  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 107, 0, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.08);
 }
 
-/* Modern Pill CTA buttons */
+/* Terracotta Primary CTAs with magnetic hover states */
 .btn-terracotta {
   background-color: #ff6b00;
   color: #ffffff;
   font-weight: 700;
   border-radius: 9999px;
-  box-shadow: 0 4px 16px rgba(255, 107, 0, 0.2);
-  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 20px rgba(255, 107, 0, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 }
 .btn-terracotta:hover {
   background-color: #ff8533;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255, 107, 0, 0.5);
+}
+.btn-terracotta:active {
+  transform: translateY(0);
 }
 
 .btn-terracotta-outline {
   background-color: transparent;
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   font-weight: 700;
   border-radius: 9999px;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-terracotta-outline:hover {
-  background-color: var(--chip-bg);
-  border-color: var(--terracotta-hover);
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 107, 0, 0.4);
 }
 
 .gradient-terracotta-text {
-  background: linear-gradient(135deg, #ffb693 0%, #ff6b00 50%, #ffdbcc 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ff8533 50%, #ff6b00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Conic Border Animation */
-.moving-border {
+/* Moving/rotating glow highlight */
+.glow-card {
   position: relative;
-  border-radius: 1.5rem;
   overflow: hidden;
-  padding: 2px;
 }
-.moving-border::before {
+.glow-card::before {
   content: '';
   position: absolute;
-  inset: -50%;
-  background: conic-gradient(from 0deg, transparent, #ffb693, transparent, #ff6b00, transparent);
-  animation: rotate 8s linear infinite;
-  z-index: 1;
-}
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  vertical-align: middle;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 0.05), rgba(255, 107, 0, 0.35), rgba(255, 255, 255, 0.05));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }

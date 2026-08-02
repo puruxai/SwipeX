@@ -74,36 +74,36 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-[82vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[82vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#fff8f6] dark:bg-[#0c1322] text-[#261812] dark:text-[#dce2f7] transition-colors">
       <motion.div 
         initial={{ opacity: 0, y: 20, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-md space-y-8 glass-panel p-8 rounded-3xl border border-slate-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/90 shadow-2xl"
+        className="w-full max-w-md space-y-8 reference-card p-8 bg-white dark:bg-[#191f2f]/85 relative overflow-hidden"
       >
         
         <div className="text-center space-y-2">
           <motion.div 
             whileHover={{ scale: 1.05, rotate: 10 }}
-            className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-[#FF6B00] to-[#FF9D42] flex items-center justify-center shadow-[0_4px_20px_rgba(255,107,0,0.35)]"
+            className="w-12 h-12 mx-auto rounded-2xl bg-[#ff6b00] dark:bg-[#ffb693] flex items-center justify-center shadow-lg"
           >
-            <Sparkles className="w-6 h-6 text-white animate-pulse" />
+            <Sparkles className="w-6 h-6 text-white dark:text-[#561f00] animate-pulse" />
           </motion.div>
-          <h2 className="text-3xl font-black text-slate-900 dark:text-white">Join SwipeX</h2>
-          <p className="text-xs text-slate-500 dark:text-neutral-400 font-medium">Create your account to unlock AI job matching</p>
+          <h2 className="text-3xl font-extrabold text-[#261812] dark:text-white">Join SwipeX</h2>
+          <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-medium">Create your account to unlock AI job matching</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">Account Role</label>
+            <label className="block text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] mb-1.5">Account Role</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setRole('user')}
                 className={`py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                   role === 'user'
-                    ? 'bg-[#FF6B00]/10 border-[#FF6B00] text-[#FF6B00] dark:text-[#FF9D42] shadow-sm'
-                    : 'bg-slate-50 dark:bg-neutral-800 border-slate-200 dark:border-neutral-700 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#ff6b00]/10 border-[#ff6b00] text-[#a04100] dark:text-[#ffb693] shadow-sm'
+                    : 'bg-white/40 dark:bg-white/5 border-[#e2bfb0]/40 dark:border-white/10 text-[#5a4136] dark:text-[#e2bfb0] hover:text-[#261812] dark:hover:text-white'
                 }`}
               >
                 <UserCheck className="w-4 h-4" /> Candidate
@@ -113,8 +113,8 @@ export default function Signup() {
                 onClick={() => setRole('recruiter')}
                 className={`py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                   role === 'recruiter'
-                    ? 'bg-[#FF9D42]/10 border-[#FF9D42] text-[#FF6B00] dark:text-[#FF9D42] shadow-sm'
-                    : 'bg-slate-50 dark:bg-neutral-800 border-slate-200 dark:border-neutral-700 text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-[#ffb693]/10 border-[#ffb693] text-[#a04100] dark:text-[#ffb693] shadow-sm'
+                    : 'bg-white/40 dark:bg-white/5 border-[#e2bfb0]/40 dark:border-white/10 text-[#5a4136] dark:text-[#e2bfb0] hover:text-[#261812] dark:hover:text-white'
                 }`}
               >
                 <Briefcase className="w-4 h-4" /> Recruiter
@@ -123,9 +123,9 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">Full Name</label>
+            <label className="block text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] mb-1.5">Full Name</label>
             <div className="relative">
-              <User className="w-4.5 h-4.5 absolute left-3.5 top-3 text-slate-400 dark:text-neutral-500" />
+              <User className="w-4.5 h-4.5 absolute left-3.5 top-3.5 text-[#5a4136] dark:text-[#e2bfb0]/70" />
               <input
                 type="text"
                 required
@@ -133,32 +133,32 @@ export default function Signup() {
                 maxLength={255}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl glass-input text-xs font-medium focus:outline-none"
+                className="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-xs font-semibold bg-white/50 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-[#261812] dark:text-white"
                 placeholder="Alex Mercer"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">Email Address</label>
+            <label className="block text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] mb-1.5">Email Address</label>
             <div className="relative">
-              <Mail className="w-4.5 h-4.5 absolute left-3.5 top-3 text-slate-400 dark:text-neutral-500" />
+              <Mail className="w-4.5 h-4.5 absolute left-3.5 top-3.5 text-[#5a4136] dark:text-[#e2bfb0]/70" />
               <input
                 type="email"
                 required
                 maxLength={255}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl glass-input text-xs font-medium focus:outline-none"
+                className="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-xs font-semibold bg-white/50 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-[#261812] dark:text-white"
                 placeholder="name@example.com"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300 mb-1.5">Password</label>
+            <label className="block text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0] mb-1.5">Password</label>
             <div className="relative">
-              <Lock className="w-4.5 h-4.5 absolute left-3.5 top-3 text-slate-400 dark:text-neutral-500" />
+              <Lock className="w-4.5 h-4.5 absolute left-3.5 top-3.5 text-[#5a4136] dark:text-[#e2bfb0]/70" />
               <input
                 type="password"
                 required
@@ -166,7 +166,7 @@ export default function Signup() {
                 maxLength={128}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
-                className={`w-full pl-11 pr-4 py-2.5 rounded-xl glass-input text-xs font-medium focus:outline-none ${passwordError ? 'border-rose-500' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 rounded-xl glass-input text-xs font-semibold bg-white/50 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-[#261812] dark:text-white ${passwordError ? 'border-rose-500' : ''}`}
                 placeholder="Minimum 10 characters"
               />
             </div>
@@ -175,27 +175,25 @@ export default function Signup() {
             )}
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
+          <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 font-black text-xs text-white bg-gradient-to-r from-[#FF6B00] to-[#FF9D42] rounded-xl shadow-[0_4px_20px_rgba(255,107,0,0.35)] hover:shadow-[0_4px_25px_rgba(255,107,0,0.55)] transition-all flex items-center justify-center gap-2"
+            className="btn-terracotta w-full py-3.5 text-xs font-black shadow-md flex items-center justify-center gap-2"
           >
             {loading ? 'Creating Account...' : 'Create Free Account'}
-          </motion.button>
+          </button>
         </form>
 
         <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200 dark:border-neutral-800"></div></div>
-          <div className="relative flex justify-center text-[10px] uppercase font-bold"><span className="bg-white dark:bg-neutral-900 px-3 text-slate-400 dark:text-neutral-500 rounded-full border border-slate-200 dark:border-neutral-800">Or</span></div>
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[#e2bfb0]/30 dark:border-white/5"></div></div>
+          <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest"><span className="bg-white dark:bg-[#191f2f] px-3.5 py-0.5 text-slate-400 dark:text-neutral-500 rounded-full border border-[#e2bfb0]/30 dark:border-white/5">Or</span></div>
         </div>
 
         <div id="googleSignUpButton" className="w-full flex justify-center mt-1"></div>
 
-        <p className="text-center text-xs text-slate-500 dark:text-neutral-400 font-medium">
+        <p className="text-center text-xs text-[#5a4136] dark:text-[#e2bfb0] font-semibold">
           Already registered?{' '}
-          <Link to="/login" className="text-[#FF6B00] font-bold hover:underline">
+          <Link to="/login" className="text-[#ff6b00] dark:text-[#ffb693] font-bold hover:underline">
             Log In
           </Link>
         </p>

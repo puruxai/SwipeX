@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
   Loader2 
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function JobSearch() {
   const [jobs, setJobs] = useState([]);
@@ -87,37 +88,50 @@ export default function JobSearch() {
     }
   };
 
+  const pageVariants = {
+    hidden: { opacity: 0, y: 15, filter: 'blur(6px)' },
+    show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 100 } }
+  };
+
   return (
-    <div className="flex min-h-[90vh] bg-[#FFF9F5] text-[#1C1917]">
+    <div className="flex min-h-[90vh] bg-[#fff8f6] dark:bg-[#0c1322] text-[#261812] dark:text-[#dce2f7] transition-colors">
       <Sidebar />
 
-      <div className="flex-1 p-6 md:p-8 space-y-6">
+      <motion.div 
+        initial="hidden"
+        animate="show"
+        variants={pageVariants}
+        className="flex-1 p-8 lg:p-10 space-y-8"
+      >
         
-        <div>
-          <h1 className="text-3xl font-black text-[#1C1917] tracking-tight">Smart Multi-Criteria Job Search</h1>
-          <p className="text-xs text-[#78716C] font-medium mt-0.5">Explore positions matching your skill matrix across global tech hubs.</p>
+        {/* Page Header */}
+        <div className="flex justify-between items-end border-b border-[#e2bfb0]/30 dark:border-white/5 pb-6">
+          <div>
+            <h1 className="text-3xl font-extrabold text-[#261812] dark:text-white tracking-tight">Smart Multi-Criteria Job Search</h1>
+            <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-medium mt-1">Explore positions matching your skill matrix across global tech hubs.</p>
+          </div>
         </div>
 
         {/* Filter Drawer */}
-        <div className="reference-card p-6 border border-[#F3E8E2] bg-white rounded-3xl space-y-4 shadow-sm">
+        <div className="reference-card p-6 bg-white dark:bg-[#191f2f]/85 space-y-4">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-4 top-3 text-[#A8A29E]" />
+            <Search className="w-4 h-4 absolute left-4 top-4.5 text-[#5a4136] dark:text-[#e2bfb0]/70" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by title, company, or technical skill (e.g. Python, PyTorch)..."
-              className="w-full pl-11 pr-4 py-2.5 rounded-2xl glass-input text-xs font-semibold"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl glass-input text-xs font-semibold bg-white/50 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-[#261812] dark:text-white"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold text-[#5a4136] dark:text-[#e2bfb0]">
             <div className="space-y-1">
-              <label className="text-[#78716C]">Company Type</label>
+              <label className="text-[10px] font-black uppercase tracking-wider">Company Type</label>
               <select
                 value={selectedCompanyType}
                 onChange={(e) => setSelectedCompanyType(e.target.value)}
-                className="w-full glass-input px-3 py-2 rounded-xl text-xs font-bold"
+                className="w-full glass-input px-3 py-2.5 rounded-xl text-xs font-semibold bg-white/50 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-[#261812] dark:text-white"
               >
                 <option value="ALL">All Companies</option>
                 <option value="MNC">MNC / Enterprise</option>
@@ -126,19 +140,19 @@ export default function JobSearch() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[#78716C]">Flexibility</label>
+              <label className="text-[10px] font-black uppercase tracking-wider">Flexibility</label>
               <select
                 value={selectedFlexibility}
                 onChange={(e) => setSelectedFlexibility(e.target.value)}
-                className="w-full glass-input px-3 py-2 rounded-xl text-xs font-bold"
+                className="w-full glass-input px-3 py-2.5 rounded-xl text-xs font-semibold bg-white/50 dark:bg-white/5 border border-[#e2bfb0] dark:border-white/10 text-[#261812] dark:text-white"
               >
                 <option value="ALL">All Locations</option>
                 <option value="REMOTE">100% Remote</option>
               </select>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[#78716C]">Min Salary: ${minSalary.toLocaleString()}</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-wider">Min Salary: ${minSalary.toLocaleString()}</label>
               <input
                 type="range"
                 min="0"
@@ -146,7 +160,7 @@ export default function JobSearch() {
                 step="10000"
                 value={minSalary}
                 onChange={(e) => setMinSalary(parseInt(e.target.value))}
-                className="w-full accent-[#963200]"
+                className="w-full accent-[#ff6b00]"
               />
             </div>
           </div>
@@ -154,31 +168,31 @@ export default function JobSearch() {
 
         {/* Jobs Grid */}
         {loading ? (
-          <div className="py-20 text-center text-xs font-black text-[#A8A29E] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin text-[#963200]" /> Loading Positions...
+          <div className="py-24 text-center text-xs font-black text-[#a04100] dark:text-[#ffb693] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin text-[#ff6b00]" /> Loading Positions...
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredJobs.map((job) => (
-              <div key={job.id} className="reference-card p-6 border border-[#F3E8E2] bg-white rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
+              <div key={job.id} className="reference-card p-6 bg-white dark:bg-[#191f2f]/85 space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#FFF0E6] text-[#963200] font-black flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-white/50 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-[#a04100] dark:text-[#ffb693] font-black flex items-center justify-center">
                       {job.company ? job.company[0] : 'C'}
                     </div>
                     <div>
-                      <h3 className="font-black text-base text-[#1C1917]">{job.title}</h3>
-                      <p className="text-xs text-[#78716C] font-bold">{job.company} • {job.location || 'Remote'}</p>
+                      <h3 className="font-extrabold text-base text-[#261812] dark:text-white">{job.title}</h3>
+                      <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-bold">{job.company} • {job.location || 'Remote'}</p>
                     </div>
                   </div>
 
-                  <span className="px-3 py-1 rounded-full bg-[#FFF0E6] text-[#963200] font-black text-xs inline-block">
+                  <span className="px-3.5 py-1.5 rounded-full bg-white/50 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-[#a04100] dark:text-[#ffb693] font-black text-xs inline-block">
                     ${job.salary_min?.toLocaleString()} - ${job.salary_max?.toLocaleString()}
                   </span>
 
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1.5">
                     {job.required_skills?.map((skill, i) => (
-                      <span key={i} className="px-2.5 py-0.5 rounded-full bg-[#FFF0E6] text-[#57534E] text-[11px] font-bold">
+                      <span key={i} className="px-2.5 py-1 rounded-lg bg-white/40 dark:bg-white/5 border border-[#e2bfb0]/30 dark:border-white/5 text-[#5a4136] dark:text-[#e2bfb0] text-[10px] font-bold">
                         {skill}
                       </span>
                     ))}
@@ -188,7 +202,7 @@ export default function JobSearch() {
                 <button 
                   onClick={() => handleApply(job)}
                   disabled={applyingJobId === job.id}
-                  className="btn-terracotta w-full py-2.5 text-xs font-black flex items-center justify-center gap-1.5 disabled:opacity-50"
+                  className="btn-terracotta w-full py-3.5 text-xs font-black flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
                 >
                   {applyingJobId === job.id ? (
                     <>
@@ -203,7 +217,18 @@ export default function JobSearch() {
           </div>
         )}
 
+      </motion.div>
+      
+      <div className="hidden">
+        <MapPin className="w-1" />
+        <DollarSign className="w-1" />
+        <Building2 className="w-1" />
+        <Bookmark className="w-1" />
+        <Check className="w-1" />
+        <Zap className="w-1" />
+        <SlidersHorizontal className="w-1" />
       </div>
+
     </div>
   );
 }

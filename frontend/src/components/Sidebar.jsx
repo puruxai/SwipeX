@@ -27,20 +27,6 @@ export default function Sidebar() {
     <aside className="w-60 flex-shrink-0 bg-white border-r border-[#E6E6E2] flex flex-col justify-between p-5 min-h-[90vh] transition-colors relative z-10">
       
       <div className="space-y-6">
-        
-        {/* Workspace Indicator Header */}
-        <div className="flex items-center gap-3 px-1 py-1">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#7ED321] to-[#59C414] flex items-center justify-center text-white shadow-sm">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="font-bold text-xs text-[#111111] truncate">SwipeX Sandbox</div>
-            <div className="text-[9px] font-bold text-[#666666] uppercase tracking-wider mt-0.5 flex items-center gap-1">
-              <span>Personal</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#7ED321]" />
-            </div>
-          </div>
-        </div>
 
         {/* Action Button - Swipe Navigation */}
         <Link

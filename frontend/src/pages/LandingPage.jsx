@@ -158,72 +158,47 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Primary Main Workspace Center Frame */}
-            <div className="w-full max-w-md p-1 bg-white border border-[#E6E6E2] rounded-3xl shadow-lg relative">
-              <div className="rounded-2xl p-5 space-y-4 bg-white relative z-10">
-                
-                {/* Workspace App Header */}
-                <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-neutral-200" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-neutral-200" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-neutral-200" />
-                    <span className="text-[10px] font-bold text-[#666666] ml-2">SwipeX Workspace</span>
-                  </div>
-                  <div className="px-2.5 py-0.5 rounded-full bg-[#7ED321]/10 text-[#59C414] text-[8px] font-bold uppercase tracking-wider border border-[#7ED321]/20">
-                    Active Telemetry
-                  </div>
-                </div>
-
-                {/* Candidate Profile Avatar Card - Reduced Size & Professionally Aligned */}
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-left">
-                  <div className="relative flex-shrink-0">
-                    <img
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                      alt="Candidate Profile Pic"
-                      className="w-10 h-10 rounded-full object-cover border border-[#E6E6E2]"
-                    />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#7ED321] rounded-full border border-white flex items-center justify-center text-[7px] font-black text-white">✓</div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1">
-                      <h4 className="text-xs font-bold text-[#111111] truncate">Sarah Jenkins</h4>
-                      <span className="px-1.5 py-0.5 rounded bg-[#7ED321]/10 text-[#59C414] text-[7px] font-bold uppercase tracking-wide flex-shrink-0">96% Match</span>
-                    </div>
-                    <p className="text-[9px] text-[#666666] font-medium truncate mt-0.5">Senior ML Specialist • React/Python</p>
-                  </div>
-                </div>
-
-                {/* Dashboard Chart Mockup - Adjusted Height */}
-                <div className="h-32 rounded-xl overflow-hidden relative border border-[#E6E6E2] group">
-                  <img
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
-                    alt="AI Career Analytics Dashboard Workspace"
-                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/50 to-transparent p-3 flex flex-col justify-end text-[#111111]">
-                    <div className="text-[8px] font-extrabold uppercase tracking-widest text-[#59C414] mb-0.5">Neural Vector Matching</div>
-                    <div className="text-xs font-bold tracking-tight">Software Engineering & AI Architect roles</div>
-                  </div>
-                </div>
-
-                {/* Quick Metrics Bar inside Workspace */}
-                <div className="grid grid-cols-3 gap-2.5 pt-0.5">
-                  <div className="p-3 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center">
-                    <div className="text-xs font-bold text-[#111111]">98.4%</div>
-                    <div className="text-[8px] font-bold text-[#666666] uppercase mt-0.5">ATS Parse</div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center">
-                    <div className="text-xs font-bold text-[#111111]">124</div>
-                    <div className="text-[8px] font-bold text-[#666666] uppercase mt-0.5">Matches</div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center">
-                    <div className="text-xs font-bold text-[#111111]">$195k</div>
-                    <div className="text-[8px] font-bold text-[#666666] uppercase mt-0.5">Median</div>
-                  </div>
-                </div>
-
+            {/* Primary Main Workspace Center Frame - Styled like a premium surrounding card */}
+            <div className="w-full max-w-md p-6 bg-white border border-[#E6E6E2] rounded-3xl shadow-lg relative z-10 flex flex-col items-center justify-center text-center space-y-4">
+              
+              {/* Candidate Avatar Container */}
+              <div className="relative w-16 h-16 flex-shrink-0 mx-auto">
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80"
+                  alt="Candidate Profile Avatar"
+                  className="w-full h-full rounded-full object-cover border border-[#E6E6E2]"
+                />
+                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#7ED321] rounded-full border border-white flex items-center justify-center text-[7px] font-black text-white">✓</div>
               </div>
+
+              {/* Name & Details */}
+              <div className="space-y-1.5 w-full">
+                <div className="flex items-center justify-center gap-2">
+                  <h4 className="text-xs font-bold text-[#111111]">Sarah Jenkins</h4>
+                  <span className="px-1.5 py-0.5 rounded bg-[#7ED321]/10 text-[#59C414] text-[7px] font-bold uppercase tracking-wide">96% Match</span>
+                </div>
+                <p className="text-[10px] text-[#666666] font-bold">Senior Machine Learning Engineer</p>
+                <p className="text-[9px] text-[#666666]/80 font-medium max-w-[200px] mx-auto leading-relaxed">
+                  Specializing in Generative AI architectures, React, and Python frameworks.
+                </p>
+              </div>
+
+              {/* Quick Metrics Inside the Card */}
+              <div className="grid grid-cols-3 gap-2.5 w-full pt-2 border-t border-neutral-100">
+                <div className="p-2 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center">
+                  <div className="text-xs font-bold text-[#111111]">98.4%</div>
+                  <div className="text-[8px] font-bold text-[#666666] uppercase mt-0.5">ATS Score</div>
+                </div>
+                <div className="p-2 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center">
+                  <div className="text-xs font-bold text-[#111111]">124</div>
+                  <div className="text-[8px] font-bold text-[#666666] uppercase mt-0.5">Matches</div>
+                </div>
+                <div className="p-2 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center">
+                  <div className="text-xs font-bold text-[#111111]">$195k</div>
+                  <div className="text-[8px] font-bold text-[#666666] uppercase mt-0.5">Median</div>
+                </div>
+              </div>
+
             </div>
 
             {/* Bottom Left Floating ATS Score Card */}

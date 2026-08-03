@@ -138,6 +138,70 @@ async def upload_resume(
         "suggested_certifications": DOMAIN_CERTIFICATIONS.get(detected_role, ["AWS Certified Solutions Architect"])
     }
 
+@router.get("/analysis/latest")
+def get_latest_resume_analysis(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    primary_resume = db.query(models.Resume).filter(
+        models.Resume.user_id == current_user.id,
+        models.Resume.is_primary == True
+    ).order_by(models.Resume.created_at.desc()).first()
+    
+    if not primary_resume:
+        return None
+        
+    profile = db.query(models.UserProfile).filter(models.UserProfile.user_id == current_user.id).first()
+    detected_role = profile.target_role if profile else "Software Engineer"
+    exp_years = profile.experience_years if profile else 1.0
+    extracted_skills = primary_resume.extracted_skills or []
+    
+    rec_skills = DOMAIN_MISSING_SKILLS_RECOMMENDATIONS.get(detected_role, ["Docker", "AWS"])
+    missing_skills = [s for s in rec_skills if s not in extracted_skills]
+    
+    base_salary = 95000 + int(exp_years * 8000)
+    salary_min = int(base_salary * 0.9)
+    salary_max = int(base_salary * 1.3)
+    
+    breakdown = primary_resume.ats_breakdown_json or {}
+    
+    score = primary_resume.ats_score
+    if score >= 95:
+        rating = "Outstanding Resume"
+    elif score >= 90:
+        rating = "Excellent Resume"
+    elif score >= 80:
+        rating = "Strong Resume"
+    elif score >= 70:
+        rating = "Good Resume"
+    elif score >= 60:
+        rating = "Average Resume"
+    elif score >= 50:
+        rating = "Basic Resume"
+    else:
+        rating = "Very Poor Resume"
+
+    return {
+        "id": primary_resume.id,
+        "filename": primary_resume.filename,
+        "file_path": primary_resume.file_path,
+        "is_primary": primary_resume.is_primary,
+        "created_at": primary_resume.created_at,
+        "ats_score": score,
+        "ats_breakdown_json": primary_resume.ats_breakdown_json,
+        "rating_tier": rating,
+        "detected_role": detected_role,
+        "role_confidence": 94 if score >= 90 else (88 if score >= 80 else 78),
+        "experience_years": exp_years,
+        "extracted_skills": extracted_skills,
+        "missing_skills": missing_skills,
+        "breakdown": breakdown.get("breakdown", {}),
+        "issues": breakdown.get("suggestions", []),
+        "google_xyz_improvements": breakdown.get("strengths", []),
+        "expected_salary": f"${salary_min:,} - ${salary_max:,} USD",
+        "suggested_certifications": DOMAIN_CERTIFICATIONS.get(detected_role, ["AWS Certified Solutions Architect"])
+    }
+
 @router.get("/")
 def get_user_resumes(
     current_user: models.User = Depends(auth.get_current_user),

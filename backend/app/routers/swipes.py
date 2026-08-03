@@ -97,7 +97,9 @@ def get_swipe_recommendation_feed(
         jobs_dicts.append(j_dict)
 
     ranked_jobs = rank_jobs_for_swipe(user_profile_dict, resume_data, jobs_dicts, swipe_history)
-    return ranked_jobs[:limit]
+    # Strictly filter out jobs below 70% relevance match score
+    filtered_ranked_jobs = [job for job in ranked_jobs if job.get("match_percentage", 0) >= 70.0]
+    return filtered_ranked_jobs[:limit]
 
 @router.post("/action")
 @router.post("")

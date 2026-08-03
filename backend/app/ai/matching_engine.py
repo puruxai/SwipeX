@@ -2,6 +2,64 @@ from typing import Dict, Any, List
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+def normalize_candidate_role(role: str) -> str:
+    role_lower = str(role).lower()
+    if any(k in role_lower for k in ["ai", "machine learning", "ml", "deep learning", "computer vision", "nlp", "generative", "llm"]):
+        return "AI Engineer"
+    if any(k in role_lower for k in ["frontend", "front-end", "react", "ui", "javascript"]):
+        return "Frontend Developer"
+    if any(k in role_lower for k in ["devops", "cloud", "platform", "reliability", "sre"]):
+        return "DevOps Engineer"
+    if any(k in role_lower for k in ["backend", "back-end"]):
+        return "Backend Developer"
+    if any(k in role_lower for k in ["data scientist", "data science", "data analyst"]):
+        return "Data Scientist"
+    if any(k in role_lower for k in ["cyber", "security", "infosec", "penetration"]):
+        return "Cyber Security"
+    return "Other"
+
+def get_role_category_from_title(title: str) -> str:
+    title_lower = str(title).lower()
+    
+    # Data Science
+    if any(keyword in title_lower for keyword in [
+        "data scientist", "data science", "data analyst", "quantitative analyst"
+    ]):
+        return "Data Scientist"
+        
+    # Cyber Security
+    if any(keyword in title_lower for keyword in [
+        "cybersecurity", "cyber security", "security engineer", "information security", "penetration tester", "infosec"
+    ]):
+        return "Cyber Security"
+
+    # AI / Machine Learning
+    if any(keyword in title_lower for keyword in [
+        "ai", "ml", "machine learning", "deep learning", "computer vision", 
+        "nlp", "natural language processing", "generative ai", "llm", "mlops", "artificial intelligence"
+    ]):
+        return "AI Engineer"
+        
+    # Frontend
+    if any(keyword in title_lower for keyword in [
+        "frontend", "front-end", "ui engineer", "ui developer", "react developer", "javascript engineer"
+    ]):
+        return "Frontend Developer"
+        
+    # DevOps
+    if any(keyword in title_lower for keyword in [
+        "devops", "platform engineer", "cloud engineer", "site reliability", "sre"
+    ]):
+        return "DevOps Engineer"
+        
+    # Backend
+    if any(keyword in title_lower for keyword in [
+        "backend", "back-end", "node developer", "python developer", "java engineer", "go developer", "database engineer"
+    ]) and "frontend" not in title_lower and "full stack" not in title_lower:
+        return "Backend Developer"
+        
+    return "Other"
+
 def compute_job_match(user_profile: Dict[str, Any], resume_data: Dict[str, Any], job: Dict[str, Any]) -> Dict[str, Any]:
     """
     Computes accurate multi-factor AI match percentage between user/resume and a job.
@@ -73,6 +131,16 @@ def compute_job_match(user_profile: Dict[str, Any], resume_data: Dict[str, Any],
         exp_score * 0.10 +
         location_score * 0.10
     )
+    
+    # Strictly filter out mismatched domain roles
+    cand_role_raw = user_profile.get("target_role") or resume_data.get("detected_role") or ""
+    cand_role_norm = normalize_candidate_role(cand_role_raw)
+    job_role_norm = get_role_category_from_title(job.get("title", ""))
+    if cand_role_norm != "Other" and cand_role_norm != job_role_norm:
+        final_match = 20.0
+    elif cand_role_norm != "Other" and cand_role_norm == job_role_norm:
+        final_match = max(final_match + 15.0, 75.0)
+        
     final_match = round(min(max(final_match, 15.0), 99.0), 1)
 
     # Human readable AI recommendation reason generator

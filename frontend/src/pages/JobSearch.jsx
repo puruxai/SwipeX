@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
 import Sidebar from '../components/Sidebar';
+import CompanyLogo from '../components/CompanyLogo';
 import { 
   Search, 
   MapPin, 
@@ -177,18 +178,7 @@ export default function JobSearch() {
               <div key={job.id} className="reference-card p-6 bg-white border border-[#E6E6E2] space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    {job.company_logo ? (
-                      <img
-                        src={job.company_logo}
-                        alt={`${job.company} logo`}
-                        className="w-10 h-10 rounded-xl object-contain border border-[#E6E6E2] bg-white p-1 flex-shrink-0"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-[#7ED321] font-black flex items-center justify-center flex-shrink-0">
-                        {job.company ? job.company[0] : 'C'}
-                      </div>
-                    )}
+                    <CompanyLogo src={job.company_logo} company={job.company} size="w-10 h-10 text-xs" />
                     <div>
                       <h3 className="font-bold text-base text-[#111111]">{job.title}</h3>
                       <p className="text-xs text-[#59C414] font-bold">{job.company} • {job.location || 'Remote'}</p>

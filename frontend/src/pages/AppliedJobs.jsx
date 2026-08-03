@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
 import Sidebar from '../components/Sidebar';
+import CompanyLogo from '../components/CompanyLogo';
 import { Briefcase, CheckCircle2, Clock, Zap, Building2, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -73,18 +74,7 @@ export default function AppliedJobs() {
                 className="reference-card p-6 bg-white border border-[#E6E6E2] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
               >
                 <div className="flex items-start gap-4">
-                  {app.job?.company_logo ? (
-                    <img
-                      src={app.job.company_logo}
-                      alt={`${app.job.company} logo`}
-                      className="w-12 h-12 rounded-xl object-contain border border-[#E6E6E2] bg-white p-1 flex-shrink-0"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-[#59C414] font-black text-lg flex items-center justify-center flex-shrink-0">
-                      {app.job?.company ? app.job.company[0] : 'C'}
-                    </div>
-                  )}
+                  <CompanyLogo src={app.job?.company_logo} company={app.job?.company} />
                   <div className="space-y-1">
                     <h3 className="font-bold text-lg text-[#111111]">{app.job?.title || 'Job Application'}</h3>
                     <div className="flex items-center gap-2 text-xs text-[#59C414] font-bold">

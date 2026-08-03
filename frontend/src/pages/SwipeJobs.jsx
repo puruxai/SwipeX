@@ -212,38 +212,38 @@ export default function SwipeJobs() {
   const visibleCards = jobs.slice(currentIndex, currentIndex + 3);
 
   return (
-    <div className="flex min-h-[90vh] bg-[#F8F8F5] text-[#111111] transition-colors relative overflow-x-hidden">
+    <div className="flex h-screen bg-[#F8F8F5] text-[#111111] transition-colors relative overflow-hidden">
       
       {/* Global Navigation Sidebar */}
       <Sidebar />
 
       {/* Main Workspace Frame */}
-      <div className="flex-1 p-6 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1600px] mx-auto w-full">
+      <div className="flex-1 p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1500px] mx-auto w-full h-full overflow-hidden">
         
         {/* Left/Center Swipe Feed Column */}
-        <div className="lg:col-span-8 flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-8 flex flex-col justify-between h-full overflow-hidden pb-2">
           
           {/* Header */}
-          <div className="flex justify-between items-end border-b border-[#E6E6E2] pb-5">
+          <div className="flex justify-between items-end border-b border-[#E6E6E2] pb-4">
             <div>
-              <h1 className="text-2xl font-extrabold text-[#111111] tracking-tight flex items-center gap-2.5">
-                <Zap className="w-6 h-6 text-[#7ED321] fill-[#7ED321]" />
+              <h1 className="text-xl font-extrabold text-[#111111] tracking-tight flex items-center gap-2">
+                <Zap className="w-5 h-5 text-[#7ED321] fill-[#7ED321]" />
                 Swipe Discovery
               </h1>
-              <p className="text-xs text-[#666666] font-medium mt-1">
+              <p className="text-[11px] text-[#666666] font-medium mt-0.5">
                 Drag cards or use actions. Right to Apply, Left to Skip, Up to Save, Down to View.
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold text-[#666666] bg-white border border-[#E6E6E2] px-3.5 py-1.5 rounded-full shadow-sm">
+              <span className="text-[9px] font-bold text-[#666666] bg-white border border-[#E6E6E2] px-3 py-1 rounded-full shadow-sm">
                 {jobs.length - currentIndex > 0 ? `${jobs.length - currentIndex} jobs left` : '0 jobs'}
               </span>
             </div>
           </div>
 
           {/* Swipe Deck Container */}
-          <div className="flex-1 flex items-center justify-center py-6 min-h-[500px]">
+          <div className="flex-1 flex items-center justify-center relative overflow-hidden py-3">
             {loading ? (
               <div className="py-24 text-center text-xs font-bold text-[#59C414] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
                 <Loader2 className="w-5 h-5 animate-spin text-[#7ED321]" /> Analyzing resume & tailoring deck...
@@ -252,19 +252,19 @@ export default function SwipeJobs() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="reference-card p-12 text-center space-y-5 bg-white border border-[#E6E6E2] max-w-md shadow-md rounded-[28px]"
+                className="reference-card p-10 text-center space-y-4 bg-white border border-[#E6E6E2] max-w-sm shadow-md rounded-[28px]"
               >
                 <Sparkles className="w-8 h-8 text-[#7ED321] mx-auto animate-bounce" />
-                <h3 className="text-lg font-extrabold text-[#111111]">Feed Fully Swiped!</h3>
+                <h3 className="text-base font-extrabold text-[#111111]">Feed Fully Swiped!</h3>
                 <p className="text-xs text-[#666666] font-semibold leading-relaxed">
                   You have reviewed all neural matches suited for your experience profiles. Refresh to pull new listings.
                 </p>
-                <button onClick={fetchJobs} className="btn-terracotta px-6 py-2.5 text-xs font-bold shadow-sm">
+                <button onClick={fetchJobs} className="btn-terracotta px-5 py-2 text-xs font-bold shadow-sm">
                   Refresh Swipe Deck
                 </button>
               </motion.div>
             ) : (
-              <div className="relative w-full max-w-[420px] h-[520px] flex items-center justify-center">
+              <div className="relative w-[92vw] sm:w-[80vw] md:w-[72%] max-w-[350px] h-[75vh] max-h-[460px] flex items-center justify-center">
                 {visibleCards.map((job, idx) => {
                   const relativeIndex = idx;
                   const isTop = relativeIndex === 0;
@@ -273,16 +273,18 @@ export default function SwipeJobs() {
                     <motion.div
                       key={job.id}
                       style={isTop ? { x: dragX, y: dragY, rotate, opacity: activeOpacity, zIndex: 30 } : { zIndex: 30 - relativeIndex }}
-                      animate={!isTop ? {
-                        scale: 1 - relativeIndex * 0.05,
-                        y: relativeIndex * 15,
-                        opacity: 1 - relativeIndex * 0.2,
-                      } : undefined}
+                      animate={{
+                        scale: isTop ? 1.0 : (relativeIndex === 1 ? 0.96 : 0.92),
+                        y: isTop ? 0 : (relativeIndex === 1 ? 24 : 48),
+                        opacity: isTop ? 1.0 : (relativeIndex === 1 ? 0.85 : 0.55),
+                      }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+                      whileDrag={isTop ? { scale: 0.98 } : undefined}
                       drag={isTop}
                       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                      dragElastic={0.9}
+                      dragElastic={1.0}
                       onDragEnd={isTop ? handleDragEnd : undefined}
-                      className={`absolute w-full h-full bg-white border border-[#E6E6E2] rounded-[28px] p-6 shadow-xl flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition-shadow duration-300 ${
+                      className={`absolute w-full h-full bg-white border border-[#E6E6E2] rounded-[28px] p-5 shadow-xl flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition-shadow duration-300 ${
                         isTop ? 'hover:shadow-2xl' : ''
                       }`}
                     >
@@ -291,25 +293,25 @@ export default function SwipeJobs() {
                         <>
                           <motion.div 
                             style={{ opacity: matchBadgeOpacity }}
-                            className="absolute top-8 left-8 border-4 border-[#7ED321] text-[#7ED321] font-black text-xs uppercase px-4 py-1.5 rounded-xl rotate-[-12deg] z-40 bg-white"
+                            className="absolute top-6 left-6 border-4 border-[#7ED321] text-[#7ED321] font-black text-[10px] uppercase px-3 py-1 rounded-xl rotate-[-12deg] z-40 bg-white"
                           >
                             Great Match
                           </motion.div>
                           <motion.div 
                             style={{ opacity: skippedBadgeOpacity }}
-                            className="absolute top-8 right-8 border-4 border-[#FFAA00] text-[#FFAA00] font-black text-xs uppercase px-4 py-1.5 rounded-xl rotate-[12deg] z-40 bg-white"
+                            className="absolute top-6 right-6 border-4 border-[#FFAA00] text-[#FFAA00] font-black text-[10px] uppercase px-3 py-1 rounded-xl rotate-[12deg] z-40 bg-white"
                           >
                             Skipped
                           </motion.div>
                           <motion.div 
                             style={{ opacity: savedBadgeOpacity }}
-                            className="absolute bottom-20 left-1/2 -translate-x-1/2 border-4 border-blue-500 text-blue-500 font-black text-xs uppercase px-5 py-1.5 rounded-xl z-40 bg-white shadow-md"
+                            className="absolute bottom-16 left-1/2 -translate-x-1/2 border-4 border-blue-500 text-blue-500 font-black text-[10px] uppercase px-4 py-1 rounded-xl z-40 bg-white shadow-md"
                           >
                             Saved
                           </motion.div>
                           <motion.div 
                             style={{ opacity: detailsBadgeOpacity }}
-                            className="absolute top-20 left-1/2 -translate-x-1/2 border-4 border-indigo-500 text-indigo-500 font-black text-xs uppercase px-5 py-1.5 rounded-xl z-40 bg-white shadow-md animate-pulse"
+                            className="absolute top-16 left-1/2 -translate-x-1/2 border-4 border-indigo-500 text-indigo-500 font-black text-[10px] uppercase px-4 py-1 rounded-xl z-40 bg-white shadow-md animate-pulse"
                           >
                             Opening Details
                           </motion.div>
@@ -317,57 +319,57 @@ export default function SwipeJobs() {
                       )}
 
                       {/* Top Card Info Row */}
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         <div className="flex justify-between items-start">
-                          <CompanyLogo src={job.company_logo} company={job.company} size="w-14 h-14" />
+                          <CompanyLogo src={job.company_logo} company={job.company} size="w-12 h-12" />
                           <div className="flex items-center gap-2">
-                            <span className="px-2.5 py-1 rounded-full bg-[#7ED321]/10 text-[#59C414] text-[10px] font-bold border border-[#7ED321]/20">
+                            <span className="px-2 py-0.5 rounded-full bg-[#7ED321]/10 text-[#59C414] text-[9px] font-bold border border-[#7ED321]/20">
                               Neural Match
                             </span>
-                            <MatchScoreRing score={job.match_score || 94} size="w-14 h-14" strokeWidth={3.5} textSize="text-xs" />
+                            <MatchScoreRing score={job.match_score || 94} size="w-12 h-12" strokeWidth={3} textSize="text-xs" />
                           </div>
                         </div>
 
-                        <div className="space-y-1">
-                          <h2 className="text-xl font-black text-[#111111] leading-tight tracking-tight">{job.title}</h2>
-                          <p className="text-xs text-[#59C414] font-bold flex items-center gap-1.5">
-                            <Building2 className="w-3.5 h-3.5" />
+                        <div className="space-y-0.5">
+                          <h2 className="text-lg font-black text-[#111111] leading-tight tracking-tight">{job.title}</h2>
+                          <p className="text-xs text-[#59C414] font-bold flex items-center gap-1">
+                            <Building2 className="w-3 h-3" />
                             {job.company}
                           </p>
                         </div>
 
                         {/* Salary and Metadata Row */}
-                        <div className="flex flex-wrap gap-2 pt-1">
-                          <span className="px-3 py-1 rounded-full bg-[#F8F8F5] border border-[#E6E6E2] text-xs font-bold text-[#666666] flex items-center gap-1">
-                            <DollarSign className="w-3.5 h-3.5 text-[#7ED321]" />
+                        <div className="flex flex-wrap gap-1.5 pt-0.5">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-bold text-[#666666] flex items-center gap-0.5">
+                            <DollarSign className="w-3 text-[#7ED321]" />
                             ${(job.salary_min / 1000).toFixed(0)}k - ${(job.salary_max / 1000).toFixed(0)}k
                           </span>
-                          <span className="px-3 py-1 rounded-full bg-[#F8F8F5] border border-[#E6E6E2] text-xs font-bold text-[#666666] flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5 text-red-400" />
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-bold text-[#666666] flex items-center gap-0.5">
+                            <MapPin className="w-3 text-red-400" />
                             {job.location || 'Remote'}
                           </span>
                         </div>
 
                         {/* Badges/Tags Info Grid */}
-                        <div className="grid grid-cols-2 gap-2 pt-1.5 text-[10px] font-bold text-[#666666]">
-                          <div className="px-3 py-1.5 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] flex items-center gap-1.5">
+                        <div className="grid grid-cols-2 gap-1.5 pt-0.5 text-[9px] font-bold text-[#666666]">
+                          <div className="px-2.5 py-1 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] flex items-center gap-1">
                             <Briefcase className="w-3 h-3 text-[#7ED321]" />
                             {job.job_type || 'Full Time'}
                           </div>
-                          <div className="px-3 py-1.5 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] flex items-center gap-1.5">
+                          <div className="px-2.5 py-1 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] flex items-center gap-1">
                             <Award className="w-3 h-3 text-[#59C414]" />
                             {job.experience_level || 'Mid Level'}
                           </div>
                         </div>
 
                         {/* Required Tech stack tags */}
-                        <div className="space-y-1.5 pt-2">
-                          <span className="text-[9px] uppercase font-black tracking-wider text-[#666666]">Key Core Skills</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {job.required_skills?.slice(0, 4).map((skill, index) => (
+                        <div className="space-y-1 pt-1">
+                          <span className="text-[8px] uppercase font-black tracking-wider text-[#666666]">Key Core Skills</span>
+                          <div className="flex flex-wrap gap-1">
+                            {job.required_skills?.slice(0, 3).map((skill, index) => (
                               <span 
                                 key={index} 
-                                className="px-2.5 py-1 rounded-lg bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-bold text-[#666666]"
+                                className="px-2 py-0.5 rounded-lg bg-[#F8F8F5] border border-[#E6E6E2] text-[9px] font-bold text-[#666666]"
                               >
                                 {skill}
                               </span>
@@ -377,16 +379,16 @@ export default function SwipeJobs() {
                       </div>
 
                       {/* Inline Brief Desc */}
-                      <div className="border-t border-[#E6E6E2] pt-4 mt-auto">
-                        <p className="text-xs text-[#666666] font-medium line-clamp-3 leading-relaxed">
+                      <div className="border-t border-[#E6E6E2] pt-3 mt-auto">
+                        <p className="text-[11px] text-[#666666] font-medium line-clamp-2 leading-relaxed">
                           {job.description}
                         </p>
                         <button 
                           onClick={() => setDetailJob(job)} 
-                          className="mt-2.5 text-[11px] font-extrabold text-[#7ED321] hover:text-[#59C414] flex items-center gap-1 transition-colors"
+                          className="mt-1.5 text-[10px] font-extrabold text-[#7ED321] hover:text-[#59C414] flex items-center gap-0.5 transition-colors"
                         >
                           Show Full JD & Match Insights
-                          <ArrowRight className="w-3 h-3" />
+                          <ArrowRight className="w-2.5 h-2.5" />
                         </button>
                       </div>
                     </motion.div>
@@ -398,45 +400,45 @@ export default function SwipeJobs() {
 
           {/* Quick Actions Footer Toolbar */}
           {!loading && currentIndex < jobs.length && (
-            <div className="flex items-center justify-center gap-4 py-4">
+            <div className="flex items-center justify-center gap-4 py-2">
               <button 
                 onClick={handleUndo} 
-                className="w-12 h-12 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#666666] hover:text-[#7ED321] flex items-center justify-center shadow-md transition-all active:scale-95"
+                className="w-10 h-10 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#666666] hover:text-[#7ED321] flex items-center justify-center shadow-md transition-all active:scale-95"
                 title="Undo last swipe"
               >
-                <RotateCcw className="w-5 h-5" />
+                <RotateCcw className="w-4.5 h-4.5" />
               </button>
 
               <button 
                 onClick={() => swipeCard('left')} 
-                className="w-14 h-14 rounded-full bg-white border border-[#E6E6E2] hover:border-red-500/30 text-red-500 hover:text-red-600 flex items-center justify-center shadow-md transition-all active:scale-90"
+                className="w-12 h-12 rounded-full bg-white border border-[#E6E6E2] hover:border-red-500/30 text-red-500 hover:text-red-600 flex items-center justify-center shadow-md transition-all active:scale-90"
                 title="Skip role (Swipe Left)"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5.5 h-5.5" />
               </button>
 
               <button 
                 onClick={() => swipeCard('up')} 
-                className="w-12 h-12 rounded-full bg-white border border-[#E6E6E2] hover:border-blue-500/30 text-blue-500 hover:text-blue-600 flex items-center justify-center shadow-md transition-all active:scale-95"
+                className="w-10 h-10 rounded-full bg-white border border-[#E6E6E2] hover:border-blue-500/30 text-blue-500 hover:text-blue-600 flex items-center justify-center shadow-md transition-all active:scale-95"
                 title="Bookmark role (Swipe Up)"
               >
-                <Bookmark className="w-5 h-5" />
+                <Bookmark className="w-4.5 h-4.5" />
               </button>
 
               <button 
                 onClick={() => swipeCard('right')} 
-                className="w-14 h-14 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#7ED321] hover:text-[#59C414] flex items-center justify-center shadow-md transition-all active:scale-90"
+                className="w-12 h-12 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#7ED321] hover:text-[#59C414] flex items-center justify-center shadow-md transition-all active:scale-90"
                 title="Apply to role (Swipe Right)"
               >
-                <Heart className="w-6 h-6 fill-[#7ED321]/10 hover:fill-[#7ED321]/30" />
+                <Heart className="w-5.5 h-5.5 fill-[#7ED321]/10 hover:fill-[#7ED321]/30" />
               </button>
 
               <button 
                 onClick={() => swipeCard('down')} 
-                className="w-12 h-12 rounded-full bg-white border border-[#E6E6E2] hover:border-indigo-500/30 text-indigo-500 hover:text-indigo-600 flex items-center justify-center shadow-md transition-all active:scale-95"
+                className="w-10 h-10 rounded-full bg-white border border-[#E6E6E2] hover:border-indigo-500/30 text-indigo-500 hover:text-indigo-600 flex items-center justify-center shadow-md transition-all active:scale-95"
                 title="View Full Details (Swipe Down)"
               >
-                <Info className="w-5 h-5" />
+                <Info className="w-4.5 h-4.5" />
               </button>
             </div>
           )}

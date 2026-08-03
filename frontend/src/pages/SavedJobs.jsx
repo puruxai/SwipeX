@@ -40,12 +40,12 @@ export default function SavedJobs() {
   };
 
   const pageVariants = {
-    hidden: { opacity: 0, y: 15, filter: 'blur(6px)' },
-    show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', stiffness: 100 } }
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
   };
 
   return (
-    <div className="flex min-h-[90vh] bg-[#fff8f6] dark:bg-[#0c1322] text-[#261812] dark:text-[#dce2f7] transition-colors">
+    <div className="flex min-h-[90vh] bg-[#F8F8F5] text-[#111111] transition-colors">
       
       {/* Left Sidebar Shell */}
       <Sidebar />
@@ -59,57 +59,57 @@ export default function SavedJobs() {
       >
         
         {/* Page Header */}
-        <div className="flex justify-between items-end border-b border-[#e2bfb0]/30 dark:border-white/5 pb-6">
+        <div className="flex justify-between items-end border-b border-[#E6E6E2] pb-6">
           <div>
-            <h1 className="text-3xl font-extrabold text-[#261812] dark:text-white tracking-tight flex items-center gap-3">
-              <Bookmark className="w-8 h-8 text-[#ff6b00]" />
+            <h1 className="text-2xl font-extrabold text-[#111111] tracking-tight flex items-center gap-3">
+              <Bookmark className="w-8 h-8 text-[#7ED321]" />
               Saved & Bookmarked Jobs
             </h1>
-            <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-medium mt-1">
+            <p className="text-xs text-[#666666] font-medium mt-1">
               Review jobs you bookmarked during your swipe feed discovery.
             </p>
           </div>
         </div>
 
         {loading ? (
-          <div className="py-24 text-center text-xs font-black text-[#a04100] dark:text-[#ffb693] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin text-[#ff6b00]" /> Loading saved jobs...
+          <div className="py-24 text-center text-xs font-bold text-[#59C414] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin text-[#7ED321]" /> Loading saved jobs...
           </div>
         ) : jobs.length === 0 ? (
-          <div className="reference-card p-14 text-center space-y-4 bg-white dark:bg-[#191f2f]/80">
-            <p className="font-extrabold text-[#261812] dark:text-white text-base">No saved jobs found.</p>
-            <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0] font-medium">Bookmark job cards in your Swipe Feed to save them for later!</p>
+          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2]">
+            <p className="font-bold text-[#111111] text-base">No saved jobs found.</p>
+            <p className="text-xs text-[#666666] font-medium">Bookmark job cards in your Swipe Feed to save them for later!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="reference-card p-6 bg-white dark:bg-[#191f2f]/80 hover:border-[#ff6b00]/40 transition-all flex flex-col justify-between space-y-4 shadow-sm"
+                className="reference-card p-6 bg-white border border-[#E6E6E2] hover:border-[#7ED321]/40 transition-all flex flex-col justify-between space-y-4 shadow-sm"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-3">
                     <img
                       src={job.company_logo || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80"}
                       alt={job.company}
-                      className="w-12 h-12 rounded-xl object-cover ring-1 ring-[#ff6b00]/20 shadow-sm"
+                      className="w-12 h-12 rounded-xl object-cover border border-[#E6E6E2] shadow-sm"
                     />
                     <div>
-                      <h3 className="font-extrabold text-base text-[#261812] dark:text-white line-clamp-1">{job.title}</h3>
-                      <p className="text-xs text-[#ff6b00] font-bold">{job.company}</p>
+                      <h3 className="font-bold text-base text-[#111111] line-clamp-1">{job.title}</h3>
+                      <p className="text-xs text-[#59C414] font-bold">{job.company}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-[#5a4136] dark:text-[#e2bfb0]/80 line-clamp-3 mb-3 leading-relaxed font-semibold">{job.description}</p>
-                  <div className="text-xs text-[#5a4136] dark:text-[#e2bfb0]/70 font-bold">{job.location}</div>
+                  <p className="text-xs text-[#666666] line-clamp-3 mb-3 leading-relaxed font-semibold">{job.description}</p>
+                  <div className="text-xs text-[#666666] font-bold">{job.location}</div>
                 </div>
 
-                <div className="pt-3 border-t border-[#e2bfb0]/20 dark:border-white/5 flex justify-between items-center">
-                  <span className="text-xs text-[#22C55E] dark:text-emerald-400 font-extrabold">
+                <div className="pt-3 border-t border-[#E6E6E2] flex justify-between items-center">
+                  <span className="text-xs text-[#7ED321] font-bold">
                     ${(job.salary_min / 1000).toFixed(0)}k - ${(job.salary_max / 1000).toFixed(0)}k
                   </span>
                   <button
                     onClick={() => handleApplyNow(job)}
-                    className="btn-terracotta px-4.5 py-2 text-xs font-black shadow-md flex items-center gap-1.5"
+                    className="btn-terracotta px-4.5 py-2 text-xs font-bold shadow-sm flex items-center gap-1.5 text-white"
                   >
                     <Heart className="w-3.5 h-3.5 fill-white" /> Instant Apply
                   </button>

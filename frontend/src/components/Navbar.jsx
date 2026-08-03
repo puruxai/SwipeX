@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import soundManager from '../services/SoundManager';
 import { 
   Sparkles, 
   Search, 
-  Moon, 
-  Sun, 
   User, 
   LogOut, 
   Briefcase, 
@@ -22,7 +19,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -33,45 +29,32 @@ export default function Navbar() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      soundManager.playTick();
       navigate('/jobs');
     }
   };
 
-  const handleLinkClick = () => {
-    soundManager.playTick();
-  };
-
-  const handleLinkHover = () => {
-    soundManager.playHover();
-  };
-
   return (
-    <header className="sticky top-0 z-50 bg-[#030509]/60 backdrop-blur-xl border-b border-white/5 transition-all">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E6E6E2] transition-all">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="flex items-center justify-between h-20 gap-6">
+        <div className="flex items-center justify-between h-16 gap-6">
           
           {/* Brand Logo & Global Nav Links */}
-          <div className="flex items-center gap-12">
+          <div className="flex items-center gap-8">
             <Link 
               to="/" 
-              onClick={handleLinkClick}
-              onMouseEnter={handleLinkHover}
-              className="flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight text-[#ffb693]"
+              className="flex items-center gap-2.5 font-display text-base font-extrabold tracking-tight text-[#111111] hover:opacity-90"
             >
-              <Sparkles className="w-5 h-5 text-[#ff6b00]" />
+              <Sparkles className="w-5 h-5 text-[#7ED321]" />
               <span>SwipeX AI</span>
             </Link>
 
             {/* Original SwipeX Navigation Links */}
             {user && (
-              <nav className="hidden xl:flex items-center gap-6 text-xs font-bold text-[#e2bfb0]/80">
+              <nav className="hidden xl:flex items-center gap-5 text-xs font-semibold text-[#666666]">
                 <Link
                   to="/swipe"
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className={`hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
-                    isActive('/swipe') ? 'text-[#ffb693] font-black' : ''
+                  className={`hover:text-[#111111] transition-colors flex items-center gap-1.5 ${
+                    isActive('/swipe') ? 'text-[#111111] font-bold' : ''
                   }`}
                 >
                   <Layers className="w-3.5 h-3.5" /> Swipe Feed
@@ -79,10 +62,8 @@ export default function Navbar() {
 
                 <Link
                   to="/resume-analyzer"
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className={`hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
-                    isActive('/resume-analyzer') ? 'text-[#ffb693] font-black' : ''
+                  className={`hover:text-[#111111] transition-colors flex items-center gap-1.5 ${
+                    isActive('/resume-analyzer') ? 'text-[#111111] font-bold' : ''
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" /> ATS Analyzer
@@ -90,10 +71,8 @@ export default function Navbar() {
 
                 <Link
                   to="/ai-hub"
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className={`hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
-                    isActive('/ai-hub') ? 'text-[#ffb693] font-black' : ''
+                  className={`hover:text-[#111111] transition-colors flex items-center gap-1.5 ${
+                    isActive('/ai-hub') ? 'text-[#111111] font-bold' : ''
                   }`}
                 >
                   <Bot className="w-3.5 h-3.5" /> AI Studio
@@ -101,10 +80,8 @@ export default function Navbar() {
 
                 <Link
                   to="/jobs"
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className={`hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
-                    isActive('/jobs') ? 'text-[#ffb693] font-black' : ''
+                  className={`hover:text-[#111111] transition-colors flex items-center gap-1.5 ${
+                    isActive('/jobs') ? 'text-[#111111] font-bold' : ''
                   }`}
                 >
                   <Search className="w-3.5 h-3.5" /> Smart Search
@@ -112,10 +89,8 @@ export default function Navbar() {
 
                 <Link
                   to="/dashboard"
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className={`hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
-                    isActive('/dashboard') ? 'text-[#ffb693] font-black' : ''
+                  className={`hover:text-[#111111] transition-colors flex items-center gap-1.5 ${
+                    isActive('/dashboard') ? 'text-[#111111] font-bold' : ''
                   }`}
                 >
                   <BarChart3 className="w-3.5 h-3.5" /> Analytics
@@ -123,10 +98,8 @@ export default function Navbar() {
 
                 <Link
                   to="/saved"
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className={`hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
-                    isActive('/saved') ? 'text-[#ffb693] font-black' : ''
+                  className={`hover:text-[#111111] transition-colors flex items-center gap-1.5 ${
+                    isActive('/saved') ? 'text-[#111111] font-bold' : ''
                   }`}
                 >
                   <Bookmark className="w-3.5 h-3.5" /> Saved
@@ -135,10 +108,8 @@ export default function Navbar() {
                 {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                   <Link
                     to="/recruiter"
-                    onClick={handleLinkClick}
-                    onMouseEnter={handleLinkHover}
-                    className={`hover:text-[#ffb693] transition-colors flex items-center gap-1.5 ${
-                      isActive('/recruiter') ? 'text-[#ffb693] font-black' : ''
+                    className={`hover:text-[#111111] transition-colors flex items-center gap-1.5 ${
+                      isActive('/recruiter') ? 'text-[#111111] font-bold' : ''
                     }`}
                   >
                     <Briefcase className="w-3.5 h-3.5" /> Recruiter HQ
@@ -148,10 +119,8 @@ export default function Navbar() {
                 {user.role === 'admin' && (
                   <Link
                     to="/admin"
-                    onClick={handleLinkClick}
-                    onMouseEnter={handleLinkHover}
-                    className={`hover:text-rose-500 transition-colors flex items-center gap-1.5 ${
-                      isActive('/admin') ? 'text-rose-500 font-black' : ''
+                    className={`hover:text-rose-600 transition-colors flex items-center gap-1.5 ${
+                      isActive('/admin') ? 'text-rose-600 font-bold' : ''
                     }`}
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-rose-500" /> Admin
@@ -162,39 +131,24 @@ export default function Navbar() {
           </div>
 
           {/* Elegant Search Bar */}
-          <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-sm items-center relative group">
-            <Search className="w-4 h-4 absolute left-4 text-[#e2bfb0]/70 group-focus-within:text-[#ff6b00]" />
+          <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-xs items-center relative group">
+            <Search className="w-4 h-4 absolute left-3.5 text-[#666666]/70 group-focus-within:text-[#7ED321]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search neural insights..."
-              className="w-full pl-11 pr-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-white focus:outline-none focus:border-[#ff6b00] focus:ring-1 focus:ring-[#ff6b00]/30 transition-all placeholder-[#e2bfb0]/40"
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-xs font-medium text-[#111111] focus:outline-none focus:border-[#7ED321] transition-all placeholder-[#666666]/60"
             />
           </form>
 
           {/* Right Action Icons Block */}
           <div className="flex items-center gap-4">
             
-            {/* Theme Toggle Button */}
-            <button
-              onClick={() => {
-                soundManager.playTick();
-                toggleTheme();
-              }}
-              onMouseEnter={handleLinkHover}
-              className="p-2.5 rounded-full hover:bg-white/5 text-[#e2bfb0] transition-colors border border-transparent hover:border-white/5"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-[#ffb693]" /> : <Moon className="w-4 h-4 text-[#e2bfb0]" />}
-            </button>
-
             {/* Upgrade CTA */}
             <Link
               to="/swipe"
-              onClick={handleLinkClick}
-              onMouseEnter={handleLinkHover}
-              className="px-6 py-2.5 rounded-full bg-[#ff6b00] dark:bg-[#ffb693] text-white dark:text-[#561f00] text-xs font-black shadow-lg hover:scale-105 active:scale-95 transition-all"
+              className="px-5 py-2 rounded-full bg-[#7ED321] hover:bg-[#59C414] text-white text-xs font-bold transition-all shadow-sm"
             >
               Upgrade
             </Link>
@@ -203,79 +157,60 @@ export default function Navbar() {
             {user ? (
               <div className="relative">
                 <button
-                  onClick={() => {
-                    soundManager.playTick();
-                    setDropdownOpen(!dropdownOpen);
-                  }}
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="flex items-center gap-2 focus:outline-none"
                 >
                   <img
                     src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}
                     alt="User Avatar"
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-[#ffb693]/25 cursor-pointer hover:scale-102 transition-transform"
+                    className="w-8.5 h-8.5 rounded-full object-cover border border-[#E6E6E2] cursor-pointer hover:opacity-95"
                   />
                 </button>
 
                 <AnimatePresence>
                   {dropdownOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      className="absolute right-0 mt-3 w-56 rounded-2xl p-2.5 bg-[#0a0f1d] border border-white/10 shadow-2xl z-50 space-y-1"
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      className="absolute right-0 mt-2.5 w-52 rounded-xl p-2 bg-white border border-[#E6E6E2] shadow-lg z-50 space-y-1"
                     >
-                      <div className="px-3.5 py-2.5 border-b border-white/5">
-                        <p className="text-[9px] text-white/60 uppercase font-black tracking-wider">Signed in as</p>
-                        <p className="text-xs font-black text-white truncate mt-0.5">{user.email}</p>
+                      <div className="px-3 py-2 border-b border-neutral-100">
+                        <p className="text-[9px] text-[#666666] uppercase font-bold tracking-wider">Signed in as</p>
+                        <p className="text-xs font-bold text-[#111111] truncate mt-0.5">{user.email}</p>
                       </div>
 
                       <Link
                         to="/profile"
-                        onClick={() => {
-                          setDropdownOpen(false);
-                          handleLinkClick();
-                        }}
-                        onMouseEnter={handleLinkHover}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-white/80 hover:bg-white/5 rounded-xl transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#111111] hover:bg-[#F8F8F5] rounded-lg transition-colors"
                       >
-                        <User className="w-4 h-4 text-[#ffb693]" /> My Profile
+                        <User className="w-4 h-4 text-[#7ED321]" /> My Profile
                       </Link>
 
                       <Link
                         to="/dashboard"
-                        onClick={() => {
-                          setDropdownOpen(false);
-                          handleLinkClick();
-                        }}
-                        onMouseEnter={handleLinkHover}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-white/80 hover:bg-white/5 rounded-xl transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#111111] hover:bg-[#F8F8F5] rounded-lg transition-colors"
                       >
-                        <BarChart3 className="w-4 h-4 text-[#ffb693]" /> Analytics
+                        <BarChart3 className="w-4 h-4 text-[#7ED321]" /> Analytics
                       </Link>
 
                       {['recruiter', 'recruiter_unverified'].includes(user.role) && (
                         <Link
                           to="/recruiter"
-                          onClick={() => {
-                            setDropdownOpen(false);
-                            handleLinkClick();
-                          }}
-                          onMouseEnter={handleLinkHover}
-                          className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-white/80 hover:bg-white/5 rounded-xl transition-colors"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#111111] hover:bg-[#F8F8F5] rounded-lg transition-colors"
                         >
-                          <Briefcase className="w-4 h-4 text-[#ffb693]" /> Recruiter HQ
+                          <Briefcase className="w-4 h-4 text-[#7ED321]" /> Recruiter HQ
                         </Link>
                       )}
 
                       {user.role === 'admin' && (
                         <Link
                           to="/admin"
-                          onClick={() => {
-                            setDropdownOpen(false);
-                            handleLinkClick();
-                          }}
-                          onMouseEnter={handleLinkHover}
-                          className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-rose-500 rounded-xl"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 rounded-lg"
                         >
                           <ShieldCheck className="w-4 h-4 text-rose-500" /> Admin Console
                         </Link>
@@ -284,11 +219,10 @@ export default function Navbar() {
                       <button
                         onClick={() => {
                           setDropdownOpen(false);
-                          handleLinkClick();
                           logout();
                           navigate('/');
                         }}
-                        className="w-full text-left flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-950/20 rounded-xl mt-1.5"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg mt-1"
                       >
                         <LogOut className="w-4 h-4" /> Sign Out
                       </button>
@@ -300,17 +234,13 @@ export default function Navbar() {
               <div className="flex items-center gap-3">
                 <Link 
                   to="/login" 
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className="px-4 py-2 text-xs font-bold text-white/80 hover:text-[#ff6b00]"
+                  className="px-3 py-1.5 text-xs font-semibold text-[#666666] hover:text-[#111111]"
                 >
                   Log In
                 </Link>
                 <Link 
                   to="/signup" 
-                  onClick={handleLinkClick}
-                  onMouseEnter={handleLinkHover}
-                  className="px-5 py-2.5 rounded-full bg-[#ff6b00] text-white text-xs font-black shadow-md"
+                  className="px-4 py-2 rounded-full bg-[#7ED321] hover:bg-[#59C414] text-white text-xs font-bold shadow-sm"
                 >
                   Sign Up
                 </Link>

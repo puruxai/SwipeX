@@ -5,20 +5,20 @@
 @tailwind utilities;
 
 :root {
-  --bg-color: #030509;
-  --section-bg: #060913;
-  --card-bg: rgba(6, 9, 19, 0.45);
-  --text-color: #f1f5f9;
-  --secondary-text: #94a3b8;
-  --border-color: rgba(255, 107, 0, 0.08);
-  --terracotta: #ff6b00;
-  --terracotta-hover: #ff8533;
-  --orange-accent: #ff6b00;
-  --glass-bg: rgba(6, 9, 19, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.04);
-  --chip-bg: rgba(255, 107, 0, 0.05);
-  --chip-text: #ff8533;
-  --shadow-color: rgba(0, 0, 0, 0.85);
+  --bg-color: #F8F8F5;
+  --section-bg: #F0F0EB;
+  --card-bg: #FFFFFF;
+  --text-color: #111111;
+  --secondary-text: #666666;
+  --border-color: #E6E6E2;
+  --primary-green: #7ED321;
+  --accent-green: #59C414;
+  --glass-bg: #FFFFFF;
+  --glass-border: #E6E6E2;
+  --chip-bg: rgba(126, 211, 33, 0.08);
+  --chip-text: #59C414;
+  --shadow-color: rgba(17, 24, 39, 0.03);
+  --shadow-hover: rgba(17, 24, 39, 0.08);
 }
 
 @layer base {
@@ -26,101 +26,89 @@
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(255, 107, 0, 0.06) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.04) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, rgba(255, 107, 0, 0.04) 0px, transparent 50%);
-    background-attachment: fixed;
-    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
   }
 }
 
 ::selection {
-  background: rgba(255, 107, 0, 0.25);
-  color: #ffffff;
+  background: rgba(126, 211, 33, 0.2);
+  color: #111111;
 }
 
-/* Custom Scrollbar matching OpenAI/Apple aesthetics */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 107, 0, 0.4);
+  background: rgba(126, 211, 33, 0.5);
 }
 
-/* Premium 3D floating glass panels */
+/* Rebuilt SaaS white panels with premium shadows */
 .glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   color: var(--text-color);
   box-shadow: 
-    0 30px 60px -15px var(--shadow-color),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    0 1px 3px 0 var(--shadow-color),
+    0 1px 2px -1px var(--shadow-color);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Bento grid cards with magnetic lift effects */
+/* Bento grid cards */
 .reference-card {
-  background: rgba(6, 9, 19, 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   color: var(--text-color);
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   box-shadow: 
-    0 20px 40px -10px var(--shadow-color),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    0 4px 6px -1px var(--shadow-color),
+    0 2px 4px -2px var(--shadow-color);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reference-card:hover {
-  border-color: rgba(255, 107, 0, 0.25);
-  transform: translateY(-6px);
+  border-color: rgba(126, 211, 33, 0.3);
+  transform: translateY(-4px);
   box-shadow: 
-    0 40px 80px -20px var(--shadow-color),
-    0 0 30px 2px rgba(255, 107, 0, 0.03);
+    0 12px 20px -8px var(--shadow-hover),
+    0 0 0 1px rgba(126, 211, 33, 0.05);
 }
 
-/* inputs */
+/* Minimalist Clean inputs */
 .glass-input {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: #ffffff;
+  background: #FFFFFF;
+  border: 1px solid #D1D1CB;
+  color: #111111;
   border-radius: 0.75rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease-in-out;
 }
 .glass-input:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 107, 0, 0.5);
-  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.08);
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(126, 211, 33, 0.15);
 }
 
-/* Terracotta Primary CTAs with magnetic hover states */
+/* Rounded Clean green buttons */
 .btn-terracotta {
-  background-color: #ff6b00;
-  color: #ffffff;
+  background-color: var(--primary-green);
+  color: #FFFFFF;
   font-weight: 700;
   border-radius: 9999px;
-  box-shadow: 0 4px 20px rgba(255, 107, 0, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(126, 211, 33, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-terracotta:hover {
-  background-color: #ff8533;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(255, 107, 0, 0.5);
+  background-color: var(--accent-green);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(126, 211, 33, 0.35);
 }
 .btn-terracotta:active {
   transform: translateY(0);
@@ -128,40 +116,19 @@
 
 .btn-terracotta-outline {
   background-color: transparent;
-  color: #f1f5f9;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #111111;
+  border: 1px solid var(--border-color);
   font-weight: 700;
   border-radius: 9999px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease-in-out;
 }
 .btn-terracotta-outline:hover {
-  background-color: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 107, 0, 0.4);
+  background-color: #F0F0EB;
+  border-color: #D1D1CB;
 }
 
 .gradient-terracotta-text {
-  background: linear-gradient(135deg, #ffffff 0%, #ff8533 50%, #ff6b00 100%);
+  background: linear-gradient(135deg, #111111 30%, #59C414 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-/* Moving/rotating glow highlight */
-.glow-card {
-  position: relative;
-  overflow: hidden;
-}
-.glow-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(130deg, rgba(255, 255, 255, 0.05), rgba(255, 107, 0, 0.35), rgba(255, 255, 255, 0.05));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
 }

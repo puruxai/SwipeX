@@ -106,8 +106,43 @@ export default function ResumeAnalyzer() {
     }
   }, [isGeneratingPDF, pdfJobs]);
 
+  const getShareMessage = () => {
+    const score = matchScore;
+    const role = analysisData?.detected_role || "Software Engineer";
+    
+    let intro = "";
+    if (score >= 90) {
+      intro = "🔥 Excellent! My resume is interview-ready.";
+    } else if (score >= 80) {
+      intro = "🚀 Great progress! My resume is getting stronger.";
+    } else if (score >= 70) {
+      intro = "📈 My resume still has room for improvement, and SwipeX showed me exactly how.";
+    } else {
+      intro = "💡 I discovered several improvements I can make to my resume using SwipeX AI.";
+    }
+    
+    return `${intro}
+
+🚀 I just analyzed my resume with SwipeX AI!
+
+📊 ATS Score: ${score}%
+🎯 Best Match Role: ${role}
+🤖 AI-powered Resume Analysis
+💼 Personalized Job Recommendations
+📈 Skill Gap Analysis
+🚀 Actionable Career Insights
+
+SwipeX helped me understand how job-ready my resume is and what I can improve to increase my chances of getting interviews.
+
+If you're preparing for internships, placements, or your next job, you should definitely try it.
+
+👉 https://swipe-x-puruxai.vercel.app
+
+#SwipeX #AI #Resume #ATS #Career #JobSearch #Placement #Students #MachineLearning #CareerGrowth`;
+  };
+
   const handleShareResult = async () => {
-    const shareText = `🚀 I analyzed my resume with SwipeX AI and achieved an ATS score of ${matchScore}%.\n\nSwipeX provided personalized AI career insights and job recommendations.\n\nTry it yourself:\nhttps://swipe-x-puruxai.vercel.app`;
+    const shareText = getShareMessage();
     if (navigator.share) {
       try {
         await navigator.share({
@@ -125,7 +160,7 @@ export default function ResumeAnalyzer() {
   };
 
   const handleCopyShareLink = () => {
-    const shareText = `🚀 I analyzed my resume with SwipeX AI and achieved an ATS score of ${matchScore}%.\n\nSwipeX provided personalized AI career insights and job recommendations.\n\nTry it yourself:\nhttps://swipe-x-puruxai.vercel.app`;
+    const shareText = getShareMessage();
     navigator.clipboard.writeText(shareText);
     addToast('Link preview text copied to clipboard!', 'success');
   };
@@ -1036,34 +1071,42 @@ export default function ResumeAnalyzer() {
             </div>
 
             {/* Social Links Grid */}
-            <div className="flex gap-2 justify-center border-t border-[#E6E6E2] pt-4">
+            <div className="flex gap-2 justify-center border-t border-[#E6E6E2] pt-4 flex-wrap">
               <a 
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://swipe-x-puruxai.vercel.app")}`}
                 target="_blank" 
                 rel="noreferrer"
-                className="depth-3d-button-outline p-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
+                className="depth-3d-button-outline px-3 py-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
               >
                 LinkedIn
               </a>
               <a 
-                href={`https://x.com/intent/tweet?text=${encodeURIComponent(`🚀 I analyzed my resume with SwipeX AI and achieved an ATS score of ${matchScore}%.\n\nTry it yourself: https://swipe-x-puruxai.vercel.app`)}`}
+                href={`https://x.com/intent/tweet?text=${encodeURIComponent(getShareMessage())}`}
                 target="_blank" 
                 rel="noreferrer"
-                className="depth-3d-button-outline p-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
+                className="depth-3d-button-outline px-3 py-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
               >
                 X (Twitter)
               </a>
               <a 
-                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`🚀 I analyzed my resume with SwipeX AI and achieved an ATS score of ${matchScore}%.\n\nTry it yourself: https://swipe-x-puruxai.vercel.app`)}`}
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getShareMessage())}`}
                 target="_blank" 
                 rel="noreferrer"
-                className="depth-3d-button-outline p-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
+                className="depth-3d-button-outline px-3 py-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
               >
                 WhatsApp
               </a>
               <a 
-                href={`mailto:?subject=My%20SwipeX%20AI%20ATS%20Score%20Achievement&body=${encodeURIComponent(`🚀 I analyzed my resume with SwipeX AI and achieved an ATS score of ${matchScore}%.\n\nTry it yourself: https://swipe-x-puruxai.vercel.app`)}`}
-                className="depth-3d-button-outline p-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://swipe-x-puruxai.vercel.app")}`}
+                target="_blank" 
+                rel="noreferrer"
+                className="depth-3d-button-outline px-3 py-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
+              >
+                Facebook
+              </a>
+              <a 
+                href={`mailto:?subject=${encodeURIComponent("My SwipeX AI ATS Score Achievement")}&body=${encodeURIComponent(getShareMessage())}`}
+                className="depth-3d-button-outline px-3 py-2 rounded-xl hover:bg-neutral-50 text-[10px] font-bold flex items-center justify-center"
               >
                 Email
               </a>

@@ -81,20 +81,20 @@ export default function SavedJobs() {
             <Loader2 className="w-4 h-4 animate-spin text-[#7ED321]" /> Loading saved jobs...
           </div>
         ) : error ? (
-          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2] shadow-sm animate-fade-in">
+          <div className="depth-3d-card p-14 text-center space-y-4">
             <p className="font-bold text-[#111111] text-base">Failed to Load Saved Jobs</p>
             <p className="text-xs text-[#666666] font-semibold leading-relaxed">
               We encountered an issue communicating with SwipeX cloud services. Please check your connection.
             </p>
             <button 
               onClick={fetchSavedJobs} 
-              className="btn-terracotta px-6 py-2.5 text-xs font-bold shadow-sm text-white"
+              className="depth-3d-button px-6 py-2.5 text-xs font-bold text-white"
             >
               Retry Connection
             </button>
           </div>
         ) : jobs.length === 0 ? (
-          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2]">
+          <div className="depth-3d-card p-14 text-center space-y-4">
             <p className="font-bold text-[#111111] text-base">No saved jobs found.</p>
             <p className="text-xs text-[#666666] font-medium">Bookmark job cards in your Swipe Feed to save them for later!</p>
           </div>
@@ -103,7 +103,7 @@ export default function SavedJobs() {
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="reference-card p-6 bg-white border border-[#E6E6E2] hover:border-[#7ED321]/40 transition-all flex flex-col justify-between space-y-4 shadow-sm"
+                className="depth-3d-card p-6 flex flex-col justify-between space-y-4"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-3">
@@ -123,7 +123,7 @@ export default function SavedJobs() {
                   </span>
                   <button
                     onClick={() => handleApplyNow(job)}
-                    className="btn-terracotta px-4.5 py-2 text-xs font-bold shadow-sm flex items-center gap-1.5 text-white"
+                    className="depth-3d-button px-4.5 py-2 text-xs font-bold text-white flex items-center gap-1.5"
                   >
                     <Heart className="w-3.5 h-3.5 fill-white" /> Instant Apply
                   </button>

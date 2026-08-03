@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation, useSpring } from 'framer-motion';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
 import Sidebar from '../components/Sidebar';
@@ -97,6 +97,26 @@ export default function SwipeJobs() {
   const matchBadgeOpacity = useTransform(dragX, [20, 80], [0, 1]);
   const savedBadgeOpacity = useTransform(dragY, [-80, -20], [1, 0]);
   const detailsBadgeOpacity = useTransform(dragY, [20, 80], [0, 1]);
+
+  // Parallax motion values
+  const parallaxX = useMotionValue(0);
+  const parallaxY = useMotionValue(0);
+  const springParallaxX = useSpring(parallaxX, { stiffness: 150, damping: 25 });
+  const springParallaxY = useSpring(parallaxY, { stiffness: 150, damping: 25 });
+
+  const handleDeckMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) - rect.width / 2;
+    const y = (e.clientY - rect.top) - rect.height / 2;
+    // Bounded to 8px max
+    parallaxX.set((x / rect.width) * 8);
+    parallaxY.set((y / rect.height) * 8);
+  };
+
+  const handleDeckMouseLeave = () => {
+    parallaxX.set(0);
+    parallaxY.set(0);
+  };
 
   useEffect(() => {
     fetchJobs();
@@ -270,7 +290,12 @@ export default function SwipeJobs() {
                 </button>
               </motion.div>
             ) : (
-              <div className="relative w-[90vw] sm:w-[480px] lg:w-[540px] h-[75vh] min-h-[580px] max-h-[660px] flex items-center justify-center">
+              <motion.div 
+                onMouseMove={handleDeckMouseMove}
+                onMouseLeave={handleDeckMouseLeave}
+                style={{ x: springParallaxX, y: springParallaxY }}
+                className="relative w-[90vw] sm:w-[480px] lg:w-[540px] h-[75vh] min-h-[580px] max-h-[660px] flex items-center justify-center"
+              >
                 {visibleCards.map((job, idx) => {
                   const relativeIndex = idx;
                   const isTop = relativeIndex === 0;
@@ -286,13 +311,12 @@ export default function SwipeJobs() {
                       }}
                       transition={{ type: 'spring', stiffness: 280, damping: 22 }}
                       whileDrag={isTop ? { scale: 0.98 } : undefined}
+                      whileHover={isTop ? { scale: 1.01, rotateX: 2, rotateY: -2, y: -4 } : undefined}
                       drag={isTop}
                       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                       dragElastic={1.0}
                       onDragEnd={isTop ? handleDragEnd : undefined}
-                      className={`absolute w-full h-full bg-white border border-[#E6E6E2]/75 rounded-[28px] p-5 shadow-[0_12px_45px_rgba(17,17,17,0.06)] flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition-shadow duration-300 ${
-                        isTop ? 'hover:shadow-[0_16px_50px_rgba(17,17,17,0.09)]' : ''
-                      }`}
+                      className={`absolute w-full h-full depth-3d-card rounded-[28px] p-5 flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition-all duration-300`}
                     >
                       {/* Swipe Visual Feedback Badges (Top Card Only) */}
                       {isTop && (
@@ -421,7 +445,7 @@ export default function SwipeJobs() {
                     </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
           </div>
 
@@ -430,7 +454,7 @@ export default function SwipeJobs() {
             <div className="flex items-center justify-center gap-4 py-2 relative z-20">
               <button 
                 onClick={handleUndo} 
-                className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#666666] hover:text-[#7ED321] flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
+                className="w-11 h-11 depth-3d-button-outline text-[#666666] hover:text-[#7ED321] flex items-center justify-center"
                 title="Undo last swipe"
                 aria-label="Undo last swipe"
               >
@@ -439,7 +463,7 @@ export default function SwipeJobs() {
 
               <button 
                 onClick={() => swipeCard('left')} 
-                className="w-13 h-13 rounded-full bg-white border border-[#E6E6E2] hover:border-red-500/30 text-red-500 hover:text-red-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-90"
+                className="w-13 h-13 rounded-full bg-white border border-[#E6E6E2] shadow-[0_4px_14px_rgba(239,68,68,0.08)] hover:border-red-500/30 text-red-500 hover:text-red-600 flex items-center justify-center transition-all hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-sm"
                 title="Skip role (Swipe Left)"
                 aria-label="Skip role"
               >
@@ -448,7 +472,7 @@ export default function SwipeJobs() {
 
               <button 
                 onClick={() => swipeCard('up')} 
-                className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-blue-500/30 text-blue-500 hover:text-blue-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
+                className="w-11 h-11 depth-3d-button-outline text-blue-500 hover:text-blue-600 flex items-center justify-center"
                 title="Bookmark role (Swipe Up)"
                 aria-label="Bookmark job"
               >
@@ -457,16 +481,16 @@ export default function SwipeJobs() {
 
               <button 
                 onClick={() => swipeCard('right')} 
-                className="w-13 h-13 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#7ED321] hover:text-[#59C414] flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-90"
+                className="w-13 h-13 depth-3d-button flex items-center justify-center"
                 title="Apply to role (Swipe Right)"
                 aria-label="Apply to job"
               >
-                <Heart className="w-6 h-6 fill-[#7ED321]/10 hover:fill-[#7ED321]/30" />
+                <Heart className="w-6 h-6 fill-white/10" />
               </button>
 
               <button 
                 onClick={() => swipeCard('down')} 
-                className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-indigo-500/30 text-indigo-500 hover:text-indigo-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
+                className="w-11 h-11 depth-3d-button-outline text-indigo-500 hover:text-indigo-600 flex items-center justify-center"
                 title="View Full Details (Swipe Down)"
                 aria-label="View job details"
               >
@@ -481,7 +505,7 @@ export default function SwipeJobs() {
         <div className="lg:col-span-4 space-y-5 h-full overflow-y-auto pr-1 pb-4 scrollbar-thin">
           
           {/* Saved Searches */}
-          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+          <div className="depth-3d-card p-5 space-y-4">
             <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center justify-between">
               <span className="flex items-center gap-1.5"><Bookmark className="w-3.5 h-3.5 text-[#7ED321]" /> Saved Searches</span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#7ED321] animate-pulse" />
@@ -505,7 +529,7 @@ export default function SwipeJobs() {
           </div>
 
           {/* AI Suggestions Card */}
-          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+          <div className="depth-3d-card p-5 space-y-4">
             <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#7ED321] fill-[#7ED321]/15" />
               AI Profile Suggestions
@@ -527,7 +551,7 @@ export default function SwipeJobs() {
           </div>
 
           {/* Trending Skills */}
-          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+          <div className="depth-3d-card p-5 space-y-4">
             <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5 text-[#59C414]" />
               Trending in AI Engineering
@@ -541,7 +565,7 @@ export default function SwipeJobs() {
           </div>
 
           {/* Interview Preparation Tips */}
-          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+          <div className="depth-3d-card p-5 space-y-4">
             <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#7ED321]" />
               Interview Prep Tips
@@ -578,7 +602,7 @@ export default function SwipeJobs() {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+          <div className="depth-3d-card p-5 space-y-4">
             <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2">
               Recent Activity Feed
             </h3>

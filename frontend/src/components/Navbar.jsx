@@ -34,7 +34,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E6E6E2] transition-all h-[72px]">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E6E6E2]/70 shadow-[0_2px_12px_rgba(17,17,17,0.015)] transition-all h-[72px]">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 h-full">
         <div className="flex items-center justify-between h-full gap-6">
           
@@ -52,13 +52,13 @@ export default function Navbar() {
 
           {/* Elegant Search Bar */}
           <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-xs items-center relative group">
-            <Search className="w-4 h-4 absolute left-3.5 text-[#666666]/70 group-focus-within:text-[#7ED321]" />
+            <Search className="w-4 h-4 absolute left-3.5 text-[#666666]/70 group-focus-within:text-[#7ED321] z-10" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search neural insights..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-xs font-medium text-[#111111] focus:outline-none focus:border-[#7ED321] transition-all placeholder-[#666666]/60"
+              className="w-full pl-9 pr-4 py-2 rounded-xl depth-3d-input text-xs font-medium text-[#111111] transition-all placeholder-[#666666]/60"
             />
           </form>
 
@@ -68,7 +68,7 @@ export default function Navbar() {
             {/* Upgrade CTA */}
             <Link
               to="/swipe"
-              className="px-5 py-2 rounded-full bg-[#7ED321] hover:bg-[#59C414] text-white text-xs font-bold transition-all shadow-sm"
+              className="px-5 py-2 depth-3d-button text-white text-xs font-bold transition-all"
             >
               Upgrade
             </Link>
@@ -83,7 +83,7 @@ export default function Navbar() {
                   <img
                     src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}
                     alt="User Avatar"
-                    className="w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full object-cover border border-[#E6E6E2] cursor-pointer hover:opacity-95 flex-shrink-0"
+                    className="w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full object-cover border border-[#E6E6E2] cursor-pointer hover:opacity-95 flex-shrink-0 shadow-[0_2px_8px_rgba(17,17,17,0.05)]"
                   />
                 </button>
 

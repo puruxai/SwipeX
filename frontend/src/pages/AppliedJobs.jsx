@@ -67,20 +67,20 @@ export default function AppliedJobs() {
             <Loader2 className="w-4 h-4 animate-spin text-[#7ED321]" /> Loading applications...
           </div>
         ) : error ? (
-          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2] shadow-sm animate-fade-in">
+          <div className="depth-3d-card p-14 text-center space-y-4">
             <p className="font-bold text-[#111111] text-base">Failed to Load Applications</p>
             <p className="text-xs text-[#666666] font-semibold leading-relaxed">
               We encountered an issue communicating with SwipeX cloud services. Please check your connection.
             </p>
             <button 
               onClick={fetchApplications} 
-              className="btn-terracotta px-6 py-2.5 text-xs font-bold shadow-sm text-white"
+              className="depth-3d-button px-6 py-2.5 text-xs font-bold text-white"
             >
               Retry Connection
             </button>
           </div>
         ) : applications.length === 0 ? (
-          <div className="reference-card p-14 text-center text-[#666666] bg-white border border-[#E6E6E2] font-semibold">
+          <div className="depth-3d-card p-14 text-center text-[#666666] font-semibold">
             No applications submitted yet. Swipe Right on jobs in the Swipe Feed to apply instantly!
           </div>
         ) : (
@@ -88,7 +88,7 @@ export default function AppliedJobs() {
             {applications.map((app) => (
               <div
                 key={app.id}
-                className="reference-card p-6 bg-white border border-[#E6E6E2] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
+                className="depth-3d-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
               >
                 <div className="flex items-start gap-4">
                   <CompanyLogo src={app.job?.company_logo} company={app.job?.company} />

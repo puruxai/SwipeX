@@ -84,7 +84,7 @@ export default function Login() {
         initial={{ opacity: 0, y: 20, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-md space-y-8 reference-card p-8 bg-white border border-[#E6E6E2] relative overflow-hidden"
+        className="w-full max-w-md space-y-8 depth-3d-card p-8 relative overflow-hidden"
       >
         
         <div className="text-center space-y-2">
@@ -138,7 +138,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                className="w-full pl-11 pr-4 py-3 rounded-xl depth-3d-input text-xs font-semibold text-[#111111]"
                 placeholder="name@example.com"
               />
             </div>
@@ -153,7 +153,7 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                className="w-full pl-11 pr-4 py-3 rounded-xl depth-3d-input text-xs font-semibold text-[#111111]"
                 placeholder="••••••••"
               />
             </div>
@@ -162,7 +162,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="btn-terracotta w-full py-3.5 text-xs font-bold shadow-sm flex items-center justify-center gap-2 text-white"
+            className="depth-3d-button w-full py-3.5 text-xs font-bold flex items-center justify-center gap-2 text-white"
           >
             <LogIn className="w-4 h-4" /> Sign In
           </button>

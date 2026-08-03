@@ -23,15 +23,16 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
   const isActive = (path) => location.pathname === path;
 
+
   return (
-    <aside className="w-60 flex-shrink-0 bg-white border-r border-[#E6E6E2] flex flex-col justify-between p-5 min-h-[90vh] transition-colors relative z-10">
+    <aside className="w-60 flex-shrink-0 bg-white border border-[#E6E6E2]/80 flex flex-col justify-between p-5 min-h-[90vh] my-3 ml-3 rounded-[24px] shadow-[0_8px_32px_rgba(17,17,17,0.04)] relative z-10">
       
       <div className="space-y-6">
 
         {/* Action Button - Swipe Navigation */}
         <Link
           to="/swipe"
-          className="w-full py-2.5 px-4 rounded-xl bg-[#7ED321] hover:bg-[#59C414] text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 hover:scale-[1.01] transition-all"
+          className="w-full py-2.5 px-4 rounded-xl depth-3d-button text-white font-bold text-xs flex items-center justify-center gap-2 hover:scale-[1.01] transition-all"
         >
           <Plus className="w-3.5 h-3.5" /> Start Swiping
         </Link>
@@ -135,12 +136,12 @@ export default function Sidebar() {
       <div className="space-y-4 pt-4 border-t border-neutral-100">
         
         {/* Elegant Upgrade Card */}
-        <div className="p-3.5 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] space-y-2.5">
+        <div className="p-3.5 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] shadow-[inset_1.5px_1.5px_3px_rgba(17,24,39,0.03)] space-y-2.5">
           <div className="text-[8px] font-black uppercase tracking-wider text-[#59C414]">PRO ENGINE</div>
           <div className="text-[11px] font-bold text-[#111111] leading-tight">Upgrade to Pro matching rules</div>
           <Link 
             to="/swipe" 
-            className="block text-center py-1.5 rounded-lg bg-[#7ED321] hover:bg-[#59C414] text-white text-[10px] font-bold transition-all"
+            className="block text-center py-1.5 rounded-lg depth-3d-button text-white text-[10px] font-bold transition-all"
           >
             Explore Upgrades
           </Link>
@@ -148,7 +149,7 @@ export default function Sidebar() {
 
         {/* User Profile Block */}
         {user && (
-          <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-neutral-100 bg-[#F8F8F5]">
+          <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-neutral-100 bg-white shadow-[inset_1px_1px_2.5px_rgba(17,24,39,0.02)]">
             <div className="flex items-center gap-2 min-w-0">
               <img
                 src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}

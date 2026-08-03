@@ -97,7 +97,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* Card 1: Applications */}
-            <div className="reference-card p-5 bg-white border border-[#E6E6E2] space-y-2">
+            <div className="depth-3d-card p-5 space-y-2">
               <div className="flex justify-between items-center text-xs font-bold text-[#666666]">
                 <span>Applied Roles</span>
                 <Briefcase className="w-4 h-4 text-[#7ED321]" />
@@ -107,7 +107,7 @@ export default function Dashboard() {
             </div>
 
             {/* Card 2: Shortlisted */}
-            <div className="reference-card p-5 bg-white border border-[#E6E6E2] space-y-2">
+            <div className="depth-3d-card p-5 space-y-2">
               <div className="flex justify-between items-center text-xs font-bold text-[#666666]">
                 <span>Shortlists</span>
                 <Users className="w-4 h-4 text-[#7ED321]" />
@@ -117,7 +117,7 @@ export default function Dashboard() {
             </div>
 
             {/* Card 3: Interviewing */}
-            <div className="reference-card p-5 bg-white border border-[#E6E6E2] space-y-2">
+            <div className="depth-3d-card p-5 space-y-2">
               <div className="flex justify-between items-center text-xs font-bold text-[#666666]">
                 <span>Interviews</span>
                 <Zap className="w-4 h-4 text-[#7ED321]" />
@@ -127,7 +127,7 @@ export default function Dashboard() {
             </div>
 
             {/* Card 4: Avg ATS Score */}
-            <div className="reference-card p-5 bg-white border border-[#E6E6E2] space-y-2">
+            <div className="depth-3d-card p-5 space-y-2">
               <div className="flex justify-between items-center text-xs font-bold text-[#666666]">
                 <span>Avg ATS Rating</span>
                 <Layers className="w-4 h-4 text-[#7ED321]" />
@@ -143,7 +143,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Time Series Area Chart */}
-          <div className="lg:col-span-8 reference-card p-6 bg-white border border-[#E6E6E2] space-y-4">
+          <div className="lg:col-span-8 depth-3d-card p-6 space-y-4">
             <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider">Job Matching Flow</h3>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -165,7 +165,7 @@ export default function Dashboard() {
           </div>
 
           {/* Activity Feed */}
-          <div className="lg:col-span-4 reference-card p-6 bg-white border border-[#E6E6E2] space-y-4">
+          <div className="lg:col-span-4 depth-3d-card p-6 space-y-4">
             <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider">Recent Activity</h3>
             <div className="space-y-3">
               <div className="p-3 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-xs font-semibold text-[#666666]">

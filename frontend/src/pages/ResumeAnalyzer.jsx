@@ -91,10 +91,10 @@ export default function ResumeAnalyzer() {
           </div>
 
           <div className="flex gap-2">
-            <button className="btn-terracotta-outline px-4 py-2 text-xs font-bold flex items-center gap-1.5 bg-white border border-[#E6E6E2] hover:bg-[#F0F0EB] text-[#111111]">
+            <button className="depth-3d-button-outline px-4 py-2 text-xs font-bold flex items-center gap-1.5">
               <Download className="w-3.5 h-3.5" /> Download Report
             </button>
-            <button className="btn-terracotta px-4 py-2 text-xs font-bold flex items-center gap-1.5 text-white">
+            <button className="depth-3d-button px-4 py-2 text-xs font-bold flex items-center gap-1.5 text-white">
               <Share2 className="w-3.5 h-3.5" /> Share Result
             </button>
           </div>
@@ -104,7 +104,7 @@ export default function ResumeAnalyzer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Circular Match Score */}
-          <div className="reference-card p-6 bg-white border border-[#E6E6E2] flex flex-col items-center justify-center space-y-4">
+          <div className="depth-3d-card p-6 flex flex-col items-center justify-center space-y-4">
             <div className="w-24 h-24 rounded-full border-4 border-[#7ED321] flex flex-col items-center justify-center bg-[#F8F8F5]">
               <span className="text-3xl font-black text-[#111111]">{matchScore}</span>
               <span className="text-[8px] font-bold uppercase text-[#666666] tracking-wider mt-0.5">MATCH</span>
@@ -115,7 +115,7 @@ export default function ResumeAnalyzer() {
           </div>
 
           {/* Card 2: Skill Radar Diamond */}
-          <div className="reference-card p-6 bg-white border border-[#E6E6E2] flex flex-col justify-between space-y-3">
+          <div className="depth-3d-card p-6 flex flex-col justify-between space-y-3">
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#111111] uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-[#7ED321]" /> Skill Radar
             </div>
@@ -130,7 +130,7 @@ export default function ResumeAnalyzer() {
           </div>
 
           {/* Card 3: Heatmap Analysis */}
-          <div className="reference-card p-6 bg-white border border-[#E6E6E2] space-y-3">
+          <div className="depth-3d-card p-6 space-y-3">
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#111111] uppercase tracking-wider">
               <FileText className="w-3.5 h-3.5 text-[#7ED321]" /> Heatmap Analysis
             </div>
@@ -152,7 +152,7 @@ export default function ResumeAnalyzer() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Critical Skill Gaps */}
-          <div className="lg:col-span-8 reference-card p-6 bg-white border border-[#E6E6E2] space-y-4">
+          <div className="lg:col-span-8 depth-3d-card p-6 space-y-4">
             <div className="flex justify-between items-center border-b border-[#E6E6E2] pb-2">
               <h3 className="text-base font-bold text-[#111111]">Critical Skill Gaps</h3>
               <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[9px] font-bold uppercase tracking-wider">Priority High</span>
@@ -186,7 +186,7 @@ export default function ResumeAnalyzer() {
           </div>
 
           {/* Solid White/Green Card: Fast Iteration */}
-          <div className="lg:col-span-4 reference-card bg-white border border-[#E6E6E2] p-6 space-y-4 shadow-md flex flex-col justify-between">
+          <div className="lg:col-span-4 depth-3d-card p-6 space-y-4 flex flex-col justify-between">
             <div className="space-y-1">
               <h3 className="text-base font-bold text-[#111111] tracking-wide">Fast Iteration</h3>
               <p className="text-xs text-[#666666] leading-relaxed">
@@ -218,7 +218,7 @@ export default function ResumeAnalyzer() {
         </div>
 
         {/* Row 3: Industry Benchmarks */}
-        <div className="reference-card p-6 bg-white border border-[#E6E6E2] space-y-4">
+        <div className="depth-3d-card p-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E6E6E2] pb-3">
             <div>
               <h3 className="text-base font-bold text-[#111111]">Industry Benchmarks</h3>

@@ -124,7 +124,7 @@ export default function Profile() {
       >
         
         {/* Profile Header Banner inside Content Canvas */}
-        <div className="reference-card p-8 bg-white flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-[#E6E6E2]">
+        <div className="depth-3d-card p-8 flex flex-col sm:flex-row items-center gap-6">
           <img
             src={user?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"}
             alt="User Avatar"
@@ -149,7 +149,7 @@ export default function Profile() {
         <form onSubmit={handleSaveProfile} className="space-y-8">
           
           {/* Basic Details */}
-          <div className="reference-card p-8 bg-white space-y-6 shadow-sm border border-[#E6E6E2]">
+          <div className="depth-3d-card p-8 space-y-6">
             <h2 className="text-lg font-bold text-[#111111] flex items-center gap-2">
               <User className="w-5 h-5 text-[#7ED321]" /> Career Details & Target Preferences
             </h2>
@@ -162,7 +162,7 @@ export default function Profile() {
                   type="text"
                   value={profileData.headline || ''}
                   onChange={(e) => setProfileData({ ...profileData, headline: e.target.value })}
-                  className="w-full glass-input px-4 py-2.5 rounded-xl text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                  className="w-full depth-3d-input px-4 py-2.5 rounded-xl text-xs font-semibold text-[#111111]"
                 />
               </div>
 
@@ -172,7 +172,7 @@ export default function Profile() {
                   type="text"
                   value={profileData.target_role || ''}
                   onChange={(e) => setProfileData({ ...profileData, target_role: e.target.value })}
-                  className="w-full glass-input px-4 py-2.5 rounded-xl text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                  className="w-full depth-3d-input px-4 py-2.5 rounded-xl text-xs font-semibold text-[#111111]"
                 />
               </div>
 
@@ -182,7 +182,7 @@ export default function Profile() {
                   type="text"
                   value={profileData.location || ''}
                   onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
-                  className="w-full glass-input px-4 py-2.5 rounded-xl text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                  className="w-full depth-3d-input px-4 py-2.5 rounded-xl text-xs font-semibold text-[#111111]"
                 />
               </div>
 
@@ -192,26 +192,26 @@ export default function Profile() {
                   type="number"
                   value={profileData.min_expected_salary || 0}
                   onChange={(e) => setProfileData({ ...profileData, min_expected_salary: parseInt(e.target.value) })}
-                  className="w-full glass-input px-4 py-2.5 rounded-xl text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                  className="w-full depth-3d-input px-4 py-2.5 rounded-xl text-xs font-semibold text-[#111111]"
                 />
               </div>
 
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-[#666666]">Bio Summary</label>
+              <label className="text-xs font-bold text-[#666666]">Professional Biography / Intro</label>
               <textarea
                 rows={3}
                 value={profileData.bio || ''}
                 onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
-                className="w-full glass-input p-3.5 rounded-xl text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                className="w-full depth-3d-input p-3.5 rounded-xl text-xs font-semibold text-[#111111]"
               />
             </div>
 
           </div>
 
           {/* Technical Skills Editor */}
-          <div className="reference-card p-8 bg-white space-y-6 shadow-sm border border-[#E6E6E2]">
+          <div className="depth-3d-card p-8 space-y-6">
             <h2 className="text-lg font-bold text-[#111111] flex items-center gap-2">
               <Award className="w-5 h-5 text-[#7ED321]" /> Technical Skill Taxonomy
             </h2>
@@ -222,9 +222,9 @@ export default function Profile() {
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 placeholder="Add skill (e.g. PyTorch, GraphQL)"
-                className="flex-1 glass-input px-4 py-2.5 rounded-xl text-xs bg-white border border-[#D1D1CB] text-[#111111]"
+                className="flex-1 depth-3d-input px-4 py-2.5 rounded-xl text-xs text-[#111111]"
               />
-              <button type="button" onClick={handleAddSkill} className="btn-terracotta px-5 py-2.5 text-xs font-bold flex items-center gap-1.5 shadow-sm text-white">
+              <button type="button" onClick={handleAddSkill} className="depth-3d-button px-5 py-2.5 text-xs font-bold flex items-center gap-1.5 text-white">
                 <Plus className="w-4 h-4" /> Add
               </button>
             </div>
@@ -241,7 +241,7 @@ export default function Profile() {
             </div>
           </div>
 
-          <button type="submit" disabled={saving} className="btn-terracotta w-full py-4 text-xs font-bold flex items-center justify-center gap-2 shadow-sm text-white">
+          <button type="submit" disabled={saving} className="depth-3d-button w-full py-4 text-xs font-bold flex items-center justify-center gap-2 text-white">
             <Save className="w-4 h-4" /> {saving ? 'Saving Profile...' : 'Save Profile Changes'}
           </button>
 

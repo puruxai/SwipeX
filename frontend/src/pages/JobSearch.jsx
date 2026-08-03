@@ -118,7 +118,7 @@ export default function JobSearch() {
         </div>
 
         {/* Filter Drawer */}
-        <div className="reference-card p-6 bg-white border border-[#E6E6E2] space-y-4">
+        <div className="depth-3d-card p-6 space-y-4">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-4 top-4 text-neutral-400" />
             <input
@@ -126,7 +126,7 @@ export default function JobSearch() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by title, company, or technical skill (e.g. Python, PyTorch)..."
-              className="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+              className="w-full pl-11 pr-4 py-3 rounded-xl depth-3d-input text-xs font-semibold text-[#111111]"
             />
           </div>
 
@@ -136,7 +136,7 @@ export default function JobSearch() {
               <select
                 value={selectedCompanyType}
                 onChange={(e) => setSelectedCompanyType(e.target.value)}
-                className="w-full glass-input px-3 py-2.5 rounded-xl text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                className="w-full depth-3d-input px-3 py-2.5 rounded-xl text-xs font-semibold text-[#111111]"
               >
                 <option value="ALL">All Companies</option>
                 <option value="MNC">MNC / Enterprise</option>
@@ -149,7 +149,7 @@ export default function JobSearch() {
               <select
                 value={selectedFlexibility}
                 onChange={(e) => setSelectedFlexibility(e.target.value)}
-                className="w-full glass-input px-3 py-2.5 rounded-xl text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                className="w-full depth-3d-input px-3 py-2.5 rounded-xl text-xs font-semibold text-[#111111]"
               >
                 <option value="ALL">All Locations</option>
                 <option value="REMOTE">100% Remote</option>
@@ -190,7 +190,7 @@ export default function JobSearch() {
             </button>
           </div>
         ) : filteredJobs.length === 0 ? (
-          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2] shadow-sm">
+          <div className="depth-3d-card p-14 text-center space-y-4">
             <p className="font-bold text-[#111111] text-base">No Matching Positions Found</p>
             <p className="text-xs text-[#666666] font-semibold leading-relaxed">
               We couldn't find any roles matching your current search terms or filters. Try broadening your query.
@@ -199,7 +199,7 @@ export default function JobSearch() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredJobs.map((job) => (
-              <div key={job.id} className="reference-card p-6 bg-white border border-[#E6E6E2] space-y-4 flex flex-col justify-between">
+              <div key={job.id} className="depth-3d-card p-6 space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <CompanyLogo src={job.company_logo} company={job.company} size="w-10 h-10 text-xs" />
@@ -225,7 +225,7 @@ export default function JobSearch() {
                 <button 
                   onClick={() => handleApply(job)}
                   disabled={applyingJobId === job.id}
-                  className="btn-terracotta w-full py-3.5 text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-sm text-white"
+                  className="depth-3d-button w-full py-3.5 text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50 text-white"
                 >
                   {applyingJobId === job.id ? (
                     <>

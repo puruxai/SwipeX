@@ -222,7 +222,7 @@ export default function AICareerHub() {
         {/* Tab content renders */}
         <div className="min-h-[50vh]">
           {activeTab === 'coach' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="reference-card p-6 space-y-4 bg-white border border-[#E6E6E2]">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="depth-3d-card p-6 space-y-4">
               <div className="flex items-center gap-3 border-b border-neutral-100 pb-4">
                 <div className="w-9 h-9 rounded-xl bg-[#7ED321]/15 flex items-center justify-center">
                   <Bot className="w-4.5 h-4.5 text-[#59C414]" />
@@ -260,9 +260,9 @@ export default function AICareerHub() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask AI Coach for advice e.g. How do I highlight system architecture skills?"
-                  className="flex-1 glass-input px-4 py-2.5 text-xs font-semibold bg-white border border-[#D1D1CB] text-[#111111]"
+                  className="flex-1 depth-3d-input px-4 py-2.5 text-xs font-semibold text-[#111111]"
                 />
-                <button type="submit" disabled={chatLoading} className="btn-terracotta px-6 py-2.5 text-xs font-bold flex items-center gap-1.5 text-white">
+                <button type="submit" disabled={chatLoading} className="depth-3d-button px-6 py-2.5 text-xs font-bold flex items-center gap-1.5 text-white">
                   <Send className="w-3.5 h-3.5" /> Send Advice Request
                 </button>
               </form>
@@ -271,7 +271,7 @@ export default function AICareerHub() {
 
           {activeTab === 'interview' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="reference-card p-6 space-y-4 bg-white border border-[#E6E6E2]">
+              <div className="depth-3d-card p-6 space-y-4">
                 <h2 className="text-sm font-bold text-[#111111] flex items-center gap-2">
                   <HelpCircle className="w-4.5 h-4.5 text-[#7ED321]" /> STAR Method Interview Simulator
                 </h2>
@@ -320,7 +320,7 @@ export default function AICareerHub() {
               </div>
 
               {/* Feedback Display */}
-              <div className="reference-card p-6 bg-white border border-[#E6E6E2] flex flex-col justify-between space-y-4">
+              <div className="depth-3d-card p-6 flex flex-col justify-between space-y-4">
                 <h3 className="text-sm font-bold text-[#111111] flex items-center gap-2">
                   <CheckCircle2 className="w-4.5 h-4.5 text-[#7ED321]" /> STAR Evaluation Feedback
                 </h3>
@@ -346,7 +346,7 @@ export default function AICareerHub() {
 
           {activeTab === 'salary' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <form onSubmit={handlePredictSalary} className="reference-card p-6 bg-white border border-[#E6E6E2] space-y-4">
+              <form onSubmit={handlePredictSalary} className="depth-3d-card p-6 space-y-4">
                 <h2 className="text-sm font-bold text-[#111111] flex items-center gap-2">
                   <DollarSign className="w-4.5 h-4.5 text-[#7ED321]" /> AI Compensation Predictor
                 </h2>
@@ -358,7 +358,7 @@ export default function AICareerHub() {
                     type="text"
                     value={salaryForm.title}
                     onChange={(e) => setSalaryForm({ ...salaryForm, title: e.target.value })}
-                    className="w-full glass-input px-3.5 py-2 text-xs bg-white border border-[#D1D1CB] text-[#111111]"
+                    className="w-full depth-3d-input px-3.5 py-2 text-xs text-[#111111]"
                   />
                 </div>
 
@@ -368,7 +368,7 @@ export default function AICareerHub() {
                     type="text"
                     value={salaryForm.skills}
                     onChange={(e) => setSalaryForm({ ...salaryForm, skills: e.target.value })}
-                    className="w-full glass-input px-3.5 py-2 text-xs bg-white border border-[#D1D1CB] text-[#111111]"
+                    className="w-full depth-3d-input px-3.5 py-2 text-xs text-[#111111]"
                   />
                 </div>
 
@@ -380,7 +380,7 @@ export default function AICareerHub() {
                       step="0.5"
                       value={salaryForm.experience_years}
                       onChange={(e) => setSalaryForm({ ...salaryForm, experience_years: e.target.value })}
-                      className="w-full glass-input px-3.5 py-2 text-xs bg-white border border-[#D1D1CB] text-[#111111]"
+                      className="w-full depth-3d-input px-3.5 py-2 text-xs text-[#111111]"
                     />
                   </div>
 
@@ -389,7 +389,7 @@ export default function AICareerHub() {
                     <select
                       value={salaryForm.company_type}
                       onChange={(e) => setSalaryForm({ ...salaryForm, company_type: e.target.value })}
-                      className="w-full glass-input px-3.5 py-2 text-xs bg-white border border-[#D1D1CB] text-[#111111] font-semibold"
+                      className="w-full depth-3d-input px-3.5 py-2 text-xs text-[#111111] font-semibold"
                     >
                       <option value="MNC">MNC / Enterprise</option>
                       <option value="Startup">Growth Startup</option>
@@ -398,7 +398,7 @@ export default function AICareerHub() {
                   </div>
                 </div>
 
-                <button type="submit" disabled={salaryLoading} className="w-full btn-terracotta py-2.5 text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 text-white">
+                <button type="submit" disabled={salaryLoading} className="w-full depth-3d-button py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 text-white">
                   {salaryLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" /> Calculating Market Rate...
@@ -410,7 +410,7 @@ export default function AICareerHub() {
               </form>
 
               {/* Salary Output */}
-              <div className="reference-card p-6 bg-white border border-[#E6E6E2] flex flex-col justify-center text-center space-y-4">
+              <div className="depth-3d-card p-6 flex flex-col justify-center text-center space-y-4">
                 {salaryResult ? (
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-bold">
@@ -438,7 +438,7 @@ export default function AICareerHub() {
           )}
 
           {activeTab === 'roadmap' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="reference-card p-6 bg-white border border-[#E6E6E2] space-y-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="depth-3d-card p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-100 pb-4">
                 <div>
                   <h2 className="text-sm font-bold text-[#111111] flex items-center gap-2">

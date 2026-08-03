@@ -174,9 +174,18 @@ export default function SwipeJobs() {
                   {/* Left Role Info */}
                   <div className="space-y-3.5 flex-1 w-full">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-[#59C414] font-black text-lg flex items-center justify-center flex-shrink-0">
-                        {job.company ? job.company[0] : 'C'}
-                      </div>
+                      {job.company_logo ? (
+                        <img
+                          src={job.company_logo}
+                          alt={`${job.company} logo`}
+                          className="w-12 h-12 rounded-xl object-contain border border-[#E6E6E2] bg-white p-1 flex-shrink-0"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-[#59C414] font-black text-lg flex items-center justify-center flex-shrink-0">
+                          {job.company ? job.company[0] : 'C'}
+                        </div>
+                      )}
                       <div className="space-y-0.5">
                         <h3 className="font-extrabold text-lg text-[#111111] leading-snug">{job.title}</h3>
                         <p className="text-xs text-[#666666] font-bold">

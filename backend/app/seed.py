@@ -157,8 +157,8 @@ def seed_database():
         jobs_data = [
             {
                 "title": "Senior AI & Full Stack Engineer",
-                "company": "NeuralStack Labs",
-                "company_logo": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
+                "company": "OpenAI",
+                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg",
                 "company_type": "Newly Founded Startup",
                 "location": "San Francisco, CA (Remote)",
                 "is_remote": True,
@@ -176,8 +176,8 @@ def seed_database():
             },
             {
                 "title": "Frontend Engineer (React + Motion)",
-                "company": "Pulse Digital",
-                "company_logo": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&auto=format&fit=crop&q=80",
+                "company": "Stripe",
+                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg",
                 "company_type": "MNC",
                 "location": "New York, NY",
                 "is_remote": True,
@@ -195,8 +195,8 @@ def seed_database():
             },
             {
                 "title": "Python Backend & Microservices Developer",
-                "company": "HyperScale Cloud",
-                "company_logo": "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&auto=format&fit=crop&q=80",
+                "company": "Google",
+                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",
                 "company_type": "Startup",
                 "location": "Austin, TX (Remote)",
                 "is_remote": True,
@@ -214,8 +214,8 @@ def seed_database():
             },
             {
                 "title": "Junior Web Developer & AI Associate",
-                "company": "Apex NextGen Tech",
-                "company_logo": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&auto=format&fit=crop&q=80",
+                "company": "Microsoft",
+                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
                 "company_type": "Newly Founded Startup",
                 "location": "Seattle, WA",
                 "is_remote": True,
@@ -233,8 +233,8 @@ def seed_database():
             },
             {
                 "title": "Lead UI/UX Designer & Frontend Strategist",
-                "company": "Vivid Studio",
-                "company_logo": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&auto=format&fit=crop&q=80",
+                "company": "Meta",
+                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
                 "company_type": "Startup",
                 "location": "Los Angeles, CA",
                 "is_remote": False,
@@ -252,8 +252,8 @@ def seed_database():
             },
             {
                 "title": "Data Scientist - NLP & Resume AI",
-                "company": "TalentIQ Systems",
-                "company_logo": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=200&auto=format&fit=crop&q=80",
+                "company": "Netflix",
+                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg",
                 "company_type": "MNC",
                 "location": "Boston, MA (Remote)",
                 "is_remote": True,
@@ -308,7 +308,7 @@ def seed_database():
             notif1 = models.Notification(
                 user_id=seeker.id,
                 title="Interview Scheduled!",
-                message="NeuralStack Labs invited you to a technical interview for Senior AI & Full Stack Engineer.",
+                message="OpenAI invited you to a technical interview for Senior AI & Full Stack Engineer.",
                 type="interview"
             )
             db.add(notif1)

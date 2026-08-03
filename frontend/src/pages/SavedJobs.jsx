@@ -89,11 +89,18 @@ export default function SavedJobs() {
               >
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <img
-                      src={job.company_logo || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80"}
-                      alt={job.company}
-                      className="w-12 h-12 rounded-xl object-cover border border-[#E6E6E2] shadow-sm"
-                    />
+                    {job.company_logo ? (
+                      <img
+                        src={job.company_logo}
+                        alt={`${job.company} logo`}
+                        className="w-12 h-12 rounded-xl object-contain border border-[#E6E6E2] bg-white p-1 flex-shrink-0"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-[#59C414] font-black text-lg flex items-center justify-center flex-shrink-0">
+                        {job.company ? job.company[0] : 'C'}
+                      </div>
+                    )}
                     <div>
                       <h3 className="font-bold text-base text-[#111111] line-clamp-1">{job.title}</h3>
                       <p className="text-xs text-[#59C414] font-bold">{job.company}</p>

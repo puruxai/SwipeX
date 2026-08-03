@@ -9,22 +9,36 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
   const [token, setToken] = useState(() => localStorage.getItem('swipex_token'));
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    const savedUser = localStorage.getItem('swipex_user');
+    const savedToken = localStorage.getItem('swipex_token');
+    return savedToken && !savedUser ? true : false;
+  });
 
   useEffect(() => {
+    let active = true;
     const initAuth = async () => {
       if (token) {
         try {
           const res = await API.get('/auth/me');
-          setUser(res.data);
-          localStorage.setItem('swipex_user', JSON.stringify(res.data));
+          if (active) {
+            setUser(res.data);
+            localStorage.setItem('swipex_user', JSON.stringify(res.data));
+          }
         } catch (err) {
-          logout();
+          if (active) {
+            logout();
+          }
         }
       }
-      setLoading(false);
+      if (active) {
+        setLoading(false);
+      }
     };
     initAuth();
+    return () => {
+      active = false;
+    };
   }, [token]);
 
   useEffect(() => {

@@ -64,7 +64,7 @@ export default function LandingPage() {
       </div>
       
       {/* HERO SECTION - Minimal Premium Light SaaS Visual */}
-      <section className="pt-20 lg:pt-32 max-w-7xl mx-auto px-6 sm:px-8 relative min-h-[85vh] flex items-center">
+      <section className="pt-8 lg:pt-14 pb-8 max-w-7xl mx-auto px-6 sm:px-8 relative min-h-[60vh] flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full relative z-10">
           
           {/* Left Column Text */}
@@ -175,14 +175,33 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Dashboard Chart Mockup */}
-                <div className="h-44 rounded-xl overflow-hidden relative border border-[#E6E6E2] group">
+                {/* Candidate Profile Avatar Card - Reduced Size & Professionally Aligned */}
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-left">
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                      alt="Candidate Profile Pic"
+                      className="w-10 h-10 rounded-full object-cover border border-[#E6E6E2]"
+                    />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#7ED321] rounded-full border border-white flex items-center justify-center text-[7px] font-black text-white">✓</div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <h4 className="text-xs font-bold text-[#111111] truncate">Sarah Jenkins</h4>
+                      <span className="px-1.5 py-0.5 rounded bg-[#7ED321]/10 text-[#59C414] text-[7px] font-bold uppercase tracking-wide flex-shrink-0">96% Match</span>
+                    </div>
+                    <p className="text-[9px] text-[#666666] font-medium truncate mt-0.5">Senior ML Specialist • React/Python</p>
+                  </div>
+                </div>
+
+                {/* Dashboard Chart Mockup - Adjusted Height */}
+                <div className="h-32 rounded-xl overflow-hidden relative border border-[#E6E6E2] group">
                   <img
                     src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
                     alt="AI Career Analytics Dashboard Workspace"
                     className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/50 to-transparent p-4 flex flex-col justify-end text-[#111111]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/50 to-transparent p-3 flex flex-col justify-end text-[#111111]">
                     <div className="text-[8px] font-extrabold uppercase tracking-widest text-[#59C414] mb-0.5">Neural Vector Matching</div>
                     <div className="text-xs font-bold tracking-tight">Software Engineering & AI Architect roles</div>
                   </div>

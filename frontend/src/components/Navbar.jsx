@@ -34,9 +34,9 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E6E6E2] transition-all">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="flex items-center justify-between h-16 gap-6">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E6E6E2] transition-all h-[72px]">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 h-full">
+        <div className="flex items-center justify-between h-full gap-6">
           
           {/* Brand Logo & Global Nav Links */}
           <div className="flex items-center gap-8">
@@ -163,7 +163,7 @@ export default function Navbar() {
                   <img
                     src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"}
                     alt="User Avatar"
-                    className="w-8.5 h-8.5 rounded-full object-cover border border-[#E6E6E2] cursor-pointer hover:opacity-95"
+                    className="w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full object-cover border border-[#E6E6E2] cursor-pointer hover:opacity-95 flex-shrink-0"
                   />
                 </button>
 

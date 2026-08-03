@@ -28,43 +28,44 @@ import {
   Clock
 } from 'lucide-react';
 
-// Reusable animated Match Score circular progress component
-const MatchScoreRing = ({ score, size = "w-16 h-16", strokeWidth = 4, textSize = "text-base" }) => {
-  const radius = 24;
+// Reusable animated premium match gauge progress component
+const PremiumMatchGauge = ({ score }) => {
+  const radius = 20;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (score / 100) * circumference;
-  
-  const getColor = (s) => {
-    if (s >= 90) return '#7ED321'; // Bright primary green
-    if (s >= 75) return '#59C414'; // Accent deep green
-    return '#E2B13C'; // Warm golden yellow
+
+  const getMatchDetails = (s) => {
+    if (s >= 90) return { label: 'Excellent Match', color: 'text-[#7ED321]', stroke: '#7ED321' };
+    if (s >= 75) return { label: 'Strong Fit', color: 'text-[#59C414]', stroke: '#59C414' };
+    return { label: 'Good Fit', color: 'text-amber-500', stroke: '#E2B13C' };
   };
 
+  const details = getMatchDetails(score);
+
   return (
-    <div className={`relative ${size} flex items-center justify-center flex-shrink-0`}>
-      <svg className="w-full h-full transform -rotate-90">
-        <circle 
-          cx="32" 
-          cy="32" 
-          r={radius} 
-          stroke="#E6E6E2" 
-          strokeWidth={strokeWidth} 
-          fill="transparent" 
-        />
-        <circle 
-          cx="32" 
-          cy="32" 
-          r={radius} 
-          stroke={getColor(score)} 
-          strokeWidth={strokeWidth} 
-          fill="transparent"
-          strokeDasharray={circumference} 
-          strokeDashoffset={strokeDashoffset} 
-          strokeLinecap="round"
-          className="transition-all duration-700 ease-out" 
-        />
-      </svg>
-      <span className={`absolute font-extrabold ${textSize} text-[#111111]`}>{score}%</span>
+    <div className="flex items-center gap-2.5 bg-[#F8F8F5]/80 backdrop-blur-sm border border-[#E6E6E2] p-2 rounded-2xl shadow-sm">
+      <div className="relative w-10 h-10 flex items-center justify-center flex-shrink-0">
+        <svg className="w-full h-full transform -rotate-90">
+          <circle cx="20" cy="20" r={radius} stroke="#E6E6E2" strokeWidth="2.5" fill="transparent" />
+          <circle 
+            cx="20" 
+            cy="20" 
+            r={radius} 
+            stroke={details.stroke} 
+            strokeWidth="3.5" 
+            fill="transparent"
+            strokeDasharray={circumference} 
+            strokeDashoffset={strokeDashoffset} 
+            strokeLinecap="round"
+            className="transition-all duration-1000 ease-out" 
+          />
+        </svg>
+        <span className="absolute text-[10px] font-black text-[#111111]">{score}%</span>
+      </div>
+      <div className="text-left">
+        <div className="text-[7.5px] font-black uppercase tracking-wider text-[#666666] leading-none mb-1">AI Recommendation</div>
+        <div className={`text-[10px] font-black leading-none ${details.color}`}>{details.label}</div>
+      </div>
     </div>
   );
 };
@@ -214,17 +215,22 @@ export default function SwipeJobs() {
   return (
     <div className="flex h-screen bg-[#F8F8F5] text-[#111111] transition-colors relative overflow-hidden">
       
+      {/* Flagship radial mesh gradients */}
+      <div className="absolute top-[-30%] left-[-10%] w-[70%] h-[70%] rounded-full bg-[radial-gradient(circle,rgba(126,211,33,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-[radial-gradient(circle,rgba(89,196,20,0.05)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-[25%] left-[35%] w-[50%] h-[50%] rounded-full bg-[radial-gradient(circle,rgba(126,211,33,0.04)_0%,transparent_60%)] pointer-events-none" />
+
       {/* Global Navigation Sidebar */}
       <Sidebar />
 
       {/* Main Workspace Frame */}
-      <div className="flex-1 p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1500px] mx-auto w-full h-full overflow-hidden">
+      <div className="flex-1 p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1600px] mx-auto w-full h-full overflow-hidden relative z-10">
         
         {/* Left/Center Swipe Feed Column */}
-        <div className="lg:col-span-8 flex flex-col justify-between h-full overflow-hidden pb-2">
+        <div className="lg:col-span-8 flex flex-col justify-between h-full overflow-hidden pb-1">
           
           {/* Header */}
-          <div className="flex justify-between items-end border-b border-[#E6E6E2] pb-4">
+          <div className="flex justify-between items-end border-b border-[#E6E6E2]/70 pb-3.5">
             <div>
               <h1 className="text-xl font-extrabold text-[#111111] tracking-tight flex items-center gap-2">
                 <Zap className="w-5 h-5 text-[#7ED321] fill-[#7ED321]" />
@@ -236,7 +242,7 @@ export default function SwipeJobs() {
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-[9px] font-bold text-[#666666] bg-white border border-[#E6E6E2] px-3 py-1 rounded-full shadow-sm">
+              <span className="text-[9px] font-bold text-[#666666] bg-white border border-[#E6E6E2]/80 px-3 py-1 rounded-full shadow-sm">
                 {jobs.length - currentIndex > 0 ? `${jobs.length - currentIndex} jobs left` : '0 jobs'}
               </span>
             </div>
@@ -264,7 +270,7 @@ export default function SwipeJobs() {
                 </button>
               </motion.div>
             ) : (
-              <div className="relative w-[92vw] sm:w-[80vw] md:w-[72%] max-w-[350px] h-[75vh] max-h-[460px] flex items-center justify-center">
+              <div className="relative w-[90vw] sm:w-[480px] lg:w-[540px] h-[75vh] min-h-[580px] max-h-[660px] flex items-center justify-center">
                 {visibleCards.map((job, idx) => {
                   const relativeIndex = idx;
                   const isTop = relativeIndex === 0;
@@ -274,18 +280,18 @@ export default function SwipeJobs() {
                       key={job.id}
                       style={isTop ? { x: dragX, y: dragY, rotate, opacity: activeOpacity, zIndex: 30 } : { zIndex: 30 - relativeIndex }}
                       animate={{
-                        scale: isTop ? 1.0 : (relativeIndex === 1 ? 0.96 : 0.92),
-                        y: isTop ? 0 : (relativeIndex === 1 ? 24 : 48),
+                        scale: isTop ? 1.0 : (relativeIndex === 1 ? 0.95 : 0.90),
+                        y: isTop ? 0 : (relativeIndex === 1 ? 22 : 44),
                         opacity: isTop ? 1.0 : (relativeIndex === 1 ? 0.85 : 0.55),
                       }}
-                      transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+                      transition={{ type: 'spring', stiffness: 280, damping: 22 }}
                       whileDrag={isTop ? { scale: 0.98 } : undefined}
                       drag={isTop}
                       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                       dragElastic={1.0}
                       onDragEnd={isTop ? handleDragEnd : undefined}
-                      className={`absolute w-full h-full bg-white border border-[#E6E6E2] rounded-[28px] p-5 shadow-xl flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition-shadow duration-300 ${
-                        isTop ? 'hover:shadow-2xl' : ''
+                      className={`absolute w-full h-full bg-white border border-[#E6E6E2]/75 rounded-[28px] p-5 shadow-[0_12px_45px_rgba(17,17,17,0.06)] flex flex-col justify-between cursor-grab active:cursor-grabbing select-none transition-shadow duration-300 ${
+                        isTop ? 'hover:shadow-[0_16px_50px_rgba(17,17,17,0.09)]' : ''
                       }`}
                     >
                       {/* Swipe Visual Feedback Badges (Top Card Only) */}
@@ -293,25 +299,25 @@ export default function SwipeJobs() {
                         <>
                           <motion.div 
                             style={{ opacity: matchBadgeOpacity }}
-                            className="absolute top-6 left-6 border-4 border-[#7ED321] text-[#7ED321] font-black text-[10px] uppercase px-3 py-1 rounded-xl rotate-[-12deg] z-40 bg-white"
+                            className="absolute top-6 left-6 border-4 border-[#7ED321] text-[#7ED321] font-black text-[10px] uppercase px-3.5 py-1 rounded-xl rotate-[-12deg] z-40 bg-white shadow-sm"
                           >
                             Great Match
                           </motion.div>
                           <motion.div 
                             style={{ opacity: skippedBadgeOpacity }}
-                            className="absolute top-6 right-6 border-4 border-[#FFAA00] text-[#FFAA00] font-black text-[10px] uppercase px-3 py-1 rounded-xl rotate-[12deg] z-40 bg-white"
+                            className="absolute top-6 right-6 border-4 border-[#FFAA00] text-[#FFAA00] font-black text-[10px] uppercase px-3.5 py-1 rounded-xl rotate-[12deg] z-40 bg-white shadow-sm"
                           >
                             Skipped
                           </motion.div>
                           <motion.div 
                             style={{ opacity: savedBadgeOpacity }}
-                            className="absolute bottom-16 left-1/2 -translate-x-1/2 border-4 border-blue-500 text-blue-500 font-black text-[10px] uppercase px-4 py-1 rounded-xl z-40 bg-white shadow-md"
+                            className="absolute bottom-16 left-1/2 -translate-x-1/2 border-4 border-blue-500 text-blue-500 font-black text-[10px] uppercase px-4 py-1.5 rounded-xl z-40 bg-white shadow-md"
                           >
                             Saved
                           </motion.div>
                           <motion.div 
                             style={{ opacity: detailsBadgeOpacity }}
-                            className="absolute top-16 left-1/2 -translate-x-1/2 border-4 border-indigo-500 text-indigo-500 font-black text-[10px] uppercase px-4 py-1 rounded-xl z-40 bg-white shadow-md animate-pulse"
+                            className="absolute top-16 left-1/2 -translate-x-1/2 border-4 border-indigo-500 text-indigo-500 font-black text-[10px] uppercase px-4 py-1.5 rounded-xl z-40 bg-white shadow-md animate-pulse"
                           >
                             Opening Details
                           </motion.div>
@@ -319,77 +325,98 @@ export default function SwipeJobs() {
                       )}
 
                       {/* Top Card Info Row */}
-                      <div className="space-y-3">
+                      <div className="space-y-4">
+                        
+                        {/* Company Details Row */}
                         <div className="flex justify-between items-start">
-                          <CompanyLogo src={job.company_logo} company={job.company} size="w-12 h-12" />
-                          <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded-full bg-[#7ED321]/10 text-[#59C414] text-[9px] font-bold border border-[#7ED321]/20">
-                              Neural Match
-                            </span>
-                            <MatchScoreRing score={job.match_score || 94} size="w-12 h-12" strokeWidth={3} textSize="text-xs" />
+                          <div className="flex items-center gap-3">
+                            <CompanyLogo src={job.company_logo} company={job.company} size="w-12 h-12" />
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-extrabold text-[#111111]">{job.company}</span>
+                                <span className="inline-flex items-center justify-center w-3.5 h-3.5 bg-[#7ED321] text-white rounded-full flex-shrink-0" title="Verified Employer">
+                                  <Check className="w-2 h-2 stroke-[4]" />
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <span className="inline-flex items-center gap-1 text-[8.5px] font-bold text-[#59C414] bg-[#7ED321]/5 border border-[#7ED321]/15 px-2 py-0.5 rounded-full leading-none">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#7ED321] animate-pulse" />
+                                  Active Recruiter
+                                </span>
+                              </div>
+                            </div>
                           </div>
+                          
+                          {/* Animated Matching Score Circular Gauge */}
+                          <PremiumMatchGauge score={job.match_score || 94} />
                         </div>
 
-                        <div className="space-y-0.5">
-                          <h2 className="text-lg font-black text-[#111111] leading-tight tracking-tight">{job.title}</h2>
-                          <p className="text-xs text-[#59C414] font-bold flex items-center gap-1">
-                            <Building2 className="w-3 h-3" />
-                            {job.company}
+                        {/* Job Position Title */}
+                        <div className="space-y-1">
+                          <h2 className="text-xl lg:text-2xl font-black text-[#111111] leading-tight tracking-tight">{job.title}</h2>
+                          <p className="text-xs text-[#666666] font-semibold flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                            {job.location || 'Remote'}
                           </p>
                         </div>
 
                         {/* Salary and Metadata Row */}
-                        <div className="flex flex-wrap gap-1.5 pt-0.5">
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-bold text-[#666666] flex items-center gap-0.5">
-                            <DollarSign className="w-3 text-[#7ED321]" />
-                            ${(job.salary_min / 1000).toFixed(0)}k - ${(job.salary_max / 1000).toFixed(0)}k
+                        <div className="flex flex-wrap gap-2 pt-0.5">
+                          <span className="px-3 py-1 rounded-full bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-bold text-[#666666] flex items-center gap-1">
+                            <DollarSign className="w-3.5 h-3.5 text-[#7ED321]" />
+                            ${(job.salary_min / 1000).toFixed(0)}k - ${(job.salary_max / 1000).toFixed(0)}k / year
                           </span>
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-bold text-[#666666] flex items-center gap-0.5">
-                            <MapPin className="w-3 text-red-400" />
-                            {job.location || 'Remote'}
-                          </span>
-                        </div>
-
-                        {/* Badges/Tags Info Grid */}
-                        <div className="grid grid-cols-2 gap-1.5 pt-0.5 text-[9px] font-bold text-[#666666]">
-                          <div className="px-2.5 py-1 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] flex items-center gap-1">
-                            <Briefcase className="w-3 h-3 text-[#7ED321]" />
+                          <span className="px-3 py-1 rounded-full bg-[#F8F8F5]/80 border border-[#E6E6E2] text-[10px] font-bold text-[#666666] flex items-center gap-1">
+                            <Briefcase className="w-3.5 h-3.5 text-[#7ED321]" />
                             {job.job_type || 'Full Time'}
-                          </div>
-                          <div className="px-2.5 py-1 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] flex items-center gap-1">
-                            <Award className="w-3 h-3 text-[#59C414]" />
+                          </span>
+                          <span className="px-3 py-1 rounded-full bg-[#F8F8F5]/80 border border-[#E6E6E2] text-[10px] font-bold text-[#666666] flex items-center gap-1">
+                            <Award className="w-3.5 h-3.5 text-[#59C414]" />
                             {job.experience_level || 'Mid Level'}
-                          </div>
+                          </span>
                         </div>
 
-                        {/* Required Tech stack tags */}
-                        <div className="space-y-1 pt-1">
-                          <span className="text-[8px] uppercase font-black tracking-wider text-[#666666]">Key Core Skills</span>
-                          <div className="flex flex-wrap gap-1">
-                            {job.required_skills?.slice(0, 3).map((skill, index) => (
+                        {/* Key Skills Tags */}
+                        <div className="space-y-1.5 pt-1.5">
+                          <span className="text-[8.5px] uppercase font-black tracking-wider text-[#666666] block">Required Stacks</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {job.required_skills?.slice(0, 4).map((skill, index) => (
                               <span 
                                 key={index} 
-                                className="px-2 py-0.5 rounded-lg bg-[#F8F8F5] border border-[#E6E6E2] text-[9px] font-bold text-[#666666]"
+                                className="px-2.5 py-1 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-[9.5px] font-bold text-[#666666]"
                               >
                                 {skill}
                               </span>
                             ))}
                           </div>
                         </div>
+
+                        {/* AI Summary Recommendation Box */}
+                        <div className="p-3 bg-[#7ED321]/5 border border-[#7ED321]/15 rounded-2xl text-[11px] text-[#666666] font-semibold leading-relaxed space-y-0.5">
+                          <span className="font-extrabold text-[#111111] flex items-center gap-1 text-[10.5px]">
+                            <Sparkles className="w-3.5 h-3.5 text-[#7ED321] fill-[#7ED321]/15" /> Why you match
+                          </span>
+                          <p className="text-[10px] text-neutral-500 leading-snug">
+                            This position matches your distributed systems profile. Remuneration exceeds your $130k base preference by 15%.
+                          </p>
+                        </div>
                       </div>
 
-                      {/* Inline Brief Desc */}
-                      <div className="border-t border-[#E6E6E2] pt-3 mt-auto">
-                        <p className="text-[11px] text-[#666666] font-medium line-clamp-2 leading-relaxed">
-                          {job.description}
-                        </p>
-                        <button 
-                          onClick={() => setDetailJob(job)} 
-                          className="mt-1.5 text-[10px] font-extrabold text-[#7ED321] hover:text-[#59C414] flex items-center gap-0.5 transition-colors"
-                        >
-                          Show Full JD & Match Insights
-                          <ArrowRight className="w-2.5 h-2.5" />
-                        </button>
+                      {/* Card Footer Section */}
+                      <div className="border-t border-[#E6E6E2]/75 pt-3.5 mt-auto flex flex-col space-y-3">
+                        <div className="flex items-center justify-between text-[10.5px] text-[#666666] font-bold">
+                          <div className="flex gap-3.5">
+                            <span className="flex items-center gap-1"><Award className="w-3.5 h-3.5 text-[#7ED321]" /> Stock Options</span>
+                            <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-[#7ED321]" /> Health Cover</span>
+                          </div>
+                          <button 
+                            onClick={() => setDetailJob(job)} 
+                            className="text-[#7ED321] hover:text-[#59C414] flex items-center gap-0.5 transition-colors font-extrabold"
+                          >
+                            Details
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   );
@@ -400,10 +427,10 @@ export default function SwipeJobs() {
 
           {/* Quick Actions Footer Toolbar */}
           {!loading && currentIndex < jobs.length && (
-            <div className="flex items-center justify-center gap-4 py-2">
+            <div className="flex items-center justify-center gap-4 py-2 relative z-20">
               <button 
                 onClick={handleUndo} 
-                className="w-10 h-10 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#666666] hover:text-[#7ED321] flex items-center justify-center shadow-md transition-all active:scale-95"
+                className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#666666] hover:text-[#7ED321] flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
                 title="Undo last swipe"
               >
                 <RotateCcw className="w-4.5 h-4.5" />
@@ -411,15 +438,15 @@ export default function SwipeJobs() {
 
               <button 
                 onClick={() => swipeCard('left')} 
-                className="w-12 h-12 rounded-full bg-white border border-[#E6E6E2] hover:border-red-500/30 text-red-500 hover:text-red-600 flex items-center justify-center shadow-md transition-all active:scale-90"
+                className="w-13 h-13 rounded-full bg-white border border-[#E6E6E2] hover:border-red-500/30 text-red-500 hover:text-red-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-90"
                 title="Skip role (Swipe Left)"
               >
-                <X className="w-5.5 h-5.5" />
+                <X className="w-6 h-6" />
               </button>
 
               <button 
                 onClick={() => swipeCard('up')} 
-                className="w-10 h-10 rounded-full bg-white border border-[#E6E6E2] hover:border-blue-500/30 text-blue-500 hover:text-blue-600 flex items-center justify-center shadow-md transition-all active:scale-95"
+                className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-blue-500/30 text-blue-500 hover:text-blue-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
                 title="Bookmark role (Swipe Up)"
               >
                 <Bookmark className="w-4.5 h-4.5" />
@@ -427,15 +454,15 @@ export default function SwipeJobs() {
 
               <button 
                 onClick={() => swipeCard('right')} 
-                className="w-12 h-12 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#7ED321] hover:text-[#59C414] flex items-center justify-center shadow-md transition-all active:scale-90"
+                className="w-13 h-13 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#7ED321] hover:text-[#59C414] flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-90"
                 title="Apply to role (Swipe Right)"
               >
-                <Heart className="w-5.5 h-5.5 fill-[#7ED321]/10 hover:fill-[#7ED321]/30" />
+                <Heart className="w-6 h-6 fill-[#7ED321]/10 hover:fill-[#7ED321]/30" />
               </button>
 
               <button 
                 onClick={() => swipeCard('down')} 
-                className="w-10 h-10 rounded-full bg-white border border-[#E6E6E2] hover:border-indigo-500/30 text-indigo-500 hover:text-indigo-600 flex items-center justify-center shadow-md transition-all active:scale-95"
+                className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-indigo-500/30 text-indigo-500 hover:text-indigo-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
                 title="View Full Details (Swipe Down)"
               >
                 <Info className="w-4.5 h-4.5" />
@@ -446,47 +473,47 @@ export default function SwipeJobs() {
         </div>
 
         {/* Right Glassmorphism Sidebar Column */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-5 h-full overflow-y-auto pr-1 pb-4 scrollbar-thin">
           
           {/* Saved Searches */}
-          <div className="bg-white/80 backdrop-blur-md border border-[#E6E6E2] rounded-3xl p-5 space-y-4 shadow-sm">
-            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100 pb-2 flex items-center justify-between">
-              <span>Saved Searches</span>
-              <span className="w-2 h-2 rounded-full bg-[#7ED321] animate-pulse" />
+          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center justify-between">
+              <span className="flex items-center gap-1.5"><Bookmark className="w-3.5 h-3.5 text-[#7ED321]" /> Saved Searches</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#7ED321] animate-pulse" />
             </h3>
             <div className="space-y-2">
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/50 border border-[#E6E6E2]/60 text-xs font-semibold hover:border-[#7ED321]/30 transition-colors cursor-pointer">
-                <span className="text-[#111111] flex items-center gap-1.5">
+              <div className="flex justify-between items-center p-2.5 rounded-2xl bg-[#F8F8F5]/80 border border-[#E6E6E2]/60 text-xs font-bold hover:border-[#7ED321]/30 transition-colors cursor-pointer">
+                <span className="text-[#111111] flex items-center gap-2">
                   <Search className="w-3.5 h-3.5 text-[#7ED321]" />
                   Generative AI Lead
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#7ED321] text-white text-[9px] font-bold uppercase tracking-wider">3 NEW</span>
+                <span className="px-2 py-0.5 rounded-full bg-[#7ED321] text-white text-[8px] font-black tracking-wider uppercase">3 NEW</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-white/50 border border-[#E6E6E2]/60 text-xs font-semibold hover:border-[#7ED321]/30 transition-colors cursor-pointer">
-                <span className="text-[#666666] flex items-center gap-1.5">
+              <div className="flex justify-between items-center p-2.5 rounded-2xl bg-[#F8F8F5]/80 border border-[#E6E6E2]/60 text-xs font-bold hover:border-[#7ED321]/30 transition-colors cursor-pointer">
+                <span className="text-[#666666] flex items-center gap-2">
                   <Search className="w-3.5 h-3.5 text-neutral-400" />
                   Data Infrastructure
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-neutral-200 text-[#666666] text-[9px] font-bold uppercase tracking-wider">0 NEW</span>
+                <span className="px-2 py-0.5 rounded-full bg-neutral-200 text-[#666666] text-[8px] font-black tracking-wider uppercase">0 NEW</span>
               </div>
             </div>
           </div>
 
           {/* AI Suggestions Card */}
-          <div className="bg-white/80 backdrop-blur-md border border-[#E6E6E2] rounded-3xl p-5 space-y-4 shadow-sm">
-            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100 pb-2 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#7ED321]" />
+          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#7ED321] fill-[#7ED321]/15" />
               AI Profile Suggestions
             </h3>
-            <div className="space-y-3 text-xs font-semibold text-[#666666]">
-              <div className="p-3 rounded-xl bg-[#7ED321]/5 border border-[#7ED321]/15 space-y-1">
-                <span className="text-[#111111] font-bold block text-[11px]">Add "PyTorch" to Resume</span>
+            <div className="space-y-2.5 text-xs font-bold text-[#666666]">
+              <div className="p-3 rounded-2xl bg-[#7ED321]/5 border border-[#7ED321]/15 space-y-1">
+                <span className="text-[#111111] font-extrabold block text-[11px]">Add "PyTorch" to Resume</span>
                 <span className="text-[10px] text-[#666666] font-medium leading-relaxed block">
                   3 matching AI engineer roles require PyTorch. Add to boost ATS compatibility score by 12%.
                 </span>
               </div>
-              <div className="p-3 rounded-xl bg-white/50 border border-[#E6E6E2]/60 space-y-1">
-                <span className="text-[#111111] font-bold block text-[11px]">Format Work Summary</span>
+              <div className="p-3 rounded-2xl bg-[#F8F8F5]/60 border border-[#E6E6E2]/60 space-y-1">
+                <span className="text-[#111111] font-extrabold block text-[11px]">Format Work Summary</span>
                 <span className="text-[10px] text-[#666666] font-medium leading-relaxed block">
                   Your experience lists LLM scaling. Focus on parameter efficiency to match OpenAI benchmarks.
                 </span>
@@ -495,52 +522,74 @@ export default function SwipeJobs() {
           </div>
 
           {/* Trending Skills */}
-          <div className="bg-white/80 backdrop-blur-md border border-[#E6E6E2] rounded-3xl p-5 space-y-4 shadow-sm">
-            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100 pb-2 flex items-center gap-1.5">
+          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5 text-[#59C414]" />
               Trending in AI Engineering
             </h3>
-            <div className="flex flex-wrap gap-1.5 text-xs font-bold">
-              <span className="px-3 py-1.5 rounded-xl bg-white/60 border border-[#E6E6E2]/60 text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-xs font-semibold">RLHF Training</span>
-              <span className="px-3 py-1.5 rounded-xl bg-white/60 border border-[#E6E6E2]/60 text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-xs font-semibold">Vector DBs</span>
-              <span className="px-3 py-1.5 rounded-xl bg-white/60 border border-[#E6E6E2]/60 text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-xs font-semibold">Kubernetes</span>
-              <span className="px-3 py-1.5 rounded-xl bg-white/60 border border-[#E6E6E2]/60 text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-xs font-semibold">Triton Lang</span>
+            <div className="flex flex-wrap gap-1.5 text-xs font-extrabold">
+              <span className="px-2.5 py-1.5 rounded-xl bg-white border border-[#E6E6E2] text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-[10px]">RLHF Training</span>
+              <span className="px-2.5 py-1.5 rounded-xl bg-white border border-[#E6E6E2] text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-[10px]">Vector DBs</span>
+              <span className="px-2.5 py-1.5 rounded-xl bg-white border border-[#E6E6E2] text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-[10px]">Kubernetes</span>
+              <span className="px-2.5 py-1.5 rounded-xl bg-white border border-[#E6E6E2] text-[#666666] hover:border-[#7ED321] hover:text-[#111111] transition-all cursor-pointer text-[10px]">Triton Lang</span>
+            </div>
+          </div>
+
+          {/* Interview Preparation Tips */}
+          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2 flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#7ED321]" />
+              Interview Prep Tips
+            </h3>
+            <div className="space-y-2.5 text-xs font-bold text-[#666666]">
+              <div className="p-3 rounded-2xl bg-[#F8F8F5]/60 border border-[#E6E6E2]/60 space-y-1">
+                <span className="text-[#111111] font-extrabold block text-[11px]">System Design Focus</span>
+                <span className="text-[10px] text-[#666666] font-medium leading-relaxed block">
+                  Stripe commonly asks system design questions focusing on idempotency and distributed transaction ledgers.
+                </span>
+              </div>
+              <div className="p-3 rounded-2xl bg-[#F8F8F5]/60 border border-[#E6E6E2]/60 space-y-1">
+                <span className="text-[#111111] font-extrabold block text-[11px]">Coding Round Benchmark</span>
+                <span className="text-[10px] text-[#666666] font-medium leading-relaxed block">
+                  OpenAI technical rounds frequently cover concurrency models and memory optimization in Python.
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Premium Upgrade card */}
-          <div className="bg-gradient-to-br from-[#7ED321]/15 to-[#59C414]/5 border border-[#7ED321]/30 rounded-3xl p-6 space-y-4 shadow-sm relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#7ED321]/15 to-[#59C414]/5 border border-[#7ED321]/30 rounded-3xl p-5 space-y-3.5 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 w-16 h-16 bg-[#7ED321]/10 rounded-full blur-xl" />
-            <h3 className="text-sm font-extrabold text-[#111111] flex items-center gap-2">
+            <h3 className="text-xs font-black uppercase tracking-wider text-[#111111] flex items-center gap-1.5">
               <Award className="w-4 h-4 text-[#7ED321]" />
               SwipeX Premium
             </h3>
-            <p className="text-xs text-[#666666] font-semibold leading-relaxed">
-              Unlock unlimited swipes, priority ATS parsing metrics, and direct messenger links with headhunting partners.
+            <p className="text-[11px] text-[#666666] font-semibold leading-relaxed">
+              Unlock unlimited swipes, priority ATS parsing metrics, and direct recruiter chat access.
             </p>
-            <button className="w-full py-2.5 rounded-xl bg-[#7ED321] hover:bg-[#59C414] text-white text-xs font-bold shadow-sm transition-all">
+            <button className="w-full py-2 rounded-xl bg-[#7ED321] hover:bg-[#59C414] text-white text-xs font-bold shadow-sm transition-all hover:scale-[1.01]">
               Go Premium ($9.99/mo)
             </button>
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white/80 backdrop-blur-md border border-[#E6E6E2] rounded-3xl p-5 space-y-4 shadow-sm">
-            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100 pb-2">
+          <div className="bg-white/90 backdrop-blur-md border border-[#E6E6E2]/80 rounded-3xl p-5 space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider border-b border-neutral-100/60 pb-2">
               Recent Activity Feed
             </h3>
-            <div className="space-y-3 text-[11px] font-semibold text-[#666666]">
+            <div className="space-y-3 text-[11px] font-bold text-[#666666]">
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#7ED321] flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="text-[#111111]">Applied:</span> Frontend role at Stripe.
-                  <span className="text-[9px] text-[#999999] block mt-0.5">Applied 10m ago</span>
+                  <span className="text-[9px] text-neutral-400 block mt-0.5">Applied 10m ago</span>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Clock className="w-3.5 h-3.5 text-[#59C414] flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="text-[#111111]">Profile Visited:</span> Sarah Jenkins viewed resume.
-                  <span className="text-[9px] text-[#999999] block mt-0.5">Seen 1h ago</span>
+                  <span className="text-[9px] text-neutral-400 block mt-0.5">Seen 1h ago</span>
                 </div>
               </div>
             </div>
@@ -616,7 +665,7 @@ export default function SwipeJobs() {
                         Your parsed resume skills match this job's tech requirements with 94% compatibility.
                       </span>
                     </div>
-                    <MatchScoreRing score={detailJob.match_score || 94} size="w-16 h-16" strokeWidth={4} textSize="text-base" />
+                    <PremiumMatchGauge score={detailJob.match_score || 94} />
                   </div>
                 </div>
 

@@ -37,95 +37,95 @@ export default function Sidebar() {
         </Link>
 
         {/* Primary Navigation Menu */}
-        <nav className="space-y-1">
+        <nav className="space-y-1.5">
           <Link
             to="/swipe"
-            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group ${
               isActive('/swipe')
-                ? 'bg-[#7ED321]/8 text-[#111111] border-l-2 border-[#7ED321]'
-                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111]'
+                ? 'bg-gradient-to-r from-[#7ED321]/12 to-[#7ED321]/2 text-[#111111] border-l-[3px] border-[#7ED321] shadow-sm'
+                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111] hover:translate-x-0.5'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <Layers className="w-4 h-4" /> 
+              <Layers className="w-4 h-4 text-[#7ED321]" /> 
               <span>Swipe Feed</span>
             </div>
-            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#7ED321]/60 opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-2px] group-hover:translate-x-0" />
           </Link>
 
           <Link
             to="/resume-analyzer"
-            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group ${
               isActive('/resume-analyzer')
-                ? 'bg-[#7ED321]/8 text-[#111111] border-l-2 border-[#7ED321]'
-                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111]'
+                ? 'bg-gradient-to-r from-[#7ED321]/12 to-[#7ED321]/2 text-[#111111] border-l-[3px] border-[#7ED321] shadow-sm'
+                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111] hover:translate-x-0.5'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <FileText className="w-4 h-4" /> 
+              <FileText className="w-4 h-4 text-[#7ED321]" /> 
               <span>ATS Analyzer</span>
             </div>
-            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#7ED321]/60 opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-2px] group-hover:translate-x-0" />
           </Link>
 
           <Link
             to="/ai-hub"
-            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group ${
               isActive('/ai-hub')
-                ? 'bg-[#7ED321]/8 text-[#111111] border-l-2 border-[#7ED321]'
-                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111]'
+                ? 'bg-gradient-to-r from-[#7ED321]/12 to-[#7ED321]/2 text-[#111111] border-l-[3px] border-[#7ED321] shadow-sm'
+                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111] hover:translate-x-0.5'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <Bot className="w-4 h-4" /> 
+              <Bot className="w-4 h-4 text-[#7ED321]" /> 
               <span>AI Studio</span>
             </div>
-            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#7ED321]/60 opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-2px] group-hover:translate-x-0" />
           </Link>
 
           <Link
             to="/jobs"
-            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group ${
               isActive('/jobs')
-                ? 'bg-[#7ED321]/8 text-[#111111] border-l-2 border-[#7ED321]'
-                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111]'
+                ? 'bg-gradient-to-r from-[#7ED321]/12 to-[#7ED321]/2 text-[#111111] border-l-[3px] border-[#7ED321] shadow-sm'
+                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111] hover:translate-x-0.5'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <Search className="w-4 h-4" /> 
+              <Search className="w-4 h-4 text-[#7ED321]" /> 
               <span>Smart Search</span>
             </div>
-            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#7ED321]/60 opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-2px] group-hover:translate-x-0" />
           </Link>
 
           <Link
             to="/dashboard"
-            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group ${
               isActive('/dashboard')
-                ? 'bg-[#7ED321]/8 text-[#111111] border-l-2 border-[#7ED321]'
-                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111]'
+                ? 'bg-gradient-to-r from-[#7ED321]/12 to-[#7ED321]/2 text-[#111111] border-l-[3px] border-[#7ED321] shadow-sm'
+                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111] hover:translate-x-0.5'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <BarChart3 className="w-4 h-4" /> 
+              <BarChart3 className="w-4 h-4 text-[#7ED321]" /> 
               <span>Analytics</span>
             </div>
-            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#7ED321]/60 opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-2px] group-hover:translate-x-0" />
           </Link>
 
           <Link
             to="/saved"
-            className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group ${
               isActive('/saved')
-                ? 'bg-[#7ED321]/8 text-[#111111] border-l-2 border-[#7ED321]'
-                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111]'
+                ? 'bg-gradient-to-r from-[#7ED321]/12 to-[#7ED321]/2 text-[#111111] border-l-[3px] border-[#7ED321] shadow-sm'
+                : 'text-[#666666] hover:bg-[#F8F8F5] hover:text-[#111111] hover:translate-x-0.5'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <Bookmark className="w-4 h-4" /> 
+              <Bookmark className="w-4 h-4 text-[#7ED321]" /> 
               <span>Saved Jobs</span>
             </div>
-            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#7ED321]/60 opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-2px] group-hover:translate-x-0" />
           </Link>
         </nav>
 

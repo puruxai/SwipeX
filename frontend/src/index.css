@@ -132,3 +132,9 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Keyboard accessibility visible focus */
+*:focus-visible {
+  outline: 2.5px solid var(--primary-green) !important;
+  outline-offset: 2.5px !important;
+}

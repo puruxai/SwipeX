@@ -89,7 +89,7 @@ export default function Signup() {
           >
             <Sparkles className="w-6 h-6 text-white" />
           </motion.div>
-          <h2 className="text-3xl font-extrabold text-[#111111]">Join SwipeX</h2>
+          <h1 className="text-3xl font-extrabold text-[#111111]">Join SwipeX</h1>
           <p className="text-xs text-[#666666] font-medium">Create your account to unlock AI job matching</p>
         </div>
 

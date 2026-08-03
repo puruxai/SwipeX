@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 export default function SavedJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const { addToast } = useNotification();
 
@@ -17,10 +18,13 @@ export default function SavedJobs() {
   }, []);
 
   const fetchSavedJobs = async () => {
+    setLoading(true);
+    setError(false);
     try {
       const res = await API.get('/applications/saved');
       setJobs(res.data);
     } catch (err) {
+      setError(true);
       addToast('Unable to load saved jobs. Please try again.', 'error');
     } finally {
       setLoading(false);
@@ -75,6 +79,19 @@ export default function SavedJobs() {
         {loading ? (
           <div className="py-24 text-center text-xs font-bold text-[#59C414] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin text-[#7ED321]" /> Loading saved jobs...
+          </div>
+        ) : error ? (
+          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2] shadow-sm animate-fade-in">
+            <p className="font-bold text-[#111111] text-base">Failed to Load Saved Jobs</p>
+            <p className="text-xs text-[#666666] font-semibold leading-relaxed">
+              We encountered an issue communicating with SwipeX cloud services. Please check your connection.
+            </p>
+            <button 
+              onClick={fetchSavedJobs} 
+              className="btn-terracotta px-6 py-2.5 text-xs font-bold shadow-sm text-white"
+            >
+              Retry Connection
+            </button>
           </div>
         ) : jobs.length === 0 ? (
           <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2]">

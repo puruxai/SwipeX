@@ -94,7 +94,7 @@ export default function Login() {
           >
             <Sparkles className="w-6 h-6 text-white" />
           </motion.div>
-          <h2 className="text-3xl font-extrabold text-[#111111]">Welcome Back</h2>
+          <h1 className="text-3xl font-extrabold text-[#111111]">Welcome Back</h1>
           <p className="text-xs text-[#666666] font-medium">Sign in to continue your AI job discovery</p>
         </div>
 

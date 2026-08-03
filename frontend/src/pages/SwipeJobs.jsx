@@ -432,6 +432,7 @@ export default function SwipeJobs() {
                 onClick={handleUndo} 
                 className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#666666] hover:text-[#7ED321] flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
                 title="Undo last swipe"
+                aria-label="Undo last swipe"
               >
                 <RotateCcw className="w-4.5 h-4.5" />
               </button>
@@ -440,6 +441,7 @@ export default function SwipeJobs() {
                 onClick={() => swipeCard('left')} 
                 className="w-13 h-13 rounded-full bg-white border border-[#E6E6E2] hover:border-red-500/30 text-red-500 hover:text-red-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-90"
                 title="Skip role (Swipe Left)"
+                aria-label="Skip role"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -448,6 +450,7 @@ export default function SwipeJobs() {
                 onClick={() => swipeCard('up')} 
                 className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-blue-500/30 text-blue-500 hover:text-blue-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
                 title="Bookmark role (Swipe Up)"
+                aria-label="Bookmark job"
               >
                 <Bookmark className="w-4.5 h-4.5" />
               </button>
@@ -456,6 +459,7 @@ export default function SwipeJobs() {
                 onClick={() => swipeCard('right')} 
                 className="w-13 h-13 rounded-full bg-white border border-[#E6E6E2] hover:border-[#7ED321]/30 text-[#7ED321] hover:text-[#59C414] flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-90"
                 title="Apply to role (Swipe Right)"
+                aria-label="Apply to job"
               >
                 <Heart className="w-6 h-6 fill-[#7ED321]/10 hover:fill-[#7ED321]/30" />
               </button>
@@ -464,6 +468,7 @@ export default function SwipeJobs() {
                 onClick={() => swipeCard('down')} 
                 className="w-11 h-11 rounded-full bg-white border border-[#E6E6E2] hover:border-indigo-500/30 text-indigo-500 hover:text-indigo-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all active:scale-95"
                 title="View Full Details (Swipe Down)"
+                aria-label="View job details"
               >
                 <Info className="w-4.5 h-4.5" />
               </button>

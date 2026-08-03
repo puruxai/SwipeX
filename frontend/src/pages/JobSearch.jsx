@@ -20,6 +20,7 @@ import { motion } from 'framer-motion';
 export default function JobSearch() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [applyingJobId, setApplyingJobId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCompanyType, setSelectedCompanyType] = useState('ALL');
@@ -34,10 +35,13 @@ export default function JobSearch() {
   }, []);
 
   const fetchJobs = async () => {
+    setLoading(true);
+    setError(false);
     try {
       const res = await API.get('/jobs/');
       setJobs(res.data);
     } catch (err) {
+      setError(true);
       if (err.response?.status === 401) {
         addToast('Session expired. Please log in.', 'error');
         navigate('/login');
@@ -171,6 +175,26 @@ export default function JobSearch() {
         {loading ? (
           <div className="py-24 text-center text-xs font-bold text-[#7ED321] uppercase tracking-widest animate-pulse flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin text-[#7ED321]" /> Loading Positions...
+          </div>
+        ) : error ? (
+          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2] shadow-sm">
+            <p className="font-bold text-[#111111] text-base">Failed to Load Job Postings</p>
+            <p className="text-xs text-[#666666] font-semibold leading-relaxed">
+              We encountered an issue communicating with SwipeX cloud services. Please check your connection.
+            </p>
+            <button 
+              onClick={fetchJobs} 
+              className="btn-terracotta px-6 py-2.5 text-xs font-bold shadow-sm text-white"
+            >
+              Retry Connection
+            </button>
+          </div>
+        ) : filteredJobs.length === 0 ? (
+          <div className="reference-card p-14 text-center space-y-4 bg-white border border-[#E6E6E2] shadow-sm">
+            <p className="font-bold text-[#111111] text-base">No Matching Positions Found</p>
+            <p className="text-xs text-[#666666] font-semibold leading-relaxed">
+              We couldn't find any roles matching your current search terms or filters. Try broadening your query.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

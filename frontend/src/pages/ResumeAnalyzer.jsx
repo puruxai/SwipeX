@@ -147,8 +147,7 @@ If you're preparing for internships, placements, or your next job, you should de
       try {
         await navigator.share({
           title: 'SwipeX AI Career Discovery',
-          text: shareText,
-          url: 'https://swipe-x-puruxai.vercel.app'
+          text: shareText
         });
         addToast('Shared successfully!', 'success');
         return;

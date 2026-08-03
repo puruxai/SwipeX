@@ -7,7 +7,7 @@ class UserRegister(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     email: EmailStr
-    password: str = Field(..., min_length=10, max_length=128)
+    password: str = Field(..., min_length=6, max_length=128)
     full_name: str = Field(..., min_length=2, max_length=255, validation_alias="fullName")
     role: str = "user" # user, recruiter, admin
 

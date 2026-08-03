@@ -54,3 +54,25 @@ def test_password_hash_round_trip():
     assert hashed_password != password
     assert verify_password(password, hashed_password)
     assert not verify_password("incorrect-password", hashed_password)
+
+def test_password_length_policy():
+    """Verify password policy limits: 6 character minimum is accepted, 5 is rejected."""
+    import random
+    rand_val = random.randint(1000, 9999)
+    response_ok = client.post("/api/v1/auth/register", json={
+        "email": f"test_policy_{rand_val}@example.com",
+        "password": "abc123",
+        "fullName": "Policy Tester",
+        "role": "user"
+    })
+    assert response_ok.status_code == 200
+    assert "access_token" in response_ok.json()
+
+    # Test invalid registration (5 chars)
+    response_fail = client.post("/api/v1/auth/register", json={
+        "email": f"test_fail_{rand_val}@example.com",
+        "password": "abc12",
+        "fullName": "Policy Failure Tester",
+        "role": "user"
+    })
+    assert response_fail.status_code == 422

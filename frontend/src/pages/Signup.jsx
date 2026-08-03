@@ -56,8 +56,8 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password.length < 10) {
-      setPasswordError('Password must be at least 10 characters');
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
       return;
     }
     setPasswordError('');
@@ -162,12 +162,12 @@ export default function Signup() {
               <input
                 type="password"
                 required
-                minLength={10}
+                minLength={6}
                 maxLength={128}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
                 className={`w-full pl-11 pr-4 py-3 rounded-xl depth-3d-input text-xs font-semibold text-[#111111] ${passwordError ? 'border-rose-500' : ''}`}
-                placeholder="Minimum 10 characters"
+                placeholder="Minimum 6 characters"
               />
             </div>
             {passwordError && (

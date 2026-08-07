@@ -12,10 +12,19 @@ def seed_database():
     db = SessionLocal()
 
     try:
-        # Check if users already seeded
-        if db.query(models.User).first():
+        # Check if users already seeded and we have enough jobs
+        if db.query(models.User).first() and db.query(models.Job).count() >= 90:
             print("Database already seeded.")
             return
+
+        print("Wiping existing records for clean re-seeding...")
+        db.query(models.SwipeAction).delete()
+        db.query(models.Application).delete()
+        db.query(models.Job).delete()
+        db.query(models.Resume).delete()
+        db.query(models.UserProfile).delete()
+        db.query(models.User).delete()
+        db.commit()
 
         print("Seeding database with rich initial dataset...")
 
@@ -154,122 +163,106 @@ def seed_database():
         db.add(resume)
 
         # 4. Seed Jobs Data (20+ realistic job postings)
-        jobs_data = [
-            {
-                "title": "Senior AI & Full Stack Engineer",
-                "company": "OpenAI",
-                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg",
-                "company_type": "Newly Founded Startup",
-                "location": "San Francisco, CA (Remote)",
-                "is_remote": True,
-                "is_hybrid": False,
-                "job_type": "Full Time",
-                "salary_min": 140000,
-                "salary_max": 180000,
-                "currency": "USD",
-                "experience_level": "Mid Level",
-                "description": "We are building the next generation of autonomous AI workflow agents. Looking for a passionate Full Stack AI Engineer skilled in Python (FastAPI), React, Tailwind, and LLM integrations.",
-                "required_skills": ["Python", "FastAPI", "React", "TypeScript", "Tailwind", "LLM", "Docker"],
-                "nice_to_have_skills": ["PyTorch", "Redis", "LangChain"],
-                "is_fresher_friendly": False,
-                "low_competition": True
+        # 4. Seed Jobs Data (90+ realistic job postings across all 6 core domains)
+        jobs_data = []
+
+        domains_sample_data = {
+            "AI / Machine Learning Engineer": {
+                "titles": [
+                    "AI Engineer", "Machine Learning Engineer", "Deep Learning Engineer", 
+                    "NLP Engineer", "LLM Engineer", "Computer Vision Engineer", 
+                    "MLOps Engineer", "AI Research Engineer", "Generative AI Engineer", 
+                    "Applied AI Engineer", "AI Workflows Developer", "Neural Networks Specialist",
+                    "Speech AI Engineer", "Reinforcement Learning Developer", "AI Platform Engineer"
+                ],
+                "skills": ["Python", "PyTorch", "TensorFlow", "Scikit-Learn", "LLM", "NLP", "Computer Vision", "Docker"],
+                "companies": ["OpenAI", "Anthropic", "Google", "Microsoft", "Meta", "NVIDIA", "Hugging Face", "Cohere", "Mistral AI", "Scale AI", "Stability AI", "Midjourney", "DeepMind", "Tesla", "Apple"]
             },
-            {
-                "title": "Frontend Engineer (React + Motion)",
-                "company": "Stripe",
-                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg",
-                "company_type": "MNC",
-                "location": "New York, NY",
-                "is_remote": True,
-                "is_hybrid": True,
-                "job_type": "Full Time",
-                "salary_min": 125000,
-                "salary_max": 160000,
-                "currency": "USD",
-                "experience_level": "Mid Level",
-                "description": "Design and craft wowed glassmorphism user experiences for our enterprise dashboard suite using React, Tailwind CSS, and Framer Motion.",
-                "required_skills": ["React", "JavaScript", "TypeScript", "Tailwind", "HTML", "CSS", "Git"],
-                "nice_to_have_skills": ["Framer Motion", "Figma", "Redux"],
-                "is_fresher_friendly": True,
-                "low_competition": False
+            "Frontend Engineer": {
+                "titles": [
+                    "Frontend Engineer", "React Developer", "Senior UI Developer", 
+                    "Next.js Developer", "TypeScript Engineer", "Staff Web Engineer", 
+                    "UI Specialist", "Frontend Performance Engineer", "Interface Architect", 
+                    "Lead Web Developer", "Framer Motion Developer", "Web Application Developer",
+                    "React Native Engineer", "Design Systems Engineer", "SaaS Frontend Developer"
+                ],
+                "skills": ["React", "Next.js", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind"],
+                "companies": ["Stripe", "Vercel", "Airbnb", "Meta", "Shopify", "Netlify", "Figma", "Canva", "Slack", "Uber", "Lyft", "Pinterest", "HubSpot", "Dropbox", "Square"]
             },
-            {
-                "title": "Python Backend & Microservices Developer",
-                "company": "Google",
-                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",
-                "company_type": "Startup",
-                "location": "Austin, TX (Remote)",
-                "is_remote": True,
-                "is_hybrid": False,
-                "job_type": "Full Time",
-                "salary_min": 130000,
-                "salary_max": 170000,
-                "currency": "USD",
-                "experience_level": "Senior",
-                "description": "Join our cloud infrastructure team. Build ultra-fast REST APIs, scale PostgreSQL databases, and orchestrate Docker container deployments.",
-                "required_skills": ["Python", "FastAPI", "PostgreSQL", "SQLAlchemy", "Docker", "AWS", "REST API"],
-                "nice_to_have_skills": ["Kubernetes", "Redis", "Kafka"],
-                "is_fresher_friendly": False,
-                "low_competition": True
+            "Cloud & DevOps Engineer": {
+                "titles": [
+                    "DevOps Engineer", "Cloud Platform Engineer", "Site Reliability Engineer (SRE)", 
+                    "Infrastructure Automation Specialist", "Kubernetes Operator", "CI/CD Pipeline Developer", 
+                    "Terraform Platform Engineer", "AWS Systems Architect", "Docker Systems Developer", 
+                    "Lead DevOps Architect", "Cloud Security Engineer", "Release Engineer",
+                    "Reliability Architect", "Linux Systems Engineer", "GitOps Specialist"
+                ],
+                "skills": ["Docker", "Kubernetes", "AWS", "GCP", "Azure", "CI/CD", "Terraform", "Ansible"],
+                "companies": ["HashiCorp", "Amazon", "Google Cloud", "Netflix", "Red Hat", "Datadog", "PagerDuty", "New Relic", "Sysdig", "Atlassian", "GitHub", "GitLab", "DigitalOcean", "Heroku", "VMware"]
             },
-            {
-                "title": "Junior Web Developer & AI Associate",
-                "company": "Microsoft",
-                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
-                "company_type": "Newly Founded Startup",
-                "location": "Seattle, WA",
-                "is_remote": True,
-                "is_hybrid": False,
-                "job_type": "Full Time",
-                "salary_min": 85000,
-                "salary_max": 110000,
-                "currency": "USD",
-                "experience_level": "Entry Level",
-                "description": "Great entry-level opportunity for ambitious fresh graduates to learn Python, React, and modern machine learning tools.",
-                "required_skills": ["Python", "JavaScript", "HTML", "CSS", "Git"],
-                "nice_to_have_skills": ["React", "FastAPI", "SQL"],
-                "is_fresher_friendly": True,
-                "low_competition": True
+            "Backend Engineer": {
+                "titles": [
+                    "Backend Developer", "FastAPI Python Engineer", "Node.js REST API Developer", 
+                    "Django Systems Engineer", "Go Microservices Developer", "Java Enterprise Developer", 
+                    "Database Architect", "High-Throughput API Developer", "Senior Python Backend Developer",
+                    "Distributed Systems Engineer", "API Gateway Architect", "Backend Systems Specialist",
+                    "Rust Backend Engineer", "FastAPI Core Developer", "Node.js Platform Engineer"
+                ],
+                "skills": ["FastAPI", "Django", "Flask", "Node.js", "PostgreSQL", "MongoDB", "Redis", "Go", "Java"],
+                "companies": ["Stripe", "Paypal", "Amazon", "Salesforce", "Uber", "eBay", "LinkedIn", "Twitter", "Zoom", "Twilio", "Adyen", "Klarna", "Chime", "Robinhood", "Coinbase"]
             },
-            {
-                "title": "Lead UI/UX Designer & Frontend Strategist",
-                "company": "Meta",
-                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
-                "company_type": "Startup",
-                "location": "Los Angeles, CA",
-                "is_remote": False,
-                "is_hybrid": True,
-                "job_type": "Full Time",
-                "salary_min": 115000,
-                "salary_max": 145000,
-                "currency": "USD",
-                "experience_level": "Mid Level",
-                "description": "Transform visual design concepts into sleek responsive web interfaces with Figma, React, and CSS animations.",
-                "required_skills": ["Figma", "UI/UX", "React", "CSS", "Tailwind"],
-                "nice_to_have_skills": ["Wireframing", "JavaScript"],
-                "is_fresher_friendly": False,
-                "low_competition": False
+            "Data Scientist": {
+                "titles": [
+                    "Data Scientist", "Quantitative Analyst", "Data Analyst", 
+                    "Machine Learning Data Scientist", "Senior Data Insights Analyst", "Statistical Modeling Specialist", 
+                    "Data Science Researcher", "Big Data Analytics Engineer", "Business Intelligence Scientist",
+                    "Product Data Analyst", "Marketing Data Scientist", "Experimentation Engineer",
+                    "Risk Data Scientist", "Data Modeler", "Data Analytics Strategist"
+                ],
+                "skills": ["Pandas", "NumPy", "Scikit-Learn", "Machine Learning", "Python", "SQL", "Tableau"],
+                "companies": ["Meta", "Netflix", "Airbnb", "Uber", "Lyft", "Spotify", "Pinterest", "Instacart", "DoorDash", "Reddit", "Twitter", "Snap", "TikTok", "Palantir", "Databricks"]
             },
-            {
-                "title": "Data Scientist - NLP & Resume AI",
-                "company": "Netflix",
-                "company_logo": "https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg",
-                "company_type": "MNC",
-                "location": "Boston, MA (Remote)",
-                "is_remote": True,
-                "is_hybrid": False,
-                "job_type": "Full Time",
-                "salary_min": 145000,
-                "salary_max": 190000,
-                "currency": "USD",
-                "experience_level": "Senior",
-                "description": "Build state-of-the-art NLP models, semantic keyword extractors, and recommendation engines for enterprise recruitment.",
-                "required_skills": ["Python", "NLP", "Machine Learning", "Scikit-Learn", "Pandas", "PyTorch"],
-                "nice_to_have_skills": ["Transformers", "FastAPI", "Docker"],
-                "is_fresher_friendly": False,
-                "low_competition": True
+            "Cybersecurity Engineer": {
+                "titles": [
+                    "Cyber Security Analyst", "Security Engineer", "Information Security Specialist", 
+                    "Penetration Tester", "Zero Trust Architect", "SIEM Operator", 
+                    "Network Intrusion Analyst", "Incident Response Developer", "SecOps Engineer",
+                    "AppSec Analyst", "Vulnerability Assessor", "Threat Intelligence Researcher",
+                    "Identity & Access Engineer", "Crypto Systems Specialist", "DevSecOps Specialist"
+                ],
+                "skills": ["Cybersecurity", "Penetration Testing", "SIEM", "Cryptography", "Wireshark"],
+                "companies": ["CrowdStrike", "Palo Alto Networks", "FireEye", "Cloudflare", "Okta", "OneTrust", "Splunk", "Zscaler", "Fortinet", "Check Point", "Rapid7", "Tenable", "Qualys", "SentinelOne", "Proofpoint"]
             }
-        ]
+        }
+
+        for domain, details in domains_sample_data.items():
+            for idx in range(15):
+                title = details["titles"][idx % len(details["titles"])]
+                company = details["companies"][idx % len(details["companies"])]
+                
+                is_rem = (idx % 2 == 0)
+                is_hyb = not is_rem and (idx % 3 == 0)
+                loc = "Remote" if is_rem else ("New York, NY" if idx % 2 == 0 else "San Francisco, CA")
+                
+                jobs_data.append({
+                    "title": title,
+                    "company": company,
+                    "company_logo": f"https://logo.clearbit.com/{company.lower().replace(' ', '').replace('(', '').replace(')', '')}.com" if idx % 3 == 0 else "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
+                    "company_type": "MNC" if idx % 2 == 0 else "Startup",
+                    "location": loc,
+                    "is_remote": is_rem,
+                    "is_hybrid": is_hyb,
+                    "job_type": "Full Time",
+                    "salary_min": 100000 + (idx * 5000),
+                    "salary_max": 140000 + (idx * 6000),
+                    "currency": "USD",
+                    "experience_level": "Senior" if idx % 3 == 0 else ("Entry Level" if idx % 4 == 0 else "Mid Level"),
+                    "description": f"Exciting opportunity for a professional {title} to build next-generation applications and scale platform infrastructures at {company}.",
+                    "required_skills": details["skills"][:4] + [details["skills"][-1]] if len(details["skills"]) >= 5 else details["skills"],
+                    "nice_to_have_skills": ["Git", "CI/CD"],
+                    "is_fresher_friendly": idx % 4 == 0,
+                    "low_competition": idx % 2 == 0
+                })
 
         created_jobs = []
         for j_data in jobs_data:

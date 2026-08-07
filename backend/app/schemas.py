@@ -157,6 +157,7 @@ class JobOut(BaseModel):
     match_percentage: Optional[float] = None
     recommendation_reason: Optional[str] = None
     missing_skills: Optional[List[str]] = None
+    ats_compatibility: Optional[float] = None
 
 # Swipe Schema
 class SwipeCreate(BaseModel):

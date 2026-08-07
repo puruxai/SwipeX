@@ -32,6 +32,54 @@ DOMAIN_MISSING_SKILLS_RECOMMENDATIONS = {
     "Software Engineer": ["Docker", "Git", "PostgreSQL", "PyTest"]
 }
 
+DOMAIN_ROADMAPS = {
+    "AI / Machine Learning Engineer": {
+        "next_skill": "PyTorch / LLM",
+        "architecture_target": "Distributed Training",
+        "recommended_cloud": "GCP / AWS"
+    },
+    "Data Scientist": {
+        "next_skill": "A/B Testing",
+        "architecture_target": "Big Data Pipelines",
+        "recommended_cloud": "Databricks"
+    },
+    "Cloud & DevOps Engineer": {
+        "next_skill": "Kubernetes / GitOps",
+        "architecture_target": "Infrastructure as Code",
+        "recommended_cloud": "AWS / GCP"
+    },
+    "Cybersecurity Engineer": {
+        "next_skill": "SIEM Tools",
+        "architecture_target": "Zero Trust Architectures",
+        "recommended_cloud": "AWS Security Hub"
+    },
+    "Backend Engineer": {
+        "next_skill": "gRPC / FastAPI",
+        "architecture_target": "Microservices Design",
+        "recommended_cloud": "AWS / Docker"
+    },
+    "Frontend Engineer": {
+        "next_skill": "TypeScript / Next.js",
+        "architecture_target": "Server-side Rendering",
+        "recommended_cloud": "Vercel / AWS"
+    },
+    "Software Engineer": {
+        "next_skill": "Design Patterns",
+        "architecture_target": "System Architecture",
+        "recommended_cloud": "AWS / Docker"
+    }
+}
+
+DOMAIN_COMPANIES = {
+    "AI / Machine Learning Engineer": "Google, Microsoft, NVIDIA, OpenAI",
+    "Data Scientist": "Meta, Netflix, Airbnb, Uber",
+    "Cloud & DevOps Engineer": "Amazon (AWS), HashiCorp, Google Cloud, Netflix",
+    "Cybersecurity Engineer": "CrowdStrike, Palo Alto Networks, FireEye, Cloudflare",
+    "Backend Engineer": "Stripe, Paypal, Amazon, Salesforce",
+    "Frontend Engineer": "Vercel, Meta, Airbnb, Vercel, Shopify",
+    "Software Engineer": "Microsoft, Apple, Amazon, Google"
+}
+
 @router.post("/upload")
 async def upload_resume(
     file: UploadFile = File(...),
@@ -94,6 +142,7 @@ async def upload_resume(
     )
     db.add(new_resume)
 
+    parsed_sections = parsed_data.get("sections", {})
     profile = db.query(models.UserProfile).filter(models.UserProfile.user_id == current_user.id).first()
     if not profile:
         profile = models.UserProfile(
@@ -101,7 +150,10 @@ async def upload_resume(
             headline=f"{detected_role} ({exp_years} yrs exp)",
             target_role=detected_role,
             skills=extracted_skills,
-            experience_years=exp_years
+            experience_years=exp_years,
+            education_json=parsed_sections.get("education", []),
+            experience_json=parsed_sections.get("experience", []),
+            projects_json=parsed_sections.get("projects", [])
         )
         db.add(profile)
     else:
@@ -109,6 +161,9 @@ async def upload_resume(
         profile.target_role = detected_role
         profile.skills = extracted_skills
         profile.experience_years = exp_years
+        profile.education_json = parsed_sections.get("education", [])
+        profile.experience_json = parsed_sections.get("experience", [])
+        profile.projects_json = parsed_sections.get("projects", [])
 
     db.commit()
     db.refresh(new_resume)
@@ -135,7 +190,10 @@ async def upload_resume(
         "issues": ats_report["issues"],
         "google_xyz_improvements": ats_report.get("ats_improvements", []),
         "expected_salary": f"${salary_min:,} - ${salary_max:,} USD",
-        "suggested_certifications": DOMAIN_CERTIFICATIONS.get(detected_role, ["AWS Certified Solutions Architect"])
+        "suggested_certifications": DOMAIN_CERTIFICATIONS.get(detected_role, ["AWS Certified Solutions Architect"]),
+        "candidate_name": parsed_data.get("name") or current_user.full_name,
+        "target_roadmap": DOMAIN_ROADMAPS.get(detected_role, DOMAIN_ROADMAPS["Software Engineer"]),
+        "matching_companies": DOMAIN_COMPANIES.get(detected_role, DOMAIN_COMPANIES["Software Engineer"])
     }
 
 @router.get("/analysis/latest")
@@ -199,7 +257,10 @@ def get_latest_resume_analysis(
         "issues": breakdown.get("suggestions", []),
         "google_xyz_improvements": breakdown.get("strengths", []),
         "expected_salary": f"${salary_min:,} - ${salary_max:,} USD",
-        "suggested_certifications": DOMAIN_CERTIFICATIONS.get(detected_role, ["AWS Certified Solutions Architect"])
+        "suggested_certifications": DOMAIN_CERTIFICATIONS.get(detected_role, ["AWS Certified Solutions Architect"]),
+        "candidate_name": current_user.full_name,
+        "target_roadmap": DOMAIN_ROADMAPS.get(detected_role, DOMAIN_ROADMAPS["Software Engineer"]),
+        "matching_companies": DOMAIN_COMPANIES.get(detected_role, DOMAIN_COMPANIES["Software Engineer"])
     }
 
 @router.get("/")

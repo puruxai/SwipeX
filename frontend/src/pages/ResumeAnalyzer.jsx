@@ -90,7 +90,7 @@ export default function ResumeAnalyzer() {
             pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
           }
 
-          const username = 'Alex_Mercer';
+          const username = (analysisData?.candidate_name || 'Alex_Mercer').replace(/\s+/g, '_');
           const dateStr = new Date().toISOString().slice(0, 10);
           pdf.save(`SwipeX_ATS_Report_${username}_${dateStr}.pdf`);
           addToast('PDF report downloaded successfully!', 'success');
@@ -139,6 +139,53 @@ If you're preparing for internships, placements, or your next job, you should de
 👉 https://swipe-x-puruxai.vercel.app
 
 #SwipeX #AI #Resume #ATS #Career #JobSearch #Placement #Students #MachineLearning #CareerGrowth`;
+  };
+
+  const getBenchmarkRoles = () => {
+    const role = analysisData?.detected_role || "Software Engineer";
+    const scoreVal = matchScore;
+    if (role.includes("AI") || role.includes("Machine Learning") || role.includes("ML")) {
+      return [
+        { name: "AI Engineer", diff: "+12%", color: "text-[#59C414]", val: `${scoreVal}%` },
+        { name: "MLOps Engineer", diff: "+4%", color: "text-[#59C414]", val: "72%" },
+        { name: "Deep Learning Specialist", diff: "+28%", color: "text-[#59C414]", val: "90%" }
+      ];
+    } else if (role.includes("Frontend")) {
+      return [
+        { name: "Frontend Developer", diff: "+14%", color: "text-[#59C414]", val: `${scoreVal}%` },
+        { name: "React Engineer", diff: "+8%", color: "text-[#59C414]", val: "82%" },
+        { name: "UI/UX Engineer", diff: "-2%", color: "text-rose-500", val: "65%" }
+      ];
+    } else if (role.includes("DevOps")) {
+      return [
+        { name: "DevOps Engineer", diff: "+10%", color: "text-[#59C414]", val: `${scoreVal}%` },
+        { name: "Site Reliability Eng.", diff: "+5%", color: "text-[#59C414]", val: "78%" },
+        { name: "Cloud Solutions Architect", diff: "+18%", color: "text-[#59C414]", val: "85%" }
+      ];
+    } else if (role.includes("Backend")) {
+      return [
+        { name: "Backend Developer", diff: "+15%", color: "text-[#59C414]", val: `${scoreVal}%` },
+        { name: "System Engineer", diff: "+6%", color: "text-[#59C414]", val: "76%" },
+        { name: "Database Architect", diff: "-5%", color: "text-rose-500", val: "60%" }
+      ];
+    } else if (role.includes("Data")) {
+      return [
+        { name: "Data Scientist", diff: "+12%", color: "text-[#59C414]", val: `${scoreVal}%` },
+        { name: "Data Analyst", diff: "+8%", color: "text-[#59C414]", val: "78%" },
+        { name: "Data Engineer", diff: "-3%", color: "text-rose-500", val: "68%" }
+      ];
+    } else if (role.includes("Security") || role.includes("Cyber")) {
+      return [
+        { name: "Cybersecurity Specialist", diff: "+16%", color: "text-[#59C414]", val: `${scoreVal}%` },
+        { name: "Security Architect", diff: "+10%", color: "text-[#59C414]", val: "80%" },
+        { name: "Penetration Tester", diff: "+22%", color: "text-[#59C414]", val: "92%" }
+      ];
+    }
+    return [
+      { name: "Software Engineer", diff: "+12%", color: "text-[#59C414]", val: `${scoreVal}%` },
+      { name: "Data Scientist", diff: "-4%", color: "text-rose-500", val: "70%" },
+      { name: "AI Researcher", diff: "+28%", color: "text-[#59C414]", val: "90%" }
+    ];
   };
 
   const handleShareResult = async () => {
@@ -192,16 +239,23 @@ If you're preparing for internships, placements, or your next job, you should de
     }
   };
 
+  const [jobsError, setJobsError] = useState(null);
+
   useEffect(() => {
     fetchLatestAnalysis();
   }, []);
 
   const loadRecommendedJobs = async () => {
+    setJobsError(null);
     try {
       const res = await API.get('/swipes/feed?limit=4');
       setRecommendedJobs(res.data);
+      if (res.data.length === 0) {
+        setJobsError("No active jobs found matching your target role or skill profile. Please ensure your resume has clear industry keywords.");
+      }
     } catch (err) {
       console.error('Failed to load recommended jobs', err);
+      setJobsError("Unable to fetch job recommendations. Please verify your connection or try again.");
     }
   };
 
@@ -352,14 +406,37 @@ If you're preparing for internships, placements, or your next job, you should de
               <FileText className="w-3.5 h-3.5 text-[#7ED321]" /> Heatmap Analysis
             </div>
             <div className="space-y-2 text-xs font-bold text-[#666666]">
-              <div className="flex justify-between"><span>Keywords found</span><span className="font-extrabold text-[#111111]">14/18</span></div>
-              <div className="flex justify-between"><span>Formatting health</span><span className="font-extrabold text-[#59C414]">98%</span></div>
-              <div className="flex justify-between"><span>Parse stability</span><span className="font-extrabold text-[#7ED321]">High</span></div>
+              <div className="flex justify-between">
+                <span>Keywords found</span>
+                <span className="font-extrabold text-[#111111]">{analysisData?.extracted_skills?.length || 8} / 12</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Formatting health</span>
+                <span className="font-extrabold text-[#59C414]">
+                  {analysisData?.breakdown?.formatting_score?.score ? `${Math.round((analysisData.breakdown.formatting_score.score / 15) * 100)}%` : "80%"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Parse stability</span>
+                <span className="font-extrabold text-[#7ED321]">
+                  {(analysisData?.breakdown?.ats_parse_rate || 90) >= 90 ? "High" : "Medium"}
+                </span>
+              </div>
             </div>
             <div className="flex flex-wrap gap-1.5 pt-0.5">
-              <span className="px-2.5 py-1 rounded bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-semibold text-[#666666]">React.js</span>
-              <span className="px-2.5 py-1 rounded bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-semibold text-[#666666]">Tailwind</span>
-              <span className="px-2.5 py-1 rounded bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-semibold text-[#666666]">Architecture</span>
+              {analysisData?.extracted_skills && analysisData.extracted_skills.length > 0 ? (
+                analysisData.extracted_skills.slice(0, 3).map((skill, index) => (
+                  <span key={index} className="px-2.5 py-1 rounded bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-semibold text-[#666666]">
+                    {skill}
+                  </span>
+                ))
+              ) : (
+                <>
+                  <span className="px-2.5 py-1 rounded bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-semibold text-[#666666]">Python</span>
+                  <span className="px-2.5 py-1 rounded bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-semibold text-[#666666]">React</span>
+                  <span className="px-2.5 py-1 rounded bg-[#F8F8F5] border border-[#E6E6E2] text-[10px] font-semibold text-[#666666]">Docker</span>
+                </>
+              )}
             </div>
           </div>
 
@@ -390,7 +467,7 @@ If you're preparing for internships, placements, or your next job, you should de
                 <div className="p-1.5 rounded-lg bg-[#7ED321]/15 text-[#59C414] font-bold text-xs mt-0.5">🏢</div>
                 <div>
                   <span className="font-bold text-[#666666] text-[10px] uppercase block tracking-wider mb-0.5">Strongest Matches</span>
-                  Your strongest matching companies are <strong className="text-[#111111]">Google, Microsoft and NVIDIA</strong>.
+                  Your strongest matching companies are <strong className="text-[#111111]">{analysisData?.matching_companies || "Google, Microsoft and NVIDIA"}</strong>.
                 </div>
               </div>
             </div>
@@ -470,25 +547,81 @@ If you're preparing for internships, placements, or your next job, you should de
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] space-y-2">
-              <div className="flex justify-between text-xs font-bold"><span className="text-[#666666] uppercase text-[8px] tracking-wider">CANDIDATE POOL</span><span className="text-[#59C414]">+12% vs Avg</span></div>
-              <h4 className="text-xs font-bold text-[#111111]">Software Eng.</h4>
-              <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden mt-1"><div className="h-full bg-[#7ED321] w-[75%]" /></div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] space-y-2">
-              <div className="flex justify-between text-xs font-bold"><span className="text-[#666666] uppercase text-[8px] tracking-wider">CANDIDATE POOL</span><span className="text-rose-500">-4% vs Avg</span></div>
-              <h4 className="text-xs font-bold text-[#111111]">Data Scientist</h4>
-              <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden mt-1"><div className="h-full bg-[#7ED321] w-[50%]" /></div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] space-y-2">
-              <div className="flex justify-between text-xs font-bold"><span className="text-[#666666] uppercase text-[8px] tracking-wider">CANDIDATE POOL</span><span className="text-[#59C414]">+28% vs Avg</span></div>
-              <h4 className="text-xs font-bold text-[#111111]">AI Researcher</h4>
-              <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden mt-1"><div className="h-full bg-[#7ED321] w-[90%]" /></div>
-            </div>
+            {getBenchmarkRoles().map((roleData, index) => (
+              <div key={index} className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] space-y-2">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="text-[#666666] uppercase text-[8px] tracking-wider">CANDIDATE POOL</span>
+                  <span className={roleData.color}>{roleData.diff} vs Avg</span>
+                </div>
+                <h4 className="text-xs font-bold text-[#111111]">{roleData.name}</h4>
+                <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden mt-1">
+                  <div className="h-full bg-[#7ED321]" style={{ width: roleData.val }} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+
+        {/* AI Career Roadmap Section */}
+        {analysisData && (
+          <div className="depth-3d-card p-6 space-y-4">
+            <div className="border-b border-[#E6E6E2] pb-3">
+              <h3 className="text-base font-bold text-[#111111]">AI Career Path Roadmap</h3>
+              <p className="text-xs text-[#666666] font-medium mt-0.5">Your recommended mid-term and long-term career growth path based on detected seniority and target role.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-4 rounded-xl bg-white border border-[#7ED321] depth-3d-card text-center space-y-1">
+                <span className="text-[8px] font-bold text-[#7ED321] uppercase tracking-wider block">Current Role Focus</span>
+                <h4 className="text-xs font-bold text-[#111111]">{analysisData?.detected_role || "Associate"}</h4>
+                <p className="text-[9px] text-[#666666]">Current profile matches entry to mid-level parameters.</p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center space-y-1">
+                <span className="text-[8px] font-bold text-indigo-600 uppercase tracking-wider block">Mid-Term Path (1-2 Yrs)</span>
+                <h4 className="text-xs font-bold text-[#111111]">Senior {analysisData?.detected_role?.replace("Engineer", "")?.replace("Developer", "")}</h4>
+                <p className="text-[9px] text-[#666666]">Focus on system architecture and team mentorship.</p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] text-center space-y-1">
+                <span className="text-[8px] font-bold text-amber-600 uppercase tracking-wider block">Long-Term Goal (3-5 Yrs)</span>
+                <h4 className="text-xs font-bold text-[#111111]">Tech Lead / Architect</h4>
+                <p className="text-[9px] text-[#666666]">Lead technical vision and large-scale platform engineering.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] space-y-3">
+                <h4 className="text-[10px] font-bold text-[#111111] uppercase tracking-wider">Target Technology Milestones</h4>
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="p-2.5 rounded-lg bg-white border border-[#E6E6E2]">
+                    <span className="text-[7px] text-[#666666] uppercase block font-semibold">Next Skill Boost</span>
+                    <strong className="text-[9px] text-[#7ED321] block mt-1">{analysisData?.target_roadmap?.next_skill || "Docker"}</strong>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-white border border-[#E6E6E2]">
+                    <span className="text-[7px] text-[#666666] uppercase block font-semibold">Architecture</span>
+                    <strong className="text-[9px] text-[#7ED321] block mt-1">{analysisData?.target_roadmap?.architecture_target || "System Design"}</strong>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-white border border-[#E6E6E2]">
+                    <span className="text-[7px] text-[#666666] uppercase block font-semibold">Target Cloud</span>
+                    <strong className="text-[9px] text-[#7ED321] block mt-1">{analysisData?.target_roadmap?.recommended_cloud || "AWS / GCP"}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] space-y-2">
+                <h4 className="text-[10px] font-bold text-[#111111] uppercase tracking-wider">Recommended Career Certifications</h4>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {(analysisData?.suggested_certifications || []).map((cert, index) => (
+                    <span key={index} className="px-2 py-0.5 rounded bg-white border border-[#E6E6E2] text-[8px] font-semibold text-[#666666]">
+                      🛡️ {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Recommended Jobs */}
         <div className="depth-3d-card p-6 space-y-4">
@@ -498,7 +631,11 @@ If you're preparing for internships, placements, or your next job, you should de
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {recommendedJobs.length > 0 ? (
+            {jobsError ? (
+              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700 col-span-2">
+                ⚠️ {jobsError}
+              </div>
+            ) : recommendedJobs.length > 0 ? (
               recommendedJobs.map((job) => (
                 <div key={job.id} className="p-4 rounded-xl bg-[#F8F8F5] border border-[#E6E6E2] hover:border-[#7ED321] transition-all flex flex-col justify-between space-y-3.5 depth-3d-card">
                   <div className="flex justify-between items-start gap-4">
@@ -559,7 +696,7 @@ If you're preparing for internships, placements, or your next job, you should de
                 <tbody>
                   <tr>
                     <td style={{ padding: '4px 0', fontWeight: 'bold', color: '#FFFFFF', width: '120px' }}>PREPARED FOR:</td>
-                    <td style={{ padding: '4px 0', color: '#FFFFFF' }}>Alex Mercer</td>
+                    <td style={{ padding: '4px 0', color: '#FFFFFF' }}>{analysisData?.candidate_name || "Alex Mercer"}</td>
                   </tr>
                   <tr>
                     <td style={{ padding: '4px 0', fontWeight: 'bold', color: '#FFFFFF' }}>TARGET ROLE:</td>
@@ -880,15 +1017,15 @@ If you're preparing for internships, placements, or your next job, you should de
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ fontSize: '10.5px', display: 'flex', justifyContent: 'space-between' }}>
                       <span>⚡ Next Skill Boost:</span>
-                      <strong style={{ color: '#7ED321' }}>Kubernetes</strong>
+                      <strong style={{ color: '#7ED321' }}>{analysisData?.target_roadmap?.next_skill || "Docker"}</strong>
                     </div>
                     <div style={{ fontSize: '10.5px', display: 'flex', justifyContent: 'space-between' }}>
                       <span>⚡ Architecture target:</span>
-                      <strong style={{ color: '#7ED321' }}>System Design</strong>
+                      <strong style={{ color: '#7ED321' }}>{analysisData?.target_roadmap?.architecture_target || "System Design"}</strong>
                     </div>
                     <div style={{ fontSize: '10.5px', display: 'flex', justifyContent: 'space-between' }}>
                       <span>⚡ Recommended Cloud:</span>
-                      <strong style={{ color: '#7ED321' }}>AWS / GCP</strong>
+                      <strong style={{ color: '#7ED321' }}>{analysisData?.target_roadmap?.recommended_cloud || "AWS / GCP"}</strong>
                     </div>
                   </div>
                 </div>
